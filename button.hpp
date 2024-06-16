@@ -11,8 +11,9 @@ public:
     ~Button();
 
     void render();
-    bool isClicked(int mouseX, int mouseY);
+    bool isHovered(int mouseX, int mouseY);
     void setOutline(bool enable, SDL_Color color);
+    void setHovered(bool hoverStatus);
 
 private:
     SDL_Renderer* mRenderer;
@@ -22,6 +23,7 @@ private:
     SDL_Color mOutlineColor;
     SDL_Rect mRect;
     bool mDrawOutline;
+    bool hovered;
 
     void createTextTexture(const std::string& text, SDL_Color color);
 };

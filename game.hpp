@@ -30,7 +30,7 @@ private:
 
     // Button objects
     Button* startButton;
-    // Button* quitButton;
+    Button* quitButton;
 };
 
 #endif

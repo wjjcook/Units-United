@@ -13,7 +13,6 @@ public:
     bool loadFont(const std::string& fontPath, int fontSize);
     void setText(const std::string& text, SDL_Color color);
     void render(int x, int y);
-    void renderCentered(int screenWidth, int screenHeight);
 
 private:
     SDL_Renderer* mRenderer;

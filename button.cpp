@@ -35,7 +35,11 @@ void Button::createTextTexture(const std::string& text, SDL_Color color) {
 
 void Button::render() {
     // Render button background
-    SDL_SetRenderDrawColor(mRenderer, mButtonColor.r, mButtonColor.g, mButtonColor.b, mButtonColor.a);
+    if (hovered) {
+        SDL_SetRenderDrawColor(mRenderer, mButtonColor.r, mButtonColor.g + 40, mButtonColor.b + 40, mButtonColor.a);
+    } else {
+        SDL_SetRenderDrawColor(mRenderer, mButtonColor.r, mButtonColor.g, mButtonColor.b, mButtonColor.a);
+    }
     SDL_RenderFillRect(mRenderer, &mRect);
 
     // Render button text
@@ -53,11 +57,15 @@ void Button::render() {
     }
 }
 
-bool Button::isClicked(int mouseX, int mouseY) {
+bool Button::isHovered(int mouseX, int mouseY) {
     return mouseX >= mRect.x && mouseX <= (mRect.x + mRect.w) && mouseY >= mRect.y && mouseY <= (mRect.y + mRect.h);
 }
 
 void Button::setOutline(bool enable, SDL_Color color) {
     mDrawOutline = enable;
     mOutlineColor = color;
+}
+
+void Button::setHovered(bool hoverStatus) {
+    hovered = hoverStatus;
 }

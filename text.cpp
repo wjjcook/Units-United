@@ -53,9 +53,3 @@ void Text::render(int x, int y) {
         SDL_RenderCopy(mRenderer, mTexture, nullptr, &renderQuad);
     }
 }
-
-void Text::renderCentered(int screenWidth, int screenHeight) {
-    int x = (screenWidth - mWidth) / 2;
-    int y = (screenHeight - mHeight) / 2;
-    render(x, y);
-}
