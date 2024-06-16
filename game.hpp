@@ -5,6 +5,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <string>
 #include "text.hpp"
+#include "button.hpp"
 
 class Game {
 public:
@@ -26,6 +27,10 @@ private:
 
     // Text objects
     Text* titleText;
+
+    // Button objects
+    Button* startButton;
+    // Button* quitButton;
 };
 
 #endif

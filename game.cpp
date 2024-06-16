@@ -40,6 +40,13 @@ bool Game::init(const std::string& title, int width, int height) {
     SDL_Color white = {255, 255, 255, 255};
     titleText->setText("Units United", white);
 
+    SDL_Color blue = {0, 0, 255, 255};
+    SDL_Color black = {0, 0, 0, 255};
+
+    // Initialize button
+    startButton = new Button(renderer, "Terminal.ttf", 24, "Start", white, blue, 270, 220, 150, 60);
+    startButton->setOutline(true, black);
+
     running = true;
     return true;
 }
@@ -54,6 +61,8 @@ void Game::run() {
 
 void Game::clean() {
     delete titleText;
+    delete startButton;
+    // delete quitButton;
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(gameWindow);
@@ -66,6 +75,12 @@ void Game::handleEvents() {
     while (SDL_PollEvent(&e) != 0) {
         if (e.type == SDL_QUIT) {
             running = false;
+        } else if (e.type == SDL_MOUSEBUTTONDOWN) {
+            int x, y;
+            SDL_GetMouseState(&x, &y);
+            if (startButton->isClicked(x, y)) {
+                std::cout << "Button clicked!" << std::endl;
+            }
         }
     }
 }
@@ -75,7 +90,11 @@ void Game::update() {
 }
 
 void Game::render() {
+    SDL_SetRenderDrawColor(renderer, 11, 45, 82, 255); // Background color
     SDL_RenderClear(renderer);
-    titleText->renderCentered(640, 240); // Centered horizontally and in the top half
+
+    titleText->renderCentered(640, 240);
+    startButton->render();
+
     SDL_RenderPresent(renderer);
 }
