@@ -1,17 +1,7 @@
 #include "game.hpp"
 #include <iostream>
 
-Game::Game() {
-    gameWindow = nullptr;
-    renderer = nullptr;
-    running = false;
-    gameState = title;
-    titleText = nullptr;
-    startButton = nullptr;
-    quitButton = nullptr;
-    // player1 = nullptr;
-    // player2 = nullptr;
-}
+Game::Game() : gameWindow(nullptr), renderer(nullptr), running(false), gameState(title), titleText(nullptr), startButton(nullptr), quitButton(nullptr), player1(nullptr), player2(nullptr) {}
 
 Game::~Game() {
     clean();
@@ -59,7 +49,6 @@ bool Game::init(const std::string& title, int width, int height) {
 
     quitButton = new Button(renderer, "Terminal.ttf", 24, "Quit", white, buttonColor, 400, 340, 150, 60);
     quitButton->setOutline(true, black);
-
     running = true;
     return true;
 }
@@ -107,8 +96,8 @@ void Game::handleTitleEvents(SDL_Event e) {
             std::cout << "Going to character selection" << std::endl;
             // Need to create goToCSelect func
             gameState = cSelect;
-            // player1 = new Player();
-            // player2 = new Player();
+            player1 = new Player();
+            player2 = new Player();
         } else {
             startButton->setHovered(true);
         }

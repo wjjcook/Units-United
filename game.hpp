@@ -34,8 +34,8 @@ private:
     Game_State gameState;
 
     // Players
-    // Player* player1;
-    // Player* player2;
+    Player* player1;
+    Player* player2;
 
     // Text objects
     Text* titleText;
