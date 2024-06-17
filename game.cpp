@@ -4,7 +4,14 @@
 Game::Game() : gameWindow(nullptr), renderer(nullptr), running(false), gameState(title), titleText(nullptr), startButton(nullptr), quitButton(nullptr), player1(nullptr), player2(nullptr) {}
 
 Game::~Game() {
-    clean();
+    delete titleText;
+    delete startButton;
+    delete quitButton;
+
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(gameWindow);
+    TTF_Quit();
+    SDL_Quit();
 }
 
 bool Game::init(const std::string& title, int width, int height) {
@@ -59,17 +66,6 @@ void Game::run() {
         update();
         render();
     }
-}
-
-void Game::clean() {
-    delete titleText;
-    delete startButton;
-    delete quitButton;
-
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(gameWindow);
-    TTF_Quit();
-    SDL_Quit();
 }
 
 void Game::handleEvents() {

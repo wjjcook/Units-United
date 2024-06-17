@@ -4,14 +4,15 @@ const int SCREEN_WIDTH = 960;
 const int SCREEN_HEIGHT = 520;
 
 int main(int argc, char* args[]) {
-    Game game;
+    Game* game = new Game();
 
-    if (!game.init("Units United", SCREEN_WIDTH, SCREEN_HEIGHT)) {
+    if (!game->init("Units United", SCREEN_WIDTH, SCREEN_HEIGHT)) {
         return 1;
     }
 
-    game.run();
-    game.clean();
+    game->run();
+    
+    delete game;
 
     return 0;
 }

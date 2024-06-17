@@ -19,7 +19,6 @@ public:
 
     bool init(const std::string& title, int width, int height);
     void run();
-    void clean();
 
 private:
     void handleEvents();
