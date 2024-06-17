@@ -27,23 +27,3 @@ clean:
 
 # Phony targets
 .PHONY: all clean
-
-# Example makefile
-CXX = g++
-CXXFLAGS = -Wall -g
-OBJ = main.o player.o
-TARGET = main
-
-all: $(TARGET)
-
-$(TARGET): $(OBJ)
-    $(CXX) $(CXXFLAGS) -o $@ $^
-
-main.o: main.cpp player.h
-    $(CXX) $(CXXFLAGS) -c main.cpp
-
-player.o: player.cpp player.h
-    $(CXX) $(CXXFLAGS) -c player.cpp
-
-clean:
-    rm -f $(OBJ) $(TARGET)
