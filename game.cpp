@@ -1,12 +1,24 @@
 #include "game.hpp"
 #include <iostream>
 
-Game::Game() : gameWindow(nullptr), renderer(nullptr), running(false), gameState(title), titleText(nullptr), startButton(nullptr), quitButton(nullptr), player1(nullptr), player2(nullptr) {}
+Game::Game() {
+    gameWindow = nullptr;
+    renderer = nullptr;
+    running = false;
+    gameState = title;
+    titleText = nullptr;
+    startButton = nullptr;
+    quitButton = nullptr;
+    player1 = nullptr;
+    player2 = nullptr;
+}
 
 Game::~Game() {
     delete titleText;
     delete startButton;
     delete quitButton;
+    delete player1;
+    delete player2;
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(gameWindow);
