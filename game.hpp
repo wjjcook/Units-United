@@ -6,7 +6,11 @@
 #include <string>
 #include "text.hpp"
 #include "button.hpp"
-#include "player.cpp"
+#include "player.hpp"
+
+enum Game_State {
+    title, cSelect, play, pause, end
+};
 
 class Game {
 public:
@@ -19,16 +23,19 @@ public:
 
 private:
     void handleEvents();
+    void handleTitleEvents(SDL_Event e);
+    void handleCSelectEvents(SDL_Event e);
     void update();
     void render();
 
     SDL_Window* gameWindow;
     SDL_Renderer* renderer;
     bool running;
+    Game_State gameState;
 
     // Players
-    Player* player1;
-    Player* player2;
+    // Player* player1;
+    // Player* player2;
 
     // Text objects
     Text* titleText;

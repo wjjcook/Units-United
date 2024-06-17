@@ -1,7 +1,17 @@
 #include "game.hpp"
 #include <iostream>
 
-Game::Game() : gameWindow(nullptr), renderer(nullptr), running(false), titleText(nullptr), startButton(nullptr), quitButton(nullptr) {}
+Game::Game() {
+    gameWindow = nullptr;
+    renderer = nullptr;
+    running = false;
+    gameState = title;
+    titleText = nullptr;
+    startButton = nullptr;
+    quitButton = nullptr;
+    // player1 = nullptr;
+    // player2 = nullptr;
+}
 
 Game::~Game() {
     clean();
@@ -79,41 +89,62 @@ void Game::handleEvents() {
         if (e.type == SDL_QUIT) {
             running = false;
         } else {
-            int x, y;
-            SDL_GetMouseState(&x, &y);
-            if (startButton->isHovered(x, y)) {
-                if (e.type == SDL_MOUSEBUTTONDOWN) {
-                    std::cout << "Going to character selection" << std::endl;
-                } else {
-                    startButton->setHovered(true);
-                }
-            } else {
-                startButton->setHovered(false);
+            if (gameState == title) {
+                handleTitleEvents(e);
+            } else if (gameState == cSelect) {
+                handleCSelectEvents(e);
             }
-            if (quitButton->isHovered(x, y)) {
-                if (e.type == SDL_MOUSEBUTTONDOWN) {
-                    running = false;
-                } else {
-                    quitButton->setHovered(true);
-                }
-            } else {
-                quitButton->setHovered(false);
-            }
+            
         }
     }
 }
 
+void Game::handleTitleEvents(SDL_Event e) {
+    int x, y;
+    SDL_GetMouseState(&x, &y);
+    if (startButton->isHovered(x, y)) {
+        if (e.type == SDL_MOUSEBUTTONDOWN) {
+            std::cout << "Going to character selection" << std::endl;
+            // Need to create goToCSelect func
+            gameState = cSelect;
+            // player1 = new Player();
+            // player2 = new Player();
+        } else {
+            startButton->setHovered(true);
+        }
+    } else {
+        startButton->setHovered(false);
+    }
+    if (quitButton->isHovered(x, y)) {
+        if (e.type == SDL_MOUSEBUTTONDOWN) {
+            running = false;
+        } else {
+            quitButton->setHovered(true);
+        }
+    } else {
+        quitButton->setHovered(false);
+    }
+}
+
+void Game::handleCSelectEvents(SDL_Event e) {
+
+}
+
 void Game::update() {
-    // Update game state
+    
 }
 
 void Game::render() {
     SDL_SetRenderDrawColor(renderer, 11, 45, 82, 255); // Background color
     SDL_RenderClear(renderer);
 
-    titleText->render(325, 100);
-    startButton->render();
-    quitButton->render();
+    if (gameState == title) {
+        titleText->render(325, 100);
+        startButton->render();
+        quitButton->render();
+    } else if (gameState == cSelect) {
+
+    }
 
     SDL_RenderPresent(renderer);
 }
