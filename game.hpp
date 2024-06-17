@@ -6,6 +6,7 @@
 #include <string>
 #include "text.hpp"
 #include "button.hpp"
+#include "player.cpp"
 
 class Game {
 public:
@@ -24,6 +25,10 @@ private:
     SDL_Window* gameWindow;
     SDL_Renderer* renderer;
     bool running;
+
+    // Players
+    Player* player1;
+    Player* player2;
 
     // Text objects
     Text* titleText;
