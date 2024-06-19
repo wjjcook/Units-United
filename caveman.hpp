@@ -5,6 +5,8 @@
 
 class Caveman: public Unit {
     public:
+        Caveman();
+        ~Caveman();
 
     private:
 };
