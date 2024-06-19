@@ -38,6 +38,9 @@ private:
 
     // Text objects
     Text* titleText;
+    Text* announcerText;
+    std::vector<Text*> player1SelectText;
+    std::vector<Text*> player2SelectText;
 
     // Button objects
     Button* startButton;

@@ -7,10 +7,12 @@ Game::Game() {
     running = false;
     gameState = title;
     titleText = nullptr;
+    announcerText = nullptr;
     startButton = nullptr;
     quitButton = nullptr;
     player1 = nullptr;
     player2 = nullptr;
+
 }
 
 Game::~Game() {
@@ -55,12 +57,12 @@ bool Game::init(const std::string& title, int width, int height) {
         return false;
     }
 
-    titleText = new Text(renderer, "Terminal.ttf", 48);
     SDL_Color white = {255, 255, 255, 255};
-    titleText->setText("Units United", white);
-
     SDL_Color buttonColor = {139, 27, 7, 255};
     SDL_Color black = {0, 0, 0, 255};
+
+    titleText = new Text(renderer, "Terminal.ttf", 48);
+    titleText->setText("Units United", white);
 
     // Initialize buttons
     startButton = new Button(renderer, "Terminal.ttf", 24, "Start", white, buttonColor, 400, 220, 150, 60);
@@ -68,6 +70,16 @@ bool Game::init(const std::string& title, int width, int height) {
 
     quitButton = new Button(renderer, "Terminal.ttf", 24, "Quit", white, buttonColor, 400, 340, 150, 60);
     quitButton->setOutline(true, black);
+
+    Text* player1HeaderText = new Text(renderer, "Terminal.ttf", 24);
+    player1HeaderText->setText("Player 1 Units:", white);
+
+    Text* player2HeaderText = new Text(renderer, "Terminal.ttf", 24);
+    player2HeaderText->setText("Player 2 Units:", white);
+
+    player1SelectText.push_back(player1HeaderText);
+    player2SelectText.push_back(player2HeaderText);
+
     running = true;
     return true;
 }
@@ -124,7 +136,7 @@ void Game::handleTitleEvents(SDL_Event e) {
 }
 
 void Game::handleCSelectEvents(SDL_Event e) {
-
+    
 }
 
 void Game::update() {
@@ -140,7 +152,12 @@ void Game::render() {
         startButton->render();
         quitButton->render();
     } else if (gameState == cSelect) {
-
+        for (unsigned int i = 0; i < player1SelectText.size(); i++) {
+            player1SelectText[i]->render(750, ((i)*35)+50);
+        }
+        for (unsigned int i = 0; i < player2SelectText.size(); i++) {
+            player2SelectText[i]->render(750, ((i)*35)+270);
+        }
     }
 
     SDL_RenderPresent(renderer);
