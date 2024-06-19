@@ -5,14 +5,14 @@
 #include "unit.hpp"
 
 class Player {
-public:
-    Player();
-    ~Player();
+    public:
+        Player();
+        ~Player();
 
-private:
-    std::vector<Unit> units;
-    int mana;
-    
+    private:
+        std::vector<Unit> units;
+        int mana;
+        
 };
 
 #endif

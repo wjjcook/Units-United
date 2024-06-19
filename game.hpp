@@ -13,38 +13,38 @@ enum Game_State {
 };
 
 class Game {
-public:
-    Game();
-    ~Game();
+    public:
+        Game();
+        ~Game();
 
-    bool init(const std::string& title, int width, int height);
-    void run();
+        bool init(const std::string& title, int width, int height);
+        void run();
 
-private:
-    void handleEvents();
-    void handleTitleEvents(SDL_Event e);
-    void handleCSelectEvents(SDL_Event e);
-    void update();
-    void render();
+    private:
+        void handleEvents();
+        void handleTitleEvents(SDL_Event e);
+        void handleCSelectEvents(SDL_Event e);
+        void update();
+        void render();
 
-    SDL_Window* gameWindow;
-    SDL_Renderer* renderer;
-    bool running;
-    Game_State gameState;
+        SDL_Window* gameWindow;
+        SDL_Renderer* renderer;
+        bool running;
+        Game_State gameState;
 
-    // Players
-    Player* player1;
-    Player* player2;
+        // Players
+        Player* player1;
+        Player* player2;
 
-    // Text objects
-    Text* titleText;
-    Text* announcerText;
-    std::vector<Text*> player1SelectText;
-    std::vector<Text*> player2SelectText;
+        // Text objects
+        Text* titleText;
+        Text* announcerText;
+        std::vector<Text*> player1SelectText;
+        std::vector<Text*> player2SelectText;
 
-    // Button objects
-    Button* startButton;
-    Button* quitButton;
+        // Button objects
+        Button* startButton;
+        Button* quitButton;
 };
 
 #endif

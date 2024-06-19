@@ -6,20 +6,20 @@
 #include <string>
 
 class Text {
-public:
-    Text(SDL_Renderer* renderer, const std::string& fontPath, int fontSize);
-    ~Text();
+    public:
+        Text(SDL_Renderer* renderer, const std::string& fontPath, int fontSize);
+        ~Text();
 
-    bool loadFont(const std::string& fontPath, int fontSize);
-    void setText(const std::string& text, SDL_Color color);
-    void render(int x, int y);
+        bool loadFont(const std::string& fontPath, int fontSize);
+        void setText(const std::string& text, SDL_Color color);
+        void render(int x, int y);
 
-private:
-    SDL_Renderer* mRenderer;
-    TTF_Font* mFont;
-    SDL_Texture* mTexture;
-    int mWidth;
-    int mHeight;
+    private:
+        SDL_Renderer* mRenderer;
+        TTF_Font* mFont;
+        SDL_Texture* mTexture;
+        int mWidth;
+        int mHeight;
 };
 
 #endif
