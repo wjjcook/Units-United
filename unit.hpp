@@ -12,7 +12,7 @@ class Unit {
 
     protected:
         std::string name;
-        static std::string basicAttack;
+        std::string basicAttack;
         std::string specialName;
         int hp;
         int minDmg;

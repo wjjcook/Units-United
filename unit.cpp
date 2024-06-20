@@ -2,14 +2,14 @@
 #include <iostream>
 #include <random>
 
-Unit::Unit() {
+Unit::Unit() : gen(rd()) {
     basicAttack = "Basic Attack";
-    std::random_device rd;
-    std::mt19937 gen(rd());
+    
 }
 
 Unit::~Unit() {}
 
 void Unit::attack() {
-
+    std::uniform_int_distribution<> distr(minDmg, maxDmg);
+    std::cout << distr(gen) << std::endl;
 }

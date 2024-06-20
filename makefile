@@ -4,7 +4,7 @@ LDFLAGS := -L src/lib
 LIBS := -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf
 
 # Source files and object files
-SRCS := main.cpp game.cpp text.cpp button.cpp player.cpp unit.cpp
+SRCS := main.cpp game.cpp text.cpp button.cpp player.cpp unit.cpp caveman.cpp
 OBJS := $(SRCS:.cpp=.o)
 
 # Target executable
