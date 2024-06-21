@@ -6,9 +6,9 @@
 
 class Unit {
     public:
-        Unit();
+        Unit(const std::string name, const std::string specialName, int hp, int minDmg, int maxDmg, int speed);
         ~Unit();
-        virtual void attack();
+        virtual void attack() const;
 
     protected:
         std::string name;
@@ -19,8 +19,7 @@ class Unit {
         int maxDmg;
         int speed;
 
-        std::random_device rd; // obtain a random number from hardware
-        std::mt19937 gen; // seed the generator
+        
 };
 
 #endif

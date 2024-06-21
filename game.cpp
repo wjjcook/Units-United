@@ -12,7 +12,7 @@ Game::Game() {
     quitButton = nullptr;
     player1 = nullptr;
     player2 = nullptr;
-
+    caveman = nullptr;
 }
 
 Game::~Game() {
@@ -77,6 +77,9 @@ bool Game::init(const std::string& title, int width, int height) {
     Text* player2HeaderText = new Text(renderer, "Terminal.ttf", 24);
     player2HeaderText->setText("Player 2 Units:", white);
 
+    cavemanButton = new Button(renderer, "Terminal.ttf", 24, "caveman", white, buttonColor, 400, 220, 150, 60);
+    cavemanButton->setOutline(true, black);
+
     player1SelectText.push_back(player1HeaderText);
     player2SelectText.push_back(player2HeaderText);
 
@@ -136,7 +139,18 @@ void Game::handleTitleEvents(SDL_Event e) {
 }
 
 void Game::handleCSelectEvents(SDL_Event e) {
-    
+    int x, y;
+    SDL_GetMouseState(&x, &y);
+    if (cavemanButton->isHovered(x, y)) {
+        if (e.type == SDL_MOUSEBUTTONDOWN) {
+            std::cout << "caveman" << std::endl;
+            caveman->attack();
+        } else {
+            cavemanButton->setHovered(true);
+        }
+    } else {
+        cavemanButton->setHovered(false);
+    }
 }
 
 void Game::update() {
@@ -152,6 +166,7 @@ void Game::render() {
         startButton->render();
         quitButton->render();
     } else if (gameState == cSelect) {
+        cavemanButton->render();
         for (unsigned int i = 0; i < player1SelectText.size(); i++) {
             player1SelectText[i]->render(750, ((i)*35)+50);
         }

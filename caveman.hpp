@@ -7,6 +7,7 @@ class Caveman: public Unit {
     public:
         Caveman();
         ~Caveman();
+        void attack() const override;
 
     private:
 };

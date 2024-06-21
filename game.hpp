@@ -7,6 +7,7 @@
 #include "text.hpp"
 #include "button.hpp"
 #include "player.hpp"
+#include "caveman.hpp"
 
 enum Game_State {
     title, cSelect, play, pause, end
@@ -45,6 +46,10 @@ class Game {
         // Button objects
         Button* startButton;
         Button* quitButton;
+
+        Button* cavemanButton;
+
+        Caveman* caveman;
 };
 
 #endif
