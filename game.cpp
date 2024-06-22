@@ -106,7 +106,6 @@ void Game::handleEvents() {
             } else if (gameState == cSelect) {
                 handleCSelectEvents(e);
             }
-            
         }
     }
 }
