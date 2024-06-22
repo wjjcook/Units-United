@@ -121,6 +121,7 @@ void Game::handleTitleEvents(SDL_Event e) {
             gameState = cSelect;
             player1 = new Player();
             player2 = new Player();
+            caveman = new Caveman();
         } else {
             startButton->setHovered(true);
         }

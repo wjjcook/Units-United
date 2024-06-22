@@ -15,9 +15,9 @@ Unit::Unit(const std::string name, const std::string specialName, int hp, int mi
 
 Unit::~Unit() {}
 
-void Unit::attack() const{
-    std::random_device rd; // obtain a random number from hardware
-    std::mt19937 gen(rd()); // seed the generator
+void Unit::attack() const {
+    std::random_device rd;
+    std::mt19937 gen(rd());
     std::uniform_int_distribution<> distr(minDmg, maxDmg);
     std::cout << distr(gen) << std::endl;
 }
