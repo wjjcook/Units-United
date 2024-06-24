@@ -22,6 +22,8 @@ class Game {
         void run();
 
     private:
+        void initializeTitleElements(SDL_Renderer* renderer);
+        void initializeCSelectElements(SDL_Renderer* renderer);
         void handleEvents();
         void handleTitleEvents(SDL_Event e);
         void handleCSelectEvents(SDL_Event e);
@@ -47,7 +49,7 @@ class Game {
         Button* startButton;
         Button* quitButton;
 
-        Button* cavemanButton;
+        std::vector<Button*> cSelectUnitButtons;
 
         Caveman* caveman;
 };

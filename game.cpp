@@ -57,6 +57,14 @@ bool Game::init(const std::string& title, int width, int height) {
         return false;
     }
 
+    initializeTitleElements(renderer);
+    initializeCSelectElements(renderer);
+
+    running = true;
+    return true;
+}
+
+void Game::initializeTitleElements(SDL_Renderer* renderer) {
     SDL_Color white = {255, 255, 255, 255};
     SDL_Color buttonColor = {139, 27, 7, 255};
     SDL_Color black = {0, 0, 0, 255};
@@ -64,12 +72,19 @@ bool Game::init(const std::string& title, int width, int height) {
     titleText = new Text(renderer, "Terminal.ttf", 48);
     titleText->setText("Units United", white);
 
-    // Initialize buttons
     startButton = new Button(renderer, "Terminal.ttf", 24, "Start", white, buttonColor, 400, 220, 150, 60);
     startButton->setOutline(true, black);
 
     quitButton = new Button(renderer, "Terminal.ttf", 24, "Quit", white, buttonColor, 400, 340, 150, 60);
     quitButton->setOutline(true, black);
+}
+
+void Game::initializeCSelectElements(SDL_Renderer* renderer) {
+    SDL_Color white = {255, 255, 255, 255};
+    SDL_Color buttonColor = {139, 27, 7, 255};
+    SDL_Color black = {0, 0, 0, 255};
+
+    announcerText = new Text(renderer, "Terminal.ttf", 24);
 
     Text* player1HeaderText = new Text(renderer, "Terminal.ttf", 24);
     player1HeaderText->setText("Player 1 Units:", white);
@@ -77,14 +92,13 @@ bool Game::init(const std::string& title, int width, int height) {
     Text* player2HeaderText = new Text(renderer, "Terminal.ttf", 24);
     player2HeaderText->setText("Player 2 Units:", white);
 
-    cavemanButton = new Button(renderer, "Terminal.ttf", 24, "caveman", white, buttonColor, 400, 220, 150, 60);
+    Button* cavemanButton = new Button(renderer, "Terminal.ttf", 24, "caveman", white, buttonColor, 400, 220, 150, 60);
     cavemanButton->setOutline(true, black);
+
+    cSelectUnitButtons.push_back(cavemanButton);
 
     player1SelectText.push_back(player1HeaderText);
     player2SelectText.push_back(player2HeaderText);
-
-    running = true;
-    return true;
 }
 
 void Game::run() {
@@ -139,18 +153,18 @@ void Game::handleTitleEvents(SDL_Event e) {
 }
 
 void Game::handleCSelectEvents(SDL_Event e) {
-    int x, y;
-    SDL_GetMouseState(&x, &y);
-    if (cavemanButton->isHovered(x, y)) {
-        if (e.type == SDL_MOUSEBUTTONDOWN) {
-            std::cout << "caveman" << std::endl;
-            caveman->attack();
-        } else {
-            cavemanButton->setHovered(true);
-        }
-    } else {
-        cavemanButton->setHovered(false);
-    }
+    // int x, y;
+    // SDL_GetMouseState(&x, &y);
+    // if (cavemanButton->isHovered(x, y)) {
+    //     if (e.type == SDL_MOUSEBUTTONDOWN) {
+    //         std::cout << "caveman" << std::endl;
+    //         caveman->attack();
+    //     } else {
+    //         cavemanButton->setHovered(true);
+    //     }
+    // } else {
+    //     cavemanButton->setHovered(false);
+    // }
 }
 
 void Game::update() {
@@ -166,7 +180,9 @@ void Game::render() {
         startButton->render();
         quitButton->render();
     } else if (gameState == cSelect) {
-        cavemanButton->render();
+        for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++) {
+            // cSelectUnitButtons[i]->render(750, ((i)*35)+50);
+        }
         for (unsigned int i = 0; i < player1SelectText.size(); i++) {
             player1SelectText[i]->render(750, ((i)*35)+50);
         }
