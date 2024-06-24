@@ -36,7 +36,7 @@ void Button::createTextTexture(const std::string& text, SDL_Color color) {
 void Button::render() {
     // Render button background
     if (hovered) {
-        SDL_SetRenderDrawColor(mRenderer, mButtonColor.r, mButtonColor.g + 40, mButtonColor.b + 40, mButtonColor.a);
+        SDL_SetRenderDrawColor(mRenderer, mButtonColor.r + 30, mButtonColor.g + 30, mButtonColor.b + 30, mButtonColor.a);
     } else {
         SDL_SetRenderDrawColor(mRenderer, mButtonColor.r, mButtonColor.g, mButtonColor.b, mButtonColor.a);
     }

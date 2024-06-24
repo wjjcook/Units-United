@@ -6,13 +6,18 @@ Game::Game() {
     renderer = nullptr;
     running = false;
     gameState = title;
+
     titleText = nullptr;
     announcerText = nullptr;
     startButton = nullptr;
     quitButton = nullptr;
+
     player1 = nullptr;
     player2 = nullptr;
+    playerTurn = PLAYER1;
+
     caveman = nullptr;
+    
 }
 
 Game::~Game() {
@@ -56,7 +61,7 @@ bool Game::init(const std::string& title, int width, int height) {
         SDL_Quit();
         return false;
     }
-
+    initializeColors();
     initializeTitleElements(renderer);
     initializeCSelectElements(renderer);
 
@@ -64,57 +69,67 @@ bool Game::init(const std::string& title, int width, int height) {
     return true;
 }
 
+void Game::initializeColors() {
+    colorMap["white"] = {255, 255, 255, 255};
+    colorMap["black"] = {0, 0, 0, 255};
+
+    // Need to find proper color palette
+    colorMap["red"] = {255, 0, 0, 255};
+    colorMap["blue"] = {0, 0, 255, 255};
+    colorMap["green"] = {37, 112, 37, 255};
+    colorMap["light red"] = {255, 50, 50, 255};
+    colorMap["light blue"] = {50, 50, 255, 255};
+    colorMap["dark red"] = {139, 27, 7, 255};
+    colorMap["dark blue"] = {37, 52, 94, 255};
+    colorMap["grey"] = {45, 45, 45, 255};
+
+}
+
 void Game::initializeTitleElements(SDL_Renderer* renderer) {
-    SDL_Color white = {255, 255, 255, 255};
-    SDL_Color buttonColor = {139, 27, 7, 255};
-    SDL_Color black = {0, 0, 0, 255};
 
     titleText = new Text(renderer, "Terminal.ttf", 48);
-    titleText->setText("Units United", white);
+    titleText->setText("Units United", colorMap["white"]);
 
-    startButton = new Button(renderer, "Terminal.ttf", 24, "Start", white, buttonColor, 400, 220, 150, 60);
-    startButton->setOutline(true, black);
+    startButton = new Button(renderer, "Terminal.ttf", 24, "Start", colorMap["white"], colorMap["green"], 400, 220, 150, 60);
+    startButton->setOutline(true, colorMap["black"]);
 
-    quitButton = new Button(renderer, "Terminal.ttf", 24, "Quit", white, buttonColor, 400, 340, 150, 60);
-    quitButton->setOutline(true, black);
+    quitButton = new Button(renderer, "Terminal.ttf", 24, "Quit", colorMap["white"], colorMap["dark red"], 400, 340, 150, 60);
+    quitButton->setOutline(true, colorMap["black"]);
 }
 
 void Game::initializeCSelectElements(SDL_Renderer* renderer) {
-    SDL_Color white = {255, 255, 255, 255};
-    SDL_Color buttonColor = {139, 27, 7, 255};
-    SDL_Color black = {0, 0, 0, 255};
 
     announcerText = new Text(renderer, "Terminal.ttf", 24);
 
     Text* player1HeaderText = new Text(renderer, "Terminal.ttf", 24);
-    player1HeaderText->setText("Player 1 Units:", white);
+    player1HeaderText->setText("Player 1 Units:", colorMap["light blue"]);
 
     Text* player2HeaderText = new Text(renderer, "Terminal.ttf", 24);
-    player2HeaderText->setText("Player 2 Units:", white);
+    player2HeaderText->setText("Player 2 Units:", colorMap["light red"]);
 
-    Button* blademasterButton = new Button(renderer, "Terminal.ttf", 16, "The Blademaster", white, buttonColor, 25, 50, 150, 50);
-    blademasterButton->setOutline(true, black);
+    Button* blademasterButton = new Button(renderer, "Terminal.ttf", 16, "The Blademaster", colorMap["white"], colorMap["grey"], 25, 50, 150, 50);
+    blademasterButton->setOutline(true, colorMap["black"]);
 
-    Button* cavemanButton = new Button(renderer, "Terminal.ttf", 16, "The Caveman", white, buttonColor, 200, 50, 150, 50);
-    cavemanButton->setOutline(true, black);
+    Button* cavemanButton = new Button(renderer, "Terminal.ttf", 16, "The Caveman", colorMap["white"], colorMap["grey"], 200, 50, 150, 50);
+    cavemanButton->setOutline(true, colorMap["black"]);
 
-    Button* duelistButton = new Button(renderer, "Terminal.ttf", 16, "The Duelist", white, buttonColor, 375, 50, 150, 50);
-    duelistButton->setOutline(true, black);
+    Button* duelistButton = new Button(renderer, "Terminal.ttf", 16, "The Duelist", colorMap["white"], colorMap["grey"], 375, 50, 150, 50);
+    duelistButton->setOutline(true, colorMap["black"]);
 
-    Button* fighterButton = new Button(renderer, "Terminal.ttf", 16, "The Fighter", white, buttonColor, 550, 50, 150, 50);
-    fighterButton->setOutline(true, black);
+    Button* fighterButton = new Button(renderer, "Terminal.ttf", 16, "The Fighter", colorMap["white"], colorMap["grey"], 550, 50, 150, 50);
+    fighterButton->setOutline(true, colorMap["black"]);
 
-    Button* medicButton = new Button(renderer, "Terminal.ttf", 16, "The Medic", white, buttonColor, 25, 150, 150, 50);
-    medicButton->setOutline(true, black);
+    Button* medicButton = new Button(renderer, "Terminal.ttf", 16, "The Medic", colorMap["white"], colorMap["grey"], 25, 150, 150, 50);
+    medicButton->setOutline(true, colorMap["black"]);
 
-    Button* raidBossButton = new Button(renderer, "Terminal.ttf", 16, "The Raid Boss", white, buttonColor, 200, 150, 150, 50);
-    raidBossButton->setOutline(true, black);
+    Button* raidBossButton = new Button(renderer, "Terminal.ttf", 16, "The Raid Boss", colorMap["white"], colorMap["grey"], 200, 150, 150, 50);
+    raidBossButton->setOutline(true, colorMap["black"]);
 
-    Button* tankButton = new Button(renderer, "Terminal.ttf", 16, "The Tank", white, buttonColor, 375, 150, 150, 50);
-    tankButton->setOutline(true, black);
+    Button* tankButton = new Button(renderer, "Terminal.ttf", 16, "The Tank", colorMap["white"], colorMap["grey"], 375, 150, 150, 50);
+    tankButton->setOutline(true, colorMap["black"]);
 
-    Button* villageIdiotButton = new Button(renderer, "Terminal.ttf", 16, "The Village Idiot", white, buttonColor, 550, 150, 150, 50);
-    villageIdiotButton->setOutline(true, black);
+    Button* villageIdiotButton = new Button(renderer, "Terminal.ttf", 16, "The Village Idiot", colorMap["white"], colorMap["grey"], 550, 150, 150, 50);
+    villageIdiotButton->setOutline(true, colorMap["black"]);
     
     cSelectUnitButtons.push_back(blademasterButton);
     cSelectUnitButtons.push_back(cavemanButton);
@@ -197,11 +212,13 @@ void Game::handleCSelectEvents(SDL_Event e) {
 }
 
 void Game::update() {
-    
+    // if (playerTurn == PLAYER1) {
+    //     announcerText->setText("Player 1: Select a Unit", white);
+    // }
 }
 
 void Game::render() {
-    SDL_SetRenderDrawColor(renderer, 11, 45, 82, 255); // Background color
+    SDL_SetRenderDrawColor(renderer, 33, 39, 64, 255); // Background color
     SDL_RenderClear(renderer);
 
     if (gameState == title) {

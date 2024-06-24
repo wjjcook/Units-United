@@ -4,6 +4,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <string>
+#include <map>
+
 #include "text.hpp"
 #include "button.hpp"
 #include "player.hpp"
@@ -11,6 +13,11 @@
 
 enum Game_State {
     title, cSelect, play, pause, end
+};
+
+enum Player_Turn {
+    PLAYER1 = 1,
+    PLAYER2 = 2
 };
 
 class Game {
@@ -22,6 +29,7 @@ class Game {
         void run();
 
     private:
+        void initializeColors();
         void initializeTitleElements(SDL_Renderer* renderer);
         void initializeCSelectElements(SDL_Renderer* renderer);
         void handleEvents();
@@ -35,9 +43,12 @@ class Game {
         bool running;
         Game_State gameState;
 
+        std::map<std::string, SDL_Color> colorMap;
+
         // Players
         Player* player1;
         Player* player2;
+        Player_Turn playerTurn;
 
         // Text objects
         Text* titleText;
