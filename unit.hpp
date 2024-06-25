@@ -10,6 +10,8 @@ class Unit {
         ~Unit();
         virtual void attack() const;
 
+        std::string getName();
+
     protected:
         std::string name;
         std::string basicAttack;

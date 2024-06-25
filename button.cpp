@@ -2,7 +2,7 @@
 #include <iostream>
 
 Button::Button(SDL_Renderer* renderer, const std::string& fontPath, int fontSize, const std::string& text, SDL_Color textColor, SDL_Color buttonColor, int x, int y, int width, int height)
-    : mRenderer(renderer), mFont(nullptr), mTexture(nullptr), mButtonColor(buttonColor), mRect({x, y, width, height}), mDrawOutline(false) {
+    : mRenderer(renderer), mFont(nullptr), mTexture(nullptr), mButtonColor(buttonColor), mRect({x, y, width, height}), mDrawOutline(false), mText(text) {
     mFont = TTF_OpenFont(fontPath.c_str(), fontSize);
     if (mFont == nullptr) {
         std::cout << "Failed to load font! TTF_Error: " << TTF_GetError() << std::endl;
@@ -18,6 +18,10 @@ Button::~Button() {
     if (mFont != nullptr) {
         TTF_CloseFont(mFont);
     }
+}
+
+std::string Button::getText() {
+    return mText;
 }
 
 void Button::createTextTexture(const std::string& text, SDL_Color color) {

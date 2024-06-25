@@ -5,11 +5,20 @@
 #include <SDL2/SDL_ttf.h>
 #include <string>
 #include <map>
+#include <unordered_map>
+#include <functional>
 
 #include "text.hpp"
 #include "button.hpp"
 #include "player.hpp"
+#include "blademaster.hpp"
 #include "caveman.hpp"
+#include "duelist.hpp"
+#include "fighter.hpp"
+#include "medic.hpp"
+#include "raid_boss.hpp"
+#include "tank.hpp"
+#include "village_idiot.hpp"
 
 enum Game_State {
     title, cSelect, play, pause, end
@@ -32,9 +41,12 @@ class Game {
         void initializeColors();
         void initializeTitleElements(SDL_Renderer* renderer);
         void initializeCSelectElements(SDL_Renderer* renderer);
+        void populateUnitMap();
+        Unit* createUnit(const std::string& unitName);
         void handleEvents();
         void handleTitleEvents(SDL_Event e);
         void handleCSelectEvents(SDL_Event e);
+        void addUnitToRoster(std::string unit);
         void update();
         void render();
 
@@ -65,7 +77,8 @@ class Game {
 
         std::vector<Button*> cSelectUnitButtons;
 
-        Caveman* caveman;
+        std::unordered_map<std::string, std::function<Unit*()>> unitCreators;
+
 };
 
 #endif

@@ -8,6 +8,15 @@ Player::Player() {
 Player::~Player() {
 }
 
-std::vector<Unit> Player::getUnits() {
+std::vector<Unit*> Player::getUnits() {
     return units;
+}
+
+void Player::addUnit(Unit* newUnit) {
+    units.push_back(newUnit);
+    unitNames.insert(newUnit->getName());
+}
+
+bool Player::hasUnit(const std::string& unitName) const {
+    return unitNames.find(unitName) != unitNames.end();
 }

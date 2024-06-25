@@ -1,5 +1,6 @@
 #include "game.hpp"
 #include <iostream>
+#include <functional>
 
 Game::Game() {
     gameWindow = nullptr;
@@ -19,8 +20,6 @@ Game::Game() {
     player1 = nullptr;
     player2 = nullptr;
     playerTurn = PLAYER1;
-
-    caveman = nullptr;
     
 }
 
@@ -85,6 +84,7 @@ bool Game::init(const std::string& title, int width, int height) {
     initializeColors();
     initializeTitleElements(renderer);
     initializeCSelectElements(renderer);
+    populateUnitMap();
 
     running = true;
     return true;
@@ -172,6 +172,41 @@ void Game::initializeCSelectElements(SDL_Renderer* renderer) {
 
 }
 
+void Game::populateUnitMap() {
+    unitCreators["The Blademaster"] = []() -> Unit* {
+        return new Blademaster();
+    };
+    unitCreators["The Caveman"] = []() -> Unit* {
+        return new Caveman();
+    };
+    unitCreators["The Duelist"] = []() -> Unit* {
+        return new Duelist();
+    };
+    unitCreators["The Fighter"] = []() -> Unit* {
+        return new Fighter();
+    };
+    unitCreators["The Medic"] = []() -> Unit* {
+        return new Medic();
+    };
+    unitCreators["The Raid Boss"] = []() -> Unit* {
+        return new RaidBoss();
+    };
+    unitCreators["The Tank"] = []() -> Unit* {
+        return new Tank();
+    };
+    unitCreators["The Village Idiot"] = []() -> Unit* {
+        return new VillageIdiot();
+    };
+}
+
+Unit* Game::createUnit(const std::string& unitName) {
+        auto it = unitCreators.find(unitName);
+        if (it != unitCreators.end()) {
+            return it->second();
+        }
+        return nullptr;
+    }
+
 void Game::run() {
     while (running) {
         handleEvents();
@@ -225,34 +260,73 @@ void Game::handleTitleEvents(SDL_Event e) {
 void Game::handleCSelectEvents(SDL_Event e) {
     int x, y;
     SDL_GetMouseState(&x, &y);
-    for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++){
-        if (cSelectUnitButtons[i]->isHovered(x, y)) {
-            if (e.type == SDL_MOUSEBUTTONDOWN) {
-                std::cout << "Clicked!" << std::endl;
+    if (!cSelectDone) {
+        for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++){
+            if (cSelectUnitButtons[i]->isHovered(x, y)) {
+                if (e.type == SDL_MOUSEBUTTONDOWN) {
+                    addUnitToRoster(cSelectUnitButtons[i]->getText());
+                } else {
+                    cSelectUnitButtons[i]->setHovered(true);
+                }
             } else {
-                cSelectUnitButtons[i]->setHovered(true);
+                cSelectUnitButtons[i]->setHovered(false);
+            }
+        }
+    } else {
+        if (cSelectStartButton->isHovered(x, y)) {
+            if (e.type == SDL_MOUSEBUTTONDOWN) {
+                gameState = play;
+            } else {
+                cSelectStartButton->setHovered(true);
             }
         } else {
-            cSelectUnitButtons[i]->setHovered(false);
+            cSelectStartButton->setHovered(false);
         }
     }
-    if (cSelectStartButton->isHovered(x, y) && cSelectDone) {
-        if (e.type == SDL_MOUSEBUTTONDOWN) {
-            gameState = play;
-        } else {
-            cSelectStartButton->setHovered(true);
+}
+
+void Game::addUnitToRoster(std::string unit) {
+    if (playerTurn == PLAYER1) {
+        if (player1->hasUnit(unit)) {
+            std::cout << "Unit already in roster!" << std::endl;
+            return;
         }
+        player1->addUnit(createUnit(unit));
+
+        Text* unitText = new Text(renderer, "Terminal.ttf", 24);
+        unitText->setText(unit, colorMap["light blue"]);
+        player1SelectText.push_back(unitText);
+
+        playerTurn = PLAYER2;
+
+    } else {
+        if (player2->hasUnit(unit)) {
+            std::cout << "Unit already in roster!" << std::endl;
+            return;
+        }
+        player2->addUnit(createUnit(unit));
+        
+        Text* unitText = new Text(renderer, "Terminal.ttf", 24);
+        unitText->setText(unit, colorMap["light red"]);
+        player2SelectText.push_back(unitText);
+
+        playerTurn = PLAYER1;
     }
 }
 
 void Game::update() {
     if (gameState == cSelect) {
-        if (player1->getUnits().size() == 4 && player2->getUnits().size() == 4) {
+        if (player1->getUnits().size() >= 4 && player2->getUnits().size() >= 4) {
             cSelectDone = true;
             announcerText->setText("All units selected, ready to start!", colorMap["white"]);
+            for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++){
+                cSelectUnitButtons[i]->setHovered(false);
+            }
         } else {
             if (playerTurn == PLAYER1) {
                 announcerText->setText("Player 1: Select a Unit", colorMap["light blue"]);
+            } else {
+                announcerText->setText("Player 2: Select a Unit", colorMap["light red"]);
             }
         }
     }
@@ -275,10 +349,10 @@ void Game::render() {
             cSelectUnitButtons[i]->render();
         }
         for (unsigned int i = 0; i < player1SelectText.size(); i++) {
-            player1SelectText[i]->render(750, ((i)*35)+50);
+            player1SelectText[i]->render(725, ((i)*35)+50);
         }
         for (unsigned int i = 0; i < player2SelectText.size(); i++) {
-            player2SelectText[i]->render(750, ((i)*35)+270);
+            player2SelectText[i]->render(725, ((i)*35)+270);
         }
     }
 

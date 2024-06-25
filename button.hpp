@@ -14,6 +14,7 @@ class Button {
         bool isHovered(int mouseX, int mouseY);
         void setOutline(bool enable, SDL_Color color);
         void setHovered(bool hoverStatus);
+        std::string getText();
 
     private:
         SDL_Renderer* mRenderer;
@@ -24,6 +25,7 @@ class Button {
         SDL_Rect mRect;
         bool mDrawOutline;
         bool hovered;
+        std::string mText;
 
         void createTextTexture(const std::string& text, SDL_Color color);
 };

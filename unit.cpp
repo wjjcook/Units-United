@@ -3,7 +3,7 @@
 #include <random>
 #include <string>
 
-Unit::Unit(const std::string name, const std::string specialName, int hp, int minDmg, int maxDmg, int speed) {
+Unit::Unit(std::string name, const std::string specialName, int hp, int minDmg, int maxDmg, int speed) {
     this->name = name;
     this->specialName = specialName;
     this->hp = hp;
@@ -14,6 +14,10 @@ Unit::Unit(const std::string name, const std::string specialName, int hp, int mi
 }
 
 Unit::~Unit() {}
+
+std::string Unit::getName() {
+    return name;
+}
 
 void Unit::attack() const {
     std::random_device rd;
