@@ -6,11 +6,15 @@ Game::Game() {
     renderer = nullptr;
     running = false;
     gameState = title;
+    cSelectDone = false;
 
     titleText = nullptr;
     announcerText = nullptr;
-    startButton = nullptr;
+    titleStartButton = nullptr;
     quitButton = nullptr;
+    cSelectStartButton = nullptr;
+
+    tempText = nullptr;
 
     player1 = nullptr;
     player2 = nullptr;
@@ -22,10 +26,27 @@ Game::Game() {
 
 Game::~Game() {
     delete titleText;
-    delete startButton;
+    delete announcerText;
+    delete tempText;
+
+    for (unsigned int i = 0; i < player1SelectText.size(); i++) {
+        delete player1SelectText[i];
+    }
+
+    for (unsigned int i = 0; i < player2SelectText.size(); i++) {
+        delete player2SelectText[i];
+    }
+
+    delete titleStartButton;
     delete quitButton;
+    delete cSelectStartButton;
+
     delete player1;
     delete player2;
+    
+    for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++) {
+        delete cSelectUnitButtons[i];
+    }
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(gameWindow);
@@ -90,8 +111,8 @@ void Game::initializeTitleElements(SDL_Renderer* renderer) {
     titleText = new Text(renderer, "Terminal.ttf", 48);
     titleText->setText("Units United", colorMap["white"]);
 
-    startButton = new Button(renderer, "Terminal.ttf", 24, "Start", colorMap["white"], colorMap["green"], 400, 220, 150, 60);
-    startButton->setOutline(true, colorMap["black"]);
+    titleStartButton = new Button(renderer, "Terminal.ttf", 24, "Start", colorMap["white"], colorMap["green"], 400, 220, 150, 60);
+    titleStartButton->setOutline(true, colorMap["black"]);
 
     quitButton = new Button(renderer, "Terminal.ttf", 24, "Quit", colorMap["white"], colorMap["dark red"], 400, 340, 150, 60);
     quitButton->setOutline(true, colorMap["black"]);
@@ -101,34 +122,43 @@ void Game::initializeCSelectElements(SDL_Renderer* renderer) {
 
     announcerText = new Text(renderer, "Terminal.ttf", 24);
 
+    tempText = new Text(renderer, "Terminal.ttf", 48);
+    tempText->setText("NEW UNITS COMING SOON...", colorMap["white"]);
+
+    cSelectStartButton = new Button(renderer, "Terminal.ttf", 24, "Start Game", colorMap["white"], colorMap["green"], 475, 430, 150, 60);
+    cSelectStartButton->setOutline(true, colorMap["black"]);
+
     Text* player1HeaderText = new Text(renderer, "Terminal.ttf", 24);
     player1HeaderText->setText("Player 1 Units:", colorMap["light blue"]);
 
     Text* player2HeaderText = new Text(renderer, "Terminal.ttf", 24);
     player2HeaderText->setText("Player 2 Units:", colorMap["light red"]);
 
-    Button* blademasterButton = new Button(renderer, "Terminal.ttf", 16, "The Blademaster", colorMap["white"], colorMap["grey"], 25, 50, 150, 50);
+    player1SelectText.push_back(player1HeaderText);
+    player2SelectText.push_back(player2HeaderText);
+
+    Button* blademasterButton = new Button(renderer, "Terminal.ttf", 16, "The Blademaster", colorMap["white"], colorMap["grey"], 25, 50, 150, 60);
     blademasterButton->setOutline(true, colorMap["black"]);
 
-    Button* cavemanButton = new Button(renderer, "Terminal.ttf", 16, "The Caveman", colorMap["white"], colorMap["grey"], 200, 50, 150, 50);
+    Button* cavemanButton = new Button(renderer, "Terminal.ttf", 16, "The Caveman", colorMap["white"], colorMap["grey"], 200, 50, 150, 60);
     cavemanButton->setOutline(true, colorMap["black"]);
 
-    Button* duelistButton = new Button(renderer, "Terminal.ttf", 16, "The Duelist", colorMap["white"], colorMap["grey"], 375, 50, 150, 50);
+    Button* duelistButton = new Button(renderer, "Terminal.ttf", 16, "The Duelist", colorMap["white"], colorMap["grey"], 375, 50, 150, 60);
     duelistButton->setOutline(true, colorMap["black"]);
 
-    Button* fighterButton = new Button(renderer, "Terminal.ttf", 16, "The Fighter", colorMap["white"], colorMap["grey"], 550, 50, 150, 50);
+    Button* fighterButton = new Button(renderer, "Terminal.ttf", 16, "The Fighter", colorMap["white"], colorMap["grey"], 550, 50, 150, 60);
     fighterButton->setOutline(true, colorMap["black"]);
 
-    Button* medicButton = new Button(renderer, "Terminal.ttf", 16, "The Medic", colorMap["white"], colorMap["grey"], 25, 150, 150, 50);
+    Button* medicButton = new Button(renderer, "Terminal.ttf", 16, "The Medic", colorMap["white"], colorMap["grey"], 25, 150, 150, 60);
     medicButton->setOutline(true, colorMap["black"]);
 
-    Button* raidBossButton = new Button(renderer, "Terminal.ttf", 16, "The Raid Boss", colorMap["white"], colorMap["grey"], 200, 150, 150, 50);
+    Button* raidBossButton = new Button(renderer, "Terminal.ttf", 16, "The Raid Boss", colorMap["white"], colorMap["grey"], 200, 150, 150, 60);
     raidBossButton->setOutline(true, colorMap["black"]);
 
-    Button* tankButton = new Button(renderer, "Terminal.ttf", 16, "The Tank", colorMap["white"], colorMap["grey"], 375, 150, 150, 50);
+    Button* tankButton = new Button(renderer, "Terminal.ttf", 16, "The Tank", colorMap["white"], colorMap["grey"], 375, 150, 150, 60);
     tankButton->setOutline(true, colorMap["black"]);
 
-    Button* villageIdiotButton = new Button(renderer, "Terminal.ttf", 16, "The Village Idiot", colorMap["white"], colorMap["grey"], 550, 150, 150, 50);
+    Button* villageIdiotButton = new Button(renderer, "Terminal.ttf", 16, "The Village Idiot", colorMap["white"], colorMap["grey"], 550, 150, 150, 60);
     villageIdiotButton->setOutline(true, colorMap["black"]);
     
     cSelectUnitButtons.push_back(blademasterButton);
@@ -140,8 +170,6 @@ void Game::initializeCSelectElements(SDL_Renderer* renderer) {
     cSelectUnitButtons.push_back(tankButton);
     cSelectUnitButtons.push_back(villageIdiotButton);
 
-    player1SelectText.push_back(player1HeaderText);
-    player2SelectText.push_back(player2HeaderText);
 }
 
 void Game::run() {
@@ -170,7 +198,7 @@ void Game::handleEvents() {
 void Game::handleTitleEvents(SDL_Event e) {
     int x, y;
     SDL_GetMouseState(&x, &y);
-    if (startButton->isHovered(x, y)) {
+    if (titleStartButton->isHovered(x, y)) {
         if (e.type == SDL_MOUSEBUTTONDOWN) {
             std::cout << "Going to character selection" << std::endl;
             // Need to create goToCSelect func
@@ -178,10 +206,10 @@ void Game::handleTitleEvents(SDL_Event e) {
             player1 = new Player();
             player2 = new Player();
         } else {
-            startButton->setHovered(true);
+            titleStartButton->setHovered(true);
         }
     } else {
-        startButton->setHovered(false);
+        titleStartButton->setHovered(false);
     }
     if (quitButton->isHovered(x, y)) {
         if (e.type == SDL_MOUSEBUTTONDOWN) {
@@ -208,13 +236,27 @@ void Game::handleCSelectEvents(SDL_Event e) {
             cSelectUnitButtons[i]->setHovered(false);
         }
     }
-    
+    if (cSelectStartButton->isHovered(x, y) && cSelectDone) {
+        if (e.type == SDL_MOUSEBUTTONDOWN) {
+            gameState = play;
+        } else {
+            cSelectStartButton->setHovered(true);
+        }
+    }
 }
 
 void Game::update() {
-    // if (playerTurn == PLAYER1) {
-    //     announcerText->setText("Player 1: Select a Unit", white);
-    // }
+    if (gameState == cSelect) {
+        if (player1->getUnits().size() == 4 && player2->getUnits().size() == 4) {
+            cSelectDone = true;
+            announcerText->setText("All units selected, ready to start!", colorMap["white"]);
+        } else {
+            if (playerTurn == PLAYER1) {
+                announcerText->setText("Player 1: Select a Unit", colorMap["light blue"]);
+            }
+        }
+    }
+    
 }
 
 void Game::render() {
@@ -223,9 +265,12 @@ void Game::render() {
 
     if (gameState == title) {
         titleText->render(325, 100);
-        startButton->render();
+        titleStartButton->render();
         quitButton->render();
     } else if (gameState == cSelect) {
+        announcerText->render(25, 450);
+        tempText->render(50, 300);
+        cSelectStartButton->render();
         for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++) {
             cSelectUnitButtons[i]->render();
         }

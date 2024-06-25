@@ -8,3 +8,6 @@ Player::Player() {
 Player::~Player() {
 }
 
+std::vector<Unit> Player::getUnits() {
+    return units;
+}

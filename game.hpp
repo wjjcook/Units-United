@@ -42,6 +42,7 @@ class Game {
         SDL_Renderer* renderer;
         bool running;
         Game_State gameState;
+        bool cSelectDone;
 
         std::map<std::string, SDL_Color> colorMap;
 
@@ -53,12 +54,14 @@ class Game {
         // Text objects
         Text* titleText;
         Text* announcerText;
+        Text* tempText;
         std::vector<Text*> player1SelectText;
         std::vector<Text*> player2SelectText;
 
         // Button objects
-        Button* startButton;
+        Button* titleStartButton;
         Button* quitButton;
+        Button* cSelectStartButton;
 
         std::vector<Button*> cSelectUnitButtons;
 

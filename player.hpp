@@ -9,6 +9,8 @@ class Player {
         Player();
         ~Player();
 
+        std::vector<Unit> getUnits();
+
     private:
         std::vector<Unit> units;
         int mana;
