@@ -10,6 +10,8 @@ Game::Game() {
 
     titleText = nullptr;
     announcerText = nullptr;
+    timelineHeader = nullptr;
+
     titleStartButton = nullptr;
     quitButton = nullptr;
     cSelectStartButton = nullptr;
@@ -25,6 +27,7 @@ Game::Game() {
 Game::~Game() {
     delete titleText;
     delete announcerText;
+    delete timelineHeader;
     delete tempText;
 
     for (unsigned int i = 0; i < player1SelectText.size(); i++) {
@@ -348,9 +351,24 @@ void Game::initializeMatch() {
         gameUnits.push_back(player2->getUnits()[j]);
         j++;
     }
+
+    timelineHeader = new Text(renderer, "Terminal.ttf", 32);
+    timelineHeader->setText("Timeline", colorMap["white"]);
+    
     for (unsigned int i = 0; i < gameUnits.size(); i++) {
-        std::cout << gameUnits[i]->getName() << gameUnits[i]->getPlayerNum() << std::endl;
+        Text* unitText = new Text(renderer, "Terminal.ttf", 24);
+        if (gameUnits[i]->getPlayerNum() == 1) {
+            unitText->setText(gameUnits[i]->getName(), colorMap["light blue"]);
+        } else {
+            unitText->setText(gameUnits[i]->getName(), colorMap["light red"]);
+        }
+        
+        timeline.push_back(unitText);
+        // std::cout << gameUnits[i]->getName() << gameUnits[i]->getPlayerNum() << std::endl;
     }
+
+    // std::string currentAnnouncement = "";
+    // announcerText->setText(currentAnnouncement, colorMap["white"]);
 
 }
 
@@ -393,6 +411,11 @@ void Game::render() {
         }
         for (unsigned int i = 0; i < player2SelectText.size(); i++) {
             player2SelectText[i]->render(725, ((i)*35)+270);
+        }
+    } else if (gameState == play) {
+        timelineHeader->render(725, 50);
+        for (unsigned int i = 0; i < timeline.size(); i++) {
+            timeline[i]->render(725, ((i+2)*35)+50);
         }
     }
 

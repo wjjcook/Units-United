@@ -71,6 +71,8 @@ class Game {
         Text* tempText;
         std::vector<Text*> player1SelectText;
         std::vector<Text*> player2SelectText;
+        Text* timelineHeader;
+        std::deque<Text*> timeline;
 
         // Button objects
         Button* titleStartButton;
