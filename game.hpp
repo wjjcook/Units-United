@@ -50,6 +50,7 @@ class Game {
         void addUnitToRoster(std::string unit);
         void initializeMatch();
         void update();
+        Unit* findNextUnit(Unit* currentUnit);
         void render();
 
         SDL_Window* gameWindow;
@@ -57,6 +58,7 @@ class Game {
         bool running;
         Game_State gameState;
         bool cSelectDone;
+        bool endTurn;
 
         std::map<std::string, SDL_Color> colorMap;
 
@@ -84,6 +86,7 @@ class Game {
         std::unordered_map<std::string, std::function<Unit*()>> unitCreators;
 
         std::deque<Unit*> gameUnits;
+        Unit* currentUnit;
 
 };
 

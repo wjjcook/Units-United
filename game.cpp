@@ -7,6 +7,7 @@ Game::Game() {
     running = false;
     gameState = title;
     cSelectDone = false;
+    endTurn = false;
 
     titleText = nullptr;
     announcerText = nullptr;
@@ -21,6 +22,8 @@ Game::Game() {
     player1 = nullptr;
     player2 = nullptr;
     playerTurn = PLAYER1;
+
+    currentUnit = nullptr;
     
 }
 
@@ -101,11 +104,10 @@ void Game::initializeColors() {
     colorMap["blue"] = {0, 0, 255, 255};
     colorMap["green"] = {37, 112, 37, 255};
     colorMap["light red"] = {255, 50, 50, 255};
-    colorMap["light blue"] = {50, 50, 255, 255};
+    colorMap["light blue"] = {3, 177, 252, 255};
     colorMap["dark red"] = {139, 27, 7, 255};
     colorMap["dark blue"] = {37, 52, 94, 255};
     colorMap["grey"] = {45, 45, 45, 255};
-
 }
 
 void Game::initializeTitleElements(SDL_Renderer* renderer) {
@@ -364,12 +366,8 @@ void Game::initializeMatch() {
         }
         
         timeline.push_back(unitText);
-        // std::cout << gameUnits[i]->getName() << gameUnits[i]->getPlayerNum() << std::endl;
     }
-
-    // std::string currentAnnouncement = "";
-    // announcerText->setText(currentAnnouncement, colorMap["white"]);
-
+    endTurn = false;
 }
 
 void Game::update() {
@@ -387,8 +385,41 @@ void Game::update() {
                 announcerText->setText("Player 2: Select a Unit", colorMap["light red"]);
             }
         }
+    } else if (gameState == play) {
+        if (currentUnit == nullptr) {
+            currentUnit = gameUnits.front();
+        } else if (endTurn) {
+            currentUnit = findNextUnit(currentUnit);
+        }
+        if (currentUnit->getPlayerNum() == 1) {
+            playerTurn = PLAYER1;
+        } else {
+            playerTurn = PLAYER2;
+        }
+
+        // std::string currentAnnouncement = "";
+
+        if (playerTurn == PLAYER1) {
+            announcerText->setText("Player 1's Turn: " + currentUnit->getName(), colorMap["light blue"]);
+        } else {
+            announcerText->setText("Player 2's Turn: " + currentUnit->getName(), colorMap["light red"]);
+        }
     }
     
+}
+
+Unit* Game::findNextUnit(Unit* currentUnit) {
+    auto it = std::find(gameUnits.begin(), gameUnits.end(), currentUnit);
+
+    if (it != gameUnits.end()) {
+        ++it;
+        if (it != gameUnits.end()) {
+            return *it;
+        } else {
+            return gameUnits.front();
+        }
+    }
+    return gameUnits.front();
 }
 
 void Game::render() {
@@ -413,6 +444,7 @@ void Game::render() {
             player2SelectText[i]->render(725, ((i)*35)+270);
         }
     } else if (gameState == play) {
+        announcerText->render(25, 365);
         timelineHeader->render(725, 50);
         for (unsigned int i = 0; i < timeline.size(); i++) {
             timeline[i]->render(675, ((i+2)*35)+50);
