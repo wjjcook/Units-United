@@ -358,9 +358,9 @@ void Game::initializeMatch() {
     for (unsigned int i = 0; i < gameUnits.size(); i++) {
         Text* unitText = new Text(renderer, "Terminal.ttf", 24);
         if (gameUnits[i]->getPlayerNum() == 1) {
-            unitText->setText(gameUnits[i]->getName(), colorMap["light blue"]);
+            unitText->setText("P1: " + gameUnits[i]->getName(), colorMap["light blue"]);
         } else {
-            unitText->setText(gameUnits[i]->getName(), colorMap["light red"]);
+            unitText->setText("P2: " + gameUnits[i]->getName(), colorMap["light red"]);
         }
         
         timeline.push_back(unitText);
@@ -415,7 +415,7 @@ void Game::render() {
     } else if (gameState == play) {
         timelineHeader->render(725, 50);
         for (unsigned int i = 0; i < timeline.size(); i++) {
-            timeline[i]->render(725, ((i+2)*35)+50);
+            timeline[i]->render(675, ((i+2)*35)+50);
         }
     }
 
