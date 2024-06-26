@@ -19,6 +19,18 @@ std::string Unit::getName() {
     return name;
 }
 
+int Unit::getSpeed() {
+    return speed;
+}
+
+int Unit::getPlayerNum(){
+    return playerNum;
+}
+
+void Unit::setPlayerNum(int pNum) {
+    playerNum = pNum;
+}
+
 void Unit::attack() const {
     std::random_device rd;
     std::mt19937 gen(rd());

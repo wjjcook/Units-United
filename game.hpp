@@ -7,6 +7,7 @@
 #include <map>
 #include <unordered_map>
 #include <functional>
+#include <deque>
 
 #include "text.hpp"
 #include "button.hpp"
@@ -47,6 +48,7 @@ class Game {
         void handleTitleEvents(SDL_Event e);
         void handleCSelectEvents(SDL_Event e);
         void addUnitToRoster(std::string unit);
+        void initializeMatch();
         void update();
         void render();
 
@@ -78,6 +80,8 @@ class Game {
         std::vector<Button*> cSelectUnitButtons;
 
         std::unordered_map<std::string, std::function<Unit*()>> unitCreators;
+
+        std::deque<Unit*> gameUnits;
 
 };
 

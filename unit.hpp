@@ -8,9 +8,13 @@ class Unit {
     public:
         Unit(const std::string name, const std::string specialName, int hp, int minDmg, int maxDmg, int speed);
         ~Unit();
-        virtual void attack() const;
 
         std::string getName();
+        int getSpeed();
+        int getPlayerNum();
+        void setPlayerNum(int playerNum);
+
+        virtual void attack() const;
 
     protected:
         std::string name;
@@ -20,6 +24,8 @@ class Unit {
         int minDmg;
         int maxDmg;
         int speed;
+
+        int playerNum;
 
         
 };

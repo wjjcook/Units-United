@@ -1,6 +1,5 @@
 #include "game.hpp"
 #include <iostream>
-#include <functional>
 
 Game::Game() {
     gameWindow = nullptr;
@@ -276,6 +275,7 @@ void Game::handleCSelectEvents(SDL_Event e) {
         if (cSelectStartButton->isHovered(x, y)) {
             if (e.type == SDL_MOUSEBUTTONDOWN) {
                 gameState = play;
+                initializeMatch();
             } else {
                 cSelectStartButton->setHovered(true);
             }
@@ -291,7 +291,7 @@ void Game::addUnitToRoster(std::string unit) {
             std::cout << "Unit already in roster!" << std::endl;
             return;
         }
-        player1->addUnit(createUnit(unit));
+        player1->addUnit(createUnit(unit), 1);
 
         Text* unitText = new Text(renderer, "Terminal.ttf", 24);
         unitText->setText(unit, colorMap["light blue"]);
@@ -304,7 +304,7 @@ void Game::addUnitToRoster(std::string unit) {
             std::cout << "Unit already in roster!" << std::endl;
             return;
         }
-        player2->addUnit(createUnit(unit));
+        player2->addUnit(createUnit(unit), 2);
         
         Text* unitText = new Text(renderer, "Terminal.ttf", 24);
         unitText->setText(unit, colorMap["light red"]);
@@ -312,6 +312,46 @@ void Game::addUnitToRoster(std::string unit) {
 
         playerTurn = PLAYER1;
     }
+}
+
+void Game::initializeMatch() {
+    player1->sortUnitsBySpeed();
+    player2->sortUnitsBySpeed();
+    int i = 0;
+    int j = 0;
+    while (i < 4 && j < 4) {
+        if (player1->getUnits()[i]->getSpeed() > player2->getUnits()[j]->getSpeed()) {
+            gameUnits.push_back(player1->getUnits()[i]);
+            i++;
+        } else if (player1->getUnits()[i]->getSpeed() < player2->getUnits()[j]->getSpeed()) {
+            gameUnits.push_back(player2->getUnits()[j]);
+            j++;
+        } else {
+            std::random_device rd;
+            std::mt19937 gen(rd());
+            std::uniform_int_distribution<> dist(0, 1);
+            int randomChoice = dist(gen);
+            if (randomChoice == 0) {
+                gameUnits.push_back(player1->getUnits()[i]);
+                i++;
+            } else {
+                gameUnits.push_back(player2->getUnits()[j]);
+                j++;
+            }
+        }
+    }
+    while (i < 4) {
+        gameUnits.push_back(player1->getUnits()[i]);
+        i++;
+    }
+    while (j < 4) {
+        gameUnits.push_back(player2->getUnits()[j]);
+        j++;
+    }
+    for (unsigned int i = 0; i < gameUnits.size(); i++) {
+        std::cout << gameUnits[i]->getName() << gameUnits[i]->getPlayerNum() << std::endl;
+    }
+
 }
 
 void Game::update() {

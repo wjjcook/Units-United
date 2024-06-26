@@ -11,14 +11,14 @@ class Player {
         ~Player();
 
         std::vector<Unit*> getUnits();
-        void addUnit(Unit* newUnit);
+        void addUnit(Unit* newUnit, int playerNum);
         bool hasUnit(const std::string& unitName) const;
+        void sortUnitsBySpeed();
 
     private:
         std::vector<Unit*> units;
         std::set<std::string> unitNames;
-        int mana;
-        
+        int mana;        
 };
 
 #endif
