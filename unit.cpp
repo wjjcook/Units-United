@@ -6,7 +6,8 @@
 Unit::Unit(std::string name, const std::string specialName, int hp, int minDmg, int maxDmg, int speed) {
     this->name = name;
     this->specialName = specialName;
-    this->hp = hp;
+    this->maxHp = hp;
+    this->currHp = hp;
     this->minDmg = minDmg;
     this->maxDmg = maxDmg;
     this->speed = speed;
@@ -17,6 +18,14 @@ Unit::~Unit() {}
 
 std::string Unit::getName() {
     return name;
+}
+
+int Unit::getMaxHp() {
+    return maxHp;
+}
+
+int Unit::getCurrHp() {
+    return currHp;
 }
 
 int Unit::getSpeed() {

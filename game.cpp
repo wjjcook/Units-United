@@ -70,17 +70,17 @@ bool Game::init(const std::string& title, int width, int height) {
         return false;
     }
 
-    SDL_DisplayMode displayMode;
-    if (SDL_GetCurrentDisplayMode(0, &displayMode) != 0) {
-        std::cerr << "Could not get display mode for video display 0: " << SDL_GetError() << std::endl;
-        SDL_Quit();
-        return -1;
-    }
+    // SDL_DisplayMode displayMode;
+    // if (SDL_GetCurrentDisplayMode(0, &displayMode) != 0) {
+    //     std::cerr << "Could not get display mode for video display 0: " << SDL_GetError() << std::endl;
+    //     SDL_Quit();
+    //     return -1;
+    // }
 
-    int screenWidth = displayMode.w - 500;
-    int screenHeight = displayMode.h - 200;
+    // int screenWidth = displayMode.w - 320;
+    // int screenHeight = displayMode.h - 200;
 
-    gameWindow = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN);
+    gameWindow = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN); // Replace width/height with screenWidth/screenHeight eventually
     if (!gameWindow) {
         std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
         TTF_Quit();
@@ -382,11 +382,25 @@ void Game::initializeMatch() {
         Button* newButton = new Button(renderer, "Terminal.ttf", 12, player1->getUnits()[i]->getName(), colorMap["white"], colorMap["dark blue"], (i*150)+25, 50, 120, 40);
         newButton->setOutline(true, colorMap["black"]);
         playUnitButtons.push_back(newButton);
+
+        Text* newHpText = new Text(renderer, "Terminal.ttf", 12);
+        int currentHp = player1->getUnits()[i]->getCurrHp();
+        int maxHp = player1->getUnits()[i]->getMaxHp();
+        std::string hpString = "HP: " + std::to_string(currentHp) + "/" + std::to_string(maxHp);
+        newHpText->setText(hpString, colorMap["white"]);
+        playUnitTexts.push_back(newHpText);
     }
     for (unsigned int i = 0; i < player2->getUnits().size(); i++) {
         Button* newButton = new Button(renderer, "Terminal.ttf", 12, player1->getUnits()[i]->getName(), colorMap["white"], colorMap["dark red"], (i*150)+25, 200, 120, 40);
         newButton->setOutline(true, colorMap["black"]);
         playUnitButtons.push_back(newButton);
+
+        Text* newHpText = new Text(renderer, "Terminal.ttf", 12);
+        int currentHp = player2->getUnits()[i]->getCurrHp();
+        int maxHp = player2->getUnits()[i]->getMaxHp();
+        std::string hpString = "HP: " + std::to_string(currentHp) + "/" + std::to_string(maxHp);
+        newHpText->setText(hpString, colorMap["white"]);
+        playUnitTexts.push_back(newHpText);
     }
 
     endTurn = false;
@@ -418,8 +432,6 @@ void Game::update() {
         } else {
             playerTurn = PLAYER2;
         }
-
-        // std::string currentAnnouncement = "";
 
         if (playerTurn == PLAYER1) {
             announcerText->setText("Player 1's Turn: " + currentUnit->getName(), colorMap["light blue"]);
@@ -473,7 +485,14 @@ void Game::render() {
         }
         for (unsigned int i = 0; i < 8; i++) {
             playUnitButtons[i]->render();
+            if (i < 4) {
+                playUnitTexts[i]->render((i*150)+27, 100);
+            } else {
+                playUnitTexts[i]->render(((i-4)*150)+27, 250);
+            }
+            
         }
+        
     }
 
     SDL_RenderPresent(renderer);

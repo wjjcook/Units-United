@@ -10,6 +10,8 @@ class Unit {
         ~Unit();
 
         std::string getName();
+        int getMaxHp();
+        int getCurrHp();
         int getSpeed();
         int getPlayerNum();
         void setPlayerNum(int playerNum);
@@ -20,7 +22,8 @@ class Unit {
         std::string name;
         std::string basicAttack;
         std::string specialName;
-        int hp;
+        int maxHp;
+        int currHp;
         int minDmg;
         int maxDmg;
         int speed;
