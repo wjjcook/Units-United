@@ -106,7 +106,7 @@ void Game::initializeColors() {
     colorMap["light red"] = {255, 50, 50, 255};
     colorMap["light blue"] = {3, 177, 252, 255};
     colorMap["dark red"] = {139, 27, 7, 255};
-    colorMap["dark blue"] = {37, 52, 94, 255};
+    colorMap["dark blue"] = {26, 49, 112, 255};
     colorMap["grey"] = {45, 45, 45, 255};
 }
 
@@ -367,6 +367,18 @@ void Game::initializeMatch() {
         
         timeline.push_back(unitText);
     }
+
+    for (unsigned int i = 0; i < player1->getUnits().size(); i++) {
+        Button* newButton = new Button(renderer, "Terminal.ttf", 12, player1->getUnits()[i]->getName(), colorMap["white"], colorMap["dark blue"], (i*150)+25, 50, 120, 40);
+        newButton->setOutline(true, colorMap["black"]);
+        playUnitButtons.push_back(newButton);
+    }
+    for (unsigned int i = 0; i < player2->getUnits().size(); i++) {
+        Button* newButton = new Button(renderer, "Terminal.ttf", 12, player1->getUnits()[i]->getName(), colorMap["white"], colorMap["dark red"], (i*150)+25, 200, 120, 40);
+        newButton->setOutline(true, colorMap["black"]);
+        playUnitButtons.push_back(newButton);
+    }
+
     endTurn = false;
 }
 
@@ -448,6 +460,9 @@ void Game::render() {
         timelineHeader->render(725, 50);
         for (unsigned int i = 0; i < timeline.size(); i++) {
             timeline[i]->render(675, ((i+2)*35)+50);
+        }
+        for (unsigned int i = 0; i < 8; i++) {
+            playUnitButtons[i]->render();
         }
     }
 

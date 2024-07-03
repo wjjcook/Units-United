@@ -85,8 +85,10 @@ class Game {
 
         std::unordered_map<std::string, std::function<Unit*()>> unitCreators;
 
+        std::vector<Button*> playUnitButtons;
         std::deque<Unit*> gameUnits;
         Unit* currentUnit;
+
 
 };
 
