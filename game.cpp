@@ -70,7 +70,17 @@ bool Game::init(const std::string& title, int width, int height) {
         return false;
     }
 
-    gameWindow = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN);
+    SDL_DisplayMode displayMode;
+    if (SDL_GetCurrentDisplayMode(0, &displayMode) != 0) {
+        std::cerr << "Could not get display mode for video display 0: " << SDL_GetError() << std::endl;
+        SDL_Quit();
+        return -1;
+    }
+
+    int screenWidth = displayMode.w - 500;
+    int screenHeight = displayMode.h - 200;
+
+    gameWindow = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN);
     if (!gameWindow) {
         std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
         TTF_Quit();
