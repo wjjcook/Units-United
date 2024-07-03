@@ -7,7 +7,7 @@
 class Unit {
     public:
         Unit(const std::string name, const std::string specialName, int hp, int minDmg, int maxDmg, int speed);
-        ~Unit();
+        virtual ~Unit();
 
         std::string getName();
         int getMaxHp();

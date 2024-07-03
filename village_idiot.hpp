@@ -6,7 +6,7 @@
 class VillageIdiot: public Unit {
     public:
         VillageIdiot();
-        ~VillageIdiot();
+        ~VillageIdiot() override;
         void attack() const override;
 
     private:

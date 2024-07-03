@@ -6,7 +6,7 @@
 class RaidBoss: public Unit {
     public:
         RaidBoss();
-        ~RaidBoss();
+        ~RaidBoss() override;
         void attack() const override;
 
     private:

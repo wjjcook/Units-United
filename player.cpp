@@ -3,10 +3,17 @@
 #include <algorithm>
 
 Player::Player() {
-    mana = 0;
+    mana = 5;
 }
 
 Player::~Player() {
+    for (unsigned int i = 0; i < units.size(); i++) {
+        delete units[i];
+    }
+}
+
+int Player::getMana() {
+    return mana;
 }
 
 std::vector<Unit*> Player::getUnits() {

@@ -70,23 +70,24 @@ class Game {
         // Text objects
         Text* titleText;
         Text* announcerText;
+        Text* timelineHeader;
+        Text* manaText;
         Text* tempText;
         std::vector<Text*> player1SelectText;
         std::vector<Text*> player2SelectText;
-        Text* timelineHeader;
         std::deque<Text*> timeline;
+        std::vector<Text*> playUnitTexts;
 
         // Button objects
         Button* titleStartButton;
         Button* quitButton;
         Button* cSelectStartButton;
-
         std::vector<Button*> cSelectUnitButtons;
-
-        std::unordered_map<std::string, std::function<Unit*()>> unitCreators;
-
         std::vector<Button*> playUnitButtons;
-        std::vector<Text*> playUnitTexts;
+        
+        // Units
+        std::unordered_map<std::string, std::function<Unit*()>> unitCreators;
+        
         std::deque<Unit*> gameUnits;
         Unit* currentUnit;
 

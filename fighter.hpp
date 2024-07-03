@@ -6,7 +6,7 @@
 class Fighter: public Unit {
     public:
         Fighter();
-        ~Fighter();
+        ~Fighter() override;
         void attack() const override;
 
     private:

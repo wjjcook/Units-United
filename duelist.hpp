@@ -6,7 +6,7 @@
 class Duelist: public Unit {
     public:
         Duelist();
-        ~Duelist();
+        ~Duelist() override;
         void attack() const override;
 
     private:

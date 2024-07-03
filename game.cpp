@@ -28,9 +28,12 @@ Game::Game() {
 }
 
 Game::~Game() {
+
+    // Text objects
     delete titleText;
     delete announcerText;
     delete timelineHeader;
+    delete manaText;
     delete tempText;
 
     for (unsigned int i = 0; i < player1SelectText.size(); i++) {
@@ -41,17 +44,32 @@ Game::~Game() {
         delete player2SelectText[i];
     }
 
+    for (unsigned int i = 0; i < timeline.size(); i++) {
+        delete timeline[i];
+    }
+
+    for (unsigned int i = 0; i < playUnitTexts.size(); i++) {
+        delete playUnitTexts[i];
+    }
+
+    // Button objects
     delete titleStartButton;
     delete quitButton;
     delete cSelectStartButton;
-
-    delete player1;
-    delete player2;
     
     for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++) {
         delete cSelectUnitButtons[i];
     }
 
+    for (unsigned int i = 0; i < playUnitButtons.size(); i++) {
+        delete playUnitButtons[i];
+    }
+
+    // Player objects
+    delete player1;
+    delete player2;
+
+    // SDL clean up
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(gameWindow);
     TTF_Quit();
@@ -249,7 +267,6 @@ void Game::handleTitleEvents(SDL_Event e) {
     SDL_GetMouseState(&x, &y);
     if (titleStartButton->isHovered(x, y)) {
         if (e.type == SDL_MOUSEBUTTONDOWN) {
-            std::cout << "Going to character selection" << std::endl;
             // Need to create goToCSelect func
             gameState = cSelect;
             player1 = new Player();
@@ -391,7 +408,7 @@ void Game::initializeMatch() {
         playUnitTexts.push_back(newHpText);
     }
     for (unsigned int i = 0; i < player2->getUnits().size(); i++) {
-        Button* newButton = new Button(renderer, "Terminal.ttf", 12, player1->getUnits()[i]->getName(), colorMap["white"], colorMap["dark red"], (i*150)+25, 200, 120, 40);
+        Button* newButton = new Button(renderer, "Terminal.ttf", 12, player2->getUnits()[i]->getName(), colorMap["white"], colorMap["dark red"], (i*150)+25, 200, 120, 40);
         newButton->setOutline(true, colorMap["black"]);
         playUnitButtons.push_back(newButton);
 
@@ -402,7 +419,8 @@ void Game::initializeMatch() {
         newHpText->setText(hpString, colorMap["white"]);
         playUnitTexts.push_back(newHpText);
     }
-
+    
+    manaText = new Text(renderer, "Terminal.ttf", 24);
     endTurn = false;
 }
 
@@ -435,8 +453,11 @@ void Game::update() {
 
         if (playerTurn == PLAYER1) {
             announcerText->setText("Player 1's Turn: " + currentUnit->getName(), colorMap["light blue"]);
+            manaText->setText("Mana: " + std::to_string(player1->getMana()), colorMap["light blue"]);
+
         } else {
             announcerText->setText("Player 2's Turn: " + currentUnit->getName(), colorMap["light red"]);
+            manaText->setText("Mana: " + std::to_string(player2->getMana()), colorMap["light red"]);
         }
     }
     
@@ -479,6 +500,7 @@ void Game::render() {
         }
     } else if (gameState == play) {
         announcerText->render(25, 365);
+        manaText->render(500, 365);
         timelineHeader->render(725, 50);
         for (unsigned int i = 0; i < timeline.size(); i++) {
             timeline[i]->render(675, ((i+2)*35)+50);

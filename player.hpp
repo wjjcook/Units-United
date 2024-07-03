@@ -10,6 +10,7 @@ class Player {
         Player();
         ~Player();
 
+        int getMana();
         std::vector<Unit*> getUnits();
         void addUnit(Unit* newUnit, int playerNum);
         bool hasUnit(const std::string& unitName) const;
