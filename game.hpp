@@ -49,6 +49,7 @@ class Game {
         void handleCSelectEvents(SDL_Event e);
         void addUnitToRoster(std::string unit);
         void initializeMatch();
+        void populateUnitButtonMap();
         void update();
         Unit* findNextUnit(Unit* currentUnit);
         void render();
@@ -84,6 +85,7 @@ class Game {
         Button* cSelectStartButton;
         std::vector<Button*> cSelectUnitButtons;
         std::vector<Button*> playUnitButtons;
+        std::unordered_map<std::string, std::vector<Button*>> unitButtonMap;
         
         // Units
         std::unordered_map<std::string, std::function<Unit*()>> unitCreators;

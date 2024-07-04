@@ -421,7 +421,42 @@ void Game::initializeMatch() {
     }
     
     manaText = new Text(renderer, "Terminal.ttf", 24);
+
+    populateUnitButtonMap();
     endTurn = false;
+}
+
+void Game::populateUnitButtonMap() {
+    Button* attackButton = new Button(renderer, "Terminal.ttf", 16, "Attack", colorMap["white"], colorMap["grey"], 25, 425, 150, 60);
+    attackButton->setOutline(true, colorMap["black"]);
+
+    Button* skipButton = new Button(renderer, "Terminal.ttf", 16, "Skip Turn", colorMap["white"], colorMap["grey"], 375, 425, 150, 60);
+    skipButton->setOutline(true, colorMap["black"]);
+
+    for (unsigned int i = 0; i < gameUnits.size(); i++) {
+        if (gameUnits[i]->getName() == "The Medic") {
+            Button* healButton = new Button(renderer, "Terminal.ttf", 16, "Heal", colorMap["white"], colorMap["grey"], 25, 425, 150, 60);
+            healButton->setOutline(true, colorMap["black"]);
+            Button* medicAttackButton = new Button(renderer, "Terminal.ttf", 16, "Attack", colorMap["white"], colorMap["grey"], 200, 425, 150, 60);
+            medicAttackButton->setOutline(true, colorMap["black"]);
+            Button* specialButton = new Button(renderer, "Terminal.ttf", 16, "Health Pack", colorMap["white"], colorMap["grey"], 375, 425, 150, 60);
+            specialButton->setOutline(true, colorMap["black"]);
+            Button* medicSkipButton = new Button(renderer, "Terminal.ttf", 16, "Skip Turn", colorMap["white"], colorMap["grey"], 550, 425, 150, 60);
+            medicSkipButton->setOutline(true, colorMap["black"]);
+
+            unitButtonMap["The Medic"].push_back(healButton);
+            unitButtonMap["The Medic"].push_back(medicAttackButton);
+            unitButtonMap["The Medic"].push_back(specialButton);
+            unitButtonMap["The Medic"].push_back(medicSkipButton);
+        } else {
+            Button* specialButton = new Button(renderer, "Terminal.ttf", 16, gameUnits[i]->getSpecialName(), colorMap["white"], colorMap["grey"], 200, 425, 150, 60);
+            specialButton->setOutline(true, colorMap["black"]);
+
+            unitButtonMap[gameUnits[i]->getName()].push_back(attackButton);
+            unitButtonMap[gameUnits[i]->getName()].push_back(specialButton);
+            unitButtonMap[gameUnits[i]->getName()].push_back(skipButton);
+        }
+    }  
 }
 
 void Game::update() {
@@ -513,6 +548,11 @@ void Game::render() {
                 playUnitTexts[i]->render(((i-4)*150)+27, 250);
             }
             
+        }
+        if (currentUnit != nullptr) {
+            for (unsigned int i = 0; i < unitButtonMap[currentUnit->getName()].size(); i++) {
+                unitButtonMap[currentUnit->getName()][i]->render();
+            }
         }
         
     }

@@ -20,6 +20,10 @@ std::string Unit::getName() {
     return name;
 }
 
+std::string Unit::getSpecialName() {
+    return specialName;
+}
+
 int Unit::getMaxHp() {
     return maxHp;
 }

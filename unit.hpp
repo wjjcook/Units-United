@@ -10,6 +10,7 @@ class Unit {
         virtual ~Unit();
 
         std::string getName();
+        std::string getSpecialName();
         int getMaxHp();
         int getCurrHp();
         int getSpeed();
