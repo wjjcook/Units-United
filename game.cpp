@@ -12,12 +12,12 @@ Game::Game() {
     titleText = nullptr;
     announcerText = nullptr;
     timelineHeader = nullptr;
+    manaText = nullptr;
+    tempText = nullptr;
 
     titleStartButton = nullptr;
     quitButton = nullptr;
     cSelectStartButton = nullptr;
-
-    tempText = nullptr;
 
     player1 = nullptr;
     player2 = nullptr;
@@ -262,29 +262,29 @@ void Game::handleEvents() {
     }
 }
 
-void Game::handleTitleEvents(SDL_Event e) {
+int Game::checkMouseEvent(Button* button, SDL_Event e) {
     int x, y;
     SDL_GetMouseState(&x, &y);
-    if (titleStartButton->isHovered(x, y)) {
+    if (button->isHovered(x, y)) {
         if (e.type == SDL_MOUSEBUTTONDOWN) {
-            // Need to create goToCSelect func
-            gameState = cSelect;
-            player1 = new Player();
-            player2 = new Player();
+            return 1;
         } else {
-            titleStartButton->setHovered(true);
+            button->setHovered(true);
         }
     } else {
-        titleStartButton->setHovered(false);
+        button->setHovered(false);
     }
-    if (quitButton->isHovered(x, y)) {
-        if (e.type == SDL_MOUSEBUTTONDOWN) {
-            running = false;
-        } else {
-            quitButton->setHovered(true);
-        }
-    } else {
-        quitButton->setHovered(false);
+    return 0;
+}
+
+void Game::handleTitleEvents(SDL_Event e) {
+    if (checkMouseEvent(titleStartButton, e) == 1) {
+        gameState = cSelect;
+        player1 = new Player();
+        player2 = new Player();
+    }
+    if (checkMouseEvent(quitButton, e) == 1) {
+        running = false;
     }
 }
 
@@ -293,26 +293,14 @@ void Game::handleCSelectEvents(SDL_Event e) {
     SDL_GetMouseState(&x, &y);
     if (!cSelectDone) {
         for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++){
-            if (cSelectUnitButtons[i]->isHovered(x, y)) {
-                if (e.type == SDL_MOUSEBUTTONDOWN) {
-                    addUnitToRoster(cSelectUnitButtons[i]->getText());
-                } else {
-                    cSelectUnitButtons[i]->setHovered(true);
-                }
-            } else {
-                cSelectUnitButtons[i]->setHovered(false);
+            if (checkMouseEvent(cSelectUnitButtons[i], e) == 1) {
+                addUnitToRoster(cSelectUnitButtons[i]->getText());
             }
         }
     } else {
-        if (cSelectStartButton->isHovered(x, y)) {
-            if (e.type == SDL_MOUSEBUTTONDOWN) {
-                gameState = play;
-                initializeMatch();
-            } else {
-                cSelectStartButton->setHovered(true);
-            }
-        } else {
-            cSelectStartButton->setHovered(false);
+        if (checkMouseEvent(cSelectStartButton, e) == 1) {
+            gameState = play;
+            initializeMatch();
         }
     }
 }

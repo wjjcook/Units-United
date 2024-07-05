@@ -45,6 +45,7 @@ class Game {
         void populateUnitMap();
         Unit* createUnit(const std::string& unitName);
         void handleEvents();
+        int checkMouseEvent(Button* button, SDL_Event e);
         void handleTitleEvents(SDL_Event e);
         void handleCSelectEvents(SDL_Event e);
         void addUnitToRoster(std::string unit);
