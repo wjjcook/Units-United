@@ -48,6 +48,7 @@ class Game {
         int checkMouseEvent(Button* button, SDL_Event e);
         void handleTitleEvents(SDL_Event e);
         void handleCSelectEvents(SDL_Event e);
+        void handlePlayEvents(SDL_Event e);
         void addUnitToRoster(std::string unit);
         void initializeMatch();
         void populateUnitButtonMap();

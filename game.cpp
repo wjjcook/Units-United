@@ -257,6 +257,8 @@ void Game::handleEvents() {
                 handleTitleEvents(e);
             } else if (gameState == cSelect) {
                 handleCSelectEvents(e);
+            } else if (gameState == play) {
+                handlePlayEvents(e);
             }
         }
     }
@@ -289,8 +291,6 @@ void Game::handleTitleEvents(SDL_Event e) {
 }
 
 void Game::handleCSelectEvents(SDL_Event e) {
-    int x, y;
-    SDL_GetMouseState(&x, &y);
     if (!cSelectDone) {
         for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++){
             if (checkMouseEvent(cSelectUnitButtons[i], e) == 1) {
@@ -303,6 +303,10 @@ void Game::handleCSelectEvents(SDL_Event e) {
             initializeMatch();
         }
     }
+}
+
+void Game::handlePlayEvents(SDL_Event e) {
+
 }
 
 void Game::addUnitToRoster(std::string unit) {
