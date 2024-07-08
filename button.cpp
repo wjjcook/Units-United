@@ -1,9 +1,14 @@
 #include "button.hpp"
 #include <iostream>
 
-Button::Button(SDL_Renderer* renderer, const std::string& fontPath, int fontSize, const std::string& text, SDL_Color textColor, SDL_Color buttonColor, int width, int height)
-    : mRenderer(renderer), mFont(nullptr), mTexture(nullptr), mButtonColor(buttonColor), mWidth(width), mHeight(height), mDrawOutline(false), mText(text) {
-    mFont = TTF_OpenFont(fontPath.c_str(), fontSize);
+Button::Button(SDL_Renderer* renderer, const std::string& fontPath, int fontSize, const std::string& text, SDL_Color textColor, SDL_Color buttonColor, int width, int height, float scaleX, float scaleY)
+    : mRenderer(renderer), mFont(nullptr), mTexture(nullptr), mButtonColor(buttonColor), mDrawOutline(false), mText(text) {
+    this->scaleX = scaleX;
+    this->scaleY = scaleY;
+    mWidth = static_cast<int>(width * scaleX);
+    mHeight = static_cast<int>(height * scaleY);
+    int scaledFontSize = static_cast<int>(fontSize * std::min(scaleX, scaleY));
+    mFont = TTF_OpenFont(fontPath.c_str(), scaledFontSize);
     if (mFont == nullptr) {
         std::cout << "Failed to load font! TTF_Error: " << TTF_GetError() << std::endl;
     } else {
@@ -38,8 +43,9 @@ void Button::createTextTexture(const std::string& text, SDL_Color color) {
 }
 
 void Button::render(int x, int y) {
-
-    mRect = {x, y, mWidth, mHeight};
+    int scaledX = static_cast<int>(x * scaleX);
+    int scaledY = static_cast<int>(y * scaleY);
+    mRect = {scaledX, scaledY, mWidth, mHeight};
 
     // Render button background
     if (hovered) {

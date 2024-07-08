@@ -58,6 +58,11 @@ class Game {
 
         SDL_Window* gameWindow;
         SDL_Renderer* renderer;
+        int screenWidth;
+        int screenHeight;
+        float scaleX;
+        float scaleY;
+
         bool running;
         Game_State gameState;
         bool cSelectDone;

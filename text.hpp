@@ -7,7 +7,7 @@
 
 class Text {
     public:
-        Text(SDL_Renderer* renderer, const std::string& fontPath, int fontSize);
+        Text(SDL_Renderer* renderer, const std::string& fontPath, int fontSize, float scaleX, float scaleY);
         ~Text();
 
         bool loadFont(const std::string& fontPath, int fontSize);
@@ -20,6 +20,8 @@ class Text {
         SDL_Texture* mTexture;
         int mWidth;
         int mHeight;
+        float scaleX;
+        float scaleY;
 };
 
 #endif

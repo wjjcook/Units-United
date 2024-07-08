@@ -7,7 +7,7 @@
 
 class Button {
     public:
-        Button(SDL_Renderer* renderer, const std::string& fontPath, int fontSize, const std::string& text, SDL_Color textColor, SDL_Color buttonColor, int width, int height);
+        Button(SDL_Renderer* renderer, const std::string& fontPath, int fontSize, const std::string& text, SDL_Color textColor, SDL_Color buttonColor, int width, int height, float scaleX, float scaleY);
         ~Button();
 
         void render(int x, int y);
@@ -25,6 +25,8 @@ class Button {
         SDL_Rect mRect;
         int mWidth;
         int mHeight;
+        float scaleX;
+        float scaleY;
         bool mDrawOutline;
         bool hovered;
         std::string mText;

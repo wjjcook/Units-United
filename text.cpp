@@ -1,8 +1,10 @@
 #include "text.hpp"
 #include <iostream>
 
-Text::Text(SDL_Renderer* renderer, const std::string& fontPath, int fontSize)
+Text::Text(SDL_Renderer* renderer, const std::string& fontPath, int fontSize, float scaleX, float scaleY)
     : mRenderer(renderer), mFont(nullptr), mTexture(nullptr), mWidth(0), mHeight(0) {
+    this->scaleX = scaleX;
+    this->scaleY = scaleY;
     loadFont(fontPath, fontSize);
 }
 
@@ -16,7 +18,8 @@ Text::~Text() {
 }
 
 bool Text::loadFont(const std::string& fontPath, int fontSize) {
-    mFont = TTF_OpenFont(fontPath.c_str(), fontSize);
+    int scaledFontSize = static_cast<int>(fontSize * std::min(scaleX, scaleY));
+    mFont = TTF_OpenFont(fontPath.c_str(), scaledFontSize);
     if (mFont == nullptr) {
         std::cout << "Failed to load font! TTF_Error: " << TTF_GetError() << std::endl;
         return false;
@@ -48,8 +51,10 @@ void Text::setText(const std::string& text, SDL_Color color) {
 }
 
 void Text::render(int x, int y) {
+    int scaledX = static_cast<int>(x * scaleX);
+    int scaledY = static_cast<int>(y * scaleY);
     if (mTexture != nullptr) {
-        SDL_Rect renderQuad = { x, y, mWidth, mHeight };
+        SDL_Rect renderQuad = {scaledX , scaledY, mWidth, mHeight };
         SDL_RenderCopy(mRenderer, mTexture, nullptr, &renderQuad);
     }
 }
