@@ -426,6 +426,9 @@ void Game::populateUnitButtonMap() {
     skipButton->setOutline(true, colorMap["black"]);
 
     for (unsigned int i = 0; i < gameUnits.size(); i++) {
+        if (unitButtonMap[gameUnits[i]->getName()].size() > 0) {
+            continue;
+        }
         if (gameUnits[i]->getName() == "The Medic") {
             Button* healButton = new Button(renderer, "Terminal.ttf", 16, "Heal", colorMap["white"], colorMap["grey"], 150, 60);
             healButton->setOutline(true, colorMap["black"]);
