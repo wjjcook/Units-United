@@ -12,14 +12,14 @@
 #include "text.hpp"
 #include "button.hpp"
 #include "player.hpp"
-#include "blademaster.hpp"
-#include "caveman.hpp"
-#include "duelist.hpp"
-#include "fighter.hpp"
-#include "medic.hpp"
-#include "raid_boss.hpp"
-#include "tank.hpp"
-#include "village_idiot.hpp"
+#include "units/blademaster.hpp"
+#include "units/caveman.hpp"
+#include "units/duelist.hpp"
+#include "units/fighter.hpp"
+#include "units/medic.hpp"
+#include "units/raid_boss.hpp"
+#include "units/tank.hpp"
+#include "units/village_idiot.hpp"
 
 enum Game_State {
     title, cSelect, play, pause, end

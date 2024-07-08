@@ -4,7 +4,7 @@ LDFLAGS := -L src/lib
 LIBS := -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf
 
 # Source files and object files
-SRCS := $(wildcard *.cpp)
+SRCS := $(wildcard *.cpp units/*.cpp)
 OBJS := $(SRCS:.cpp=.o)
 
 # Target executable
@@ -23,7 +23,9 @@ $(TARGET): $(OBJS)
 
 # Clean up build files
 clean:
-	-del -rf $(OBJS) $(TARGET).exe
+	-del /f /q *.o
+	-del /f /q units\*.o
+	-del /f /q $(TARGET).exe
 
 # Phony targets
 .PHONY: all clean
