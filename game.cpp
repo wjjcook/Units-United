@@ -143,10 +143,10 @@ void Game::initializeTitleElements(SDL_Renderer* renderer) {
     titleText = new Text(renderer, "Terminal.ttf", 48);
     titleText->setText("Units United", colorMap["white"]);
 
-    titleStartButton = new Button(renderer, "Terminal.ttf", 24, "Start", colorMap["white"], colorMap["green"], 400, 220, 150, 60);
+    titleStartButton = new Button(renderer, "Terminal.ttf", 24, "Start", colorMap["white"], colorMap["green"], 150, 60);
     titleStartButton->setOutline(true, colorMap["black"]);
 
-    quitButton = new Button(renderer, "Terminal.ttf", 24, "Quit", colorMap["white"], colorMap["dark red"], 400, 340, 150, 60);
+    quitButton = new Button(renderer, "Terminal.ttf", 24, "Quit", colorMap["white"], colorMap["dark red"], 150, 60);
     quitButton->setOutline(true, colorMap["black"]);
 }
 
@@ -157,7 +157,7 @@ void Game::initializeCSelectElements(SDL_Renderer* renderer) {
     tempText = new Text(renderer, "Terminal.ttf", 48);
     tempText->setText("NEW UNITS COMING SOON...", colorMap["white"]);
 
-    cSelectStartButton = new Button(renderer, "Terminal.ttf", 24, "Start Game", colorMap["white"], colorMap["green"], 475, 430, 150, 60);
+    cSelectStartButton = new Button(renderer, "Terminal.ttf", 24, "Start Game", colorMap["white"], colorMap["green"], 150, 60);
     cSelectStartButton->setOutline(true, colorMap["black"]);
 
     Text* player1HeaderText = new Text(renderer, "Terminal.ttf", 24);
@@ -169,28 +169,28 @@ void Game::initializeCSelectElements(SDL_Renderer* renderer) {
     player1SelectText.push_back(player1HeaderText);
     player2SelectText.push_back(player2HeaderText);
 
-    Button* blademasterButton = new Button(renderer, "Terminal.ttf", 16, "The Blademaster", colorMap["white"], colorMap["grey"], 25, 50, 150, 60);
+    Button* blademasterButton = new Button(renderer, "Terminal.ttf", 16, "The Blademaster", colorMap["white"], colorMap["grey"], 150, 60);
     blademasterButton->setOutline(true, colorMap["black"]);
 
-    Button* cavemanButton = new Button(renderer, "Terminal.ttf", 16, "The Caveman", colorMap["white"], colorMap["grey"], 200, 50, 150, 60);
+    Button* cavemanButton = new Button(renderer, "Terminal.ttf", 16, "The Caveman", colorMap["white"], colorMap["grey"], 150, 60);
     cavemanButton->setOutline(true, colorMap["black"]);
 
-    Button* duelistButton = new Button(renderer, "Terminal.ttf", 16, "The Duelist", colorMap["white"], colorMap["grey"], 375, 50, 150, 60);
+    Button* duelistButton = new Button(renderer, "Terminal.ttf", 16, "The Duelist", colorMap["white"], colorMap["grey"], 150, 60);
     duelistButton->setOutline(true, colorMap["black"]);
 
-    Button* fighterButton = new Button(renderer, "Terminal.ttf", 16, "The Fighter", colorMap["white"], colorMap["grey"], 550, 50, 150, 60);
+    Button* fighterButton = new Button(renderer, "Terminal.ttf", 16, "The Fighter", colorMap["white"], colorMap["grey"], 150, 60);
     fighterButton->setOutline(true, colorMap["black"]);
 
-    Button* medicButton = new Button(renderer, "Terminal.ttf", 16, "The Medic", colorMap["white"], colorMap["grey"], 25, 150, 150, 60);
+    Button* medicButton = new Button(renderer, "Terminal.ttf", 16, "The Medic", colorMap["white"], colorMap["grey"], 150, 60);
     medicButton->setOutline(true, colorMap["black"]);
 
-    Button* raidBossButton = new Button(renderer, "Terminal.ttf", 16, "The Raid Boss", colorMap["white"], colorMap["grey"], 200, 150, 150, 60);
+    Button* raidBossButton = new Button(renderer, "Terminal.ttf", 16, "The Raid Boss", colorMap["white"], colorMap["grey"], 150, 60);
     raidBossButton->setOutline(true, colorMap["black"]);
 
-    Button* tankButton = new Button(renderer, "Terminal.ttf", 16, "The Tank", colorMap["white"], colorMap["grey"], 375, 150, 150, 60);
+    Button* tankButton = new Button(renderer, "Terminal.ttf", 16, "The Tank", colorMap["white"], colorMap["grey"], 150, 60);
     tankButton->setOutline(true, colorMap["black"]);
 
-    Button* villageIdiotButton = new Button(renderer, "Terminal.ttf", 16, "The Village Idiot", colorMap["white"], colorMap["grey"], 550, 150, 150, 60);
+    Button* villageIdiotButton = new Button(renderer, "Terminal.ttf", 16, "The Village Idiot", colorMap["white"], colorMap["grey"], 150, 60);
     villageIdiotButton->setOutline(true, colorMap["black"]);
     
     cSelectUnitButtons.push_back(blademasterButton);
@@ -388,7 +388,7 @@ void Game::initializeMatch() {
     }
 
     for (unsigned int i = 0; i < player1->getUnits().size(); i++) {
-        Button* newButton = new Button(renderer, "Terminal.ttf", 12, player1->getUnits()[i]->getName(), colorMap["white"], colorMap["dark blue"], (i*150)+25, 50, 120, 40);
+        Button* newButton = new Button(renderer, "Terminal.ttf", 12, player1->getUnits()[i]->getName(), colorMap["white"], colorMap["dark blue"], 120, 40);
         newButton->setOutline(true, colorMap["black"]);
         playUnitButtons.push_back(newButton);
 
@@ -400,7 +400,7 @@ void Game::initializeMatch() {
         playUnitTexts.push_back(newHpText);
     }
     for (unsigned int i = 0; i < player2->getUnits().size(); i++) {
-        Button* newButton = new Button(renderer, "Terminal.ttf", 12, player2->getUnits()[i]->getName(), colorMap["white"], colorMap["dark red"], (i*150)+25, 200, 120, 40);
+        Button* newButton = new Button(renderer, "Terminal.ttf", 12, player2->getUnits()[i]->getName(), colorMap["white"], colorMap["dark red"], 120, 40);
         newButton->setOutline(true, colorMap["black"]);
         playUnitButtons.push_back(newButton);
 
@@ -419,21 +419,21 @@ void Game::initializeMatch() {
 }
 
 void Game::populateUnitButtonMap() {
-    Button* attackButton = new Button(renderer, "Terminal.ttf", 16, "Attack", colorMap["white"], colorMap["grey"], 25, 425, 150, 60);
+    Button* attackButton = new Button(renderer, "Terminal.ttf", 16, "Attack", colorMap["white"], colorMap["grey"], 150, 60);
     attackButton->setOutline(true, colorMap["black"]);
 
-    Button* skipButton = new Button(renderer, "Terminal.ttf", 16, "Skip Turn", colorMap["white"], colorMap["grey"], 375, 425, 150, 60);
+    Button* skipButton = new Button(renderer, "Terminal.ttf", 16, "Skip Turn", colorMap["white"], colorMap["grey"], 150, 60);
     skipButton->setOutline(true, colorMap["black"]);
 
     for (unsigned int i = 0; i < gameUnits.size(); i++) {
         if (gameUnits[i]->getName() == "The Medic") {
-            Button* healButton = new Button(renderer, "Terminal.ttf", 16, "Heal", colorMap["white"], colorMap["grey"], 25, 425, 150, 60);
+            Button* healButton = new Button(renderer, "Terminal.ttf", 16, "Heal", colorMap["white"], colorMap["grey"], 150, 60);
             healButton->setOutline(true, colorMap["black"]);
-            Button* medicAttackButton = new Button(renderer, "Terminal.ttf", 16, "Attack", colorMap["white"], colorMap["grey"], 200, 425, 150, 60);
+            Button* medicAttackButton = new Button(renderer, "Terminal.ttf", 16, "Attack", colorMap["white"], colorMap["grey"], 150, 60);
             medicAttackButton->setOutline(true, colorMap["black"]);
-            Button* specialButton = new Button(renderer, "Terminal.ttf", 16, "Health Pack", colorMap["white"], colorMap["grey"], 375, 425, 150, 60);
+            Button* specialButton = new Button(renderer, "Terminal.ttf", 16, "Health Pack", colorMap["white"], colorMap["grey"], 150, 60);
             specialButton->setOutline(true, colorMap["black"]);
-            Button* medicSkipButton = new Button(renderer, "Terminal.ttf", 16, "Skip Turn", colorMap["white"], colorMap["grey"], 550, 425, 150, 60);
+            Button* medicSkipButton = new Button(renderer, "Terminal.ttf", 16, "Skip Turn", colorMap["white"], colorMap["grey"], 150, 60);
             medicSkipButton->setOutline(true, colorMap["black"]);
 
             unitButtonMap["The Medic"].push_back(healButton);
@@ -441,7 +441,7 @@ void Game::populateUnitButtonMap() {
             unitButtonMap["The Medic"].push_back(specialButton);
             unitButtonMap["The Medic"].push_back(medicSkipButton);
         } else {
-            Button* specialButton = new Button(renderer, "Terminal.ttf", 16, gameUnits[i]->getSpecialName(), colorMap["white"], colorMap["grey"], 200, 425, 150, 60);
+            Button* specialButton = new Button(renderer, "Terminal.ttf", 16, gameUnits[i]->getSpecialName(), colorMap["white"], colorMap["grey"], 150, 60);
             specialButton->setOutline(true, colorMap["black"]);
 
             unitButtonMap[gameUnits[i]->getName()].push_back(attackButton);
@@ -510,14 +510,19 @@ void Game::render() {
 
     if (gameState == title) {
         titleText->render(325, 100);
-        titleStartButton->render();
-        quitButton->render();
+        titleStartButton->render(400, 220);
+        quitButton->render(400, 340);
     } else if (gameState == cSelect) {
         announcerText->render(25, 450);
         tempText->render(50, 300);
-        cSelectStartButton->render();
+        cSelectStartButton->render(475, 430);
         for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++) {
-            cSelectUnitButtons[i]->render();
+            if (i < 4) {
+                cSelectUnitButtons[i]->render((i*175)+25, 50);
+            } else {
+                cSelectUnitButtons[i]->render(((i-4)*175)+25, 150);
+            }
+            
         }
         for (unsigned int i = 0; i < player1SelectText.size(); i++) {
             player1SelectText[i]->render(725, ((i)*35)+50);
@@ -533,17 +538,18 @@ void Game::render() {
             timeline[i]->render(675, ((i+2)*35)+50);
         }
         for (unsigned int i = 0; i < 8; i++) {
-            playUnitButtons[i]->render();
             if (i < 4) {
+                playUnitButtons[i]->render((i*150)+25, 50);
                 playUnitTexts[i]->render((i*150)+27, 100);
             } else {
+                playUnitButtons[i]->render(((i-4)*150)+25, 200);
                 playUnitTexts[i]->render(((i-4)*150)+27, 250);
             }
             
         }
         if (currentUnit != nullptr) {
             for (unsigned int i = 0; i < unitButtonMap[currentUnit->getName()].size(); i++) {
-                unitButtonMap[currentUnit->getName()][i]->render();
+                unitButtonMap[currentUnit->getName()][i]->render((i*175)+25, 425);
             }
         }
         

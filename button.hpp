@@ -7,10 +7,10 @@
 
 class Button {
     public:
-        Button(SDL_Renderer* renderer, const std::string& fontPath, int fontSize, const std::string& text, SDL_Color textColor, SDL_Color buttonColor, int x, int y, int width, int height);
+        Button(SDL_Renderer* renderer, const std::string& fontPath, int fontSize, const std::string& text, SDL_Color textColor, SDL_Color buttonColor, int width, int height);
         ~Button();
 
-        void render();
+        void render(int x, int y);
         bool isHovered(int mouseX, int mouseY);
         void setOutline(bool enable, SDL_Color color);
         void setHovered(bool hoverStatus);
@@ -23,6 +23,8 @@ class Button {
         SDL_Color mButtonColor;
         SDL_Color mOutlineColor;
         SDL_Rect mRect;
+        int mWidth;
+        int mHeight;
         bool mDrawOutline;
         bool hovered;
         std::string mText;
