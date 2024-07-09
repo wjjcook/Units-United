@@ -432,6 +432,9 @@ void Game::populateUnitButtonMap() {
     Button* skipButton = new Button(renderer, "Terminal.ttf", 16, "Skip Turn", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
     skipButton->setOutline(true, colorMap["black"]);
 
+    Button* cancelButton = new Button(renderer, "Terminal.ttf", 16, "Cancel", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
+    cancelButton->setOutline(true, colorMap["black"]);
+
     for (unsigned int i = 0; i < gameUnits.size(); i++) {
         if (unitButtonMap[gameUnits[i]->getName()].size() > 0) {
             continue;
@@ -439,25 +442,16 @@ void Game::populateUnitButtonMap() {
         if (gameUnits[i]->getName() == "The Medic") {
             Button* healButton = new Button(renderer, "Terminal.ttf", 16, "Heal", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
             healButton->setOutline(true, colorMap["black"]);
-            Button* medicAttackButton = new Button(renderer, "Terminal.ttf", 16, "Attack", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
-            medicAttackButton->setOutline(true, colorMap["black"]);
-            Button* specialButton = new Button(renderer, "Terminal.ttf", 16, "Health Pack", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
-            specialButton->setOutline(true, colorMap["black"]);
-            Button* medicSkipButton = new Button(renderer, "Terminal.ttf", 16, "Skip Turn", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
-            medicSkipButton->setOutline(true, colorMap["black"]);
-
             unitButtonMap["The Medic"].push_back(healButton);
-            unitButtonMap["The Medic"].push_back(medicAttackButton);
-            unitButtonMap["The Medic"].push_back(specialButton);
-            unitButtonMap["The Medic"].push_back(medicSkipButton);
-        } else {
-            Button* specialButton = new Button(renderer, "Terminal.ttf", 16, gameUnits[i]->getSpecialName(), colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
-            specialButton->setOutline(true, colorMap["black"]);
+        
+        } 
+        Button* specialButton = new Button(renderer, "Terminal.ttf", 16, gameUnits[i]->getSpecialName(), colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
+        specialButton->setOutline(true, colorMap["black"]);
 
-            unitButtonMap[gameUnits[i]->getName()].push_back(attackButton);
-            unitButtonMap[gameUnits[i]->getName()].push_back(specialButton);
-            unitButtonMap[gameUnits[i]->getName()].push_back(skipButton);
-        }
+        unitButtonMap[gameUnits[i]->getName()].push_back(attackButton);
+        unitButtonMap[gameUnits[i]->getName()].push_back(specialButton);
+        unitButtonMap[gameUnits[i]->getName()].push_back(skipButton);
+        unitButtonMap[gameUnits[i]->getName()].push_back(cancelButton);
     }  
 }
 
@@ -557,9 +551,15 @@ void Game::render() {
             }
             
         }
+        std::string currentAction = ""; // Change when unit is attacking/using special
         if (currentUnit != nullptr) {
-            for (unsigned int i = 0; i < unitButtonMap[currentUnit->getName()].size(); i++) {
-                unitButtonMap[currentUnit->getName()][i]->render((i*175)+25, 425);
+            for (unsigned int i = 0; i < unitButtonMap[currentUnit->getName()].size() - 1; i++) {
+                if (unitButtonMap[currentUnit->getName()][i]->getText() == currentAction) {
+                    unitButtonMap[currentUnit->getName()][-1]->render((i*175)+25, 425);
+                } else {
+                    unitButtonMap[currentUnit->getName()][i]->render((i*175)+25, 425);
+                }
+                
             }
         }
         
