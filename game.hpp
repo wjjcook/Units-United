@@ -77,6 +77,7 @@ class Game {
 
         // Text objects
         Text* titleText;
+        Text* playerTurnText;
         Text* announcerText;
         Text* timelineHeader;
         Text* manaText;

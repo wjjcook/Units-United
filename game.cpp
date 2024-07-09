@@ -10,6 +10,7 @@ Game::Game() {
     endTurn = false;
 
     titleText = nullptr;
+    playerTurnText = nullptr;
     announcerText = nullptr;
     timelineHeader = nullptr;
     manaText = nullptr;
@@ -31,6 +32,7 @@ Game::~Game() {
 
     // Text objects
     delete titleText;
+    delete playerTurnText;
     delete announcerText;
     delete timelineHeader;
     delete manaText;
@@ -415,6 +417,8 @@ void Game::initializeMatch() {
         playUnitTexts.push_back(newHpText);
     }
     
+    playerTurnText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
+    announcerText->setText("", colorMap["white"]);
     manaText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
 
     populateUnitButtonMap();
@@ -485,11 +489,10 @@ void Game::update() {
         }
 
         if (playerTurn == PLAYER1) {
-            announcerText->setText("Player 1's Turn: " + currentUnit->getName(), colorMap["light blue"]);
+            playerTurnText->setText("Player 1's Turn: " + currentUnit->getName(), colorMap["light blue"]);
             manaText->setText("Mana: " + std::to_string(player1->getMana()), colorMap["light blue"]);
-
         } else {
-            announcerText->setText("Player 2's Turn: " + currentUnit->getName(), colorMap["light red"]);
+            playerTurnText->setText("Player 2's Turn: " + currentUnit->getName(), colorMap["light red"]);
             manaText->setText("Mana: " + std::to_string(player2->getMana()), colorMap["light red"]);
         }
     }
@@ -537,19 +540,20 @@ void Game::render() {
             player2SelectText[i]->render(725, ((i)*35)+270);
         }
     } else if (gameState == play) {
-        announcerText->render(25, 365);
-        manaText->render(500, 365);
+        playerTurnText->render(25, 340);
+        announcerText->render(25, 380);
+        manaText->render(500, 340);
         timelineHeader->render(725, 50);
         for (unsigned int i = 0; i < timeline.size(); i++) {
-            timeline[i]->render(675, ((i+2)*35)+50);
+            timeline[i]->render(675, ((i+2)*35)+25);
         }
         for (unsigned int i = 0; i < 8; i++) {
             if (i < 4) {
                 playUnitButtons[i]->render((i*150)+25, 50);
                 playUnitTexts[i]->render((i*150)+27, 100);
             } else {
-                playUnitButtons[i]->render(((i-4)*150)+25, 200);
-                playUnitTexts[i]->render(((i-4)*150)+27, 250);
+                playUnitButtons[i]->render(((i-4)*150)+25, 175);
+                playUnitTexts[i]->render(((i-4)*150)+27, 225);
             }
             
         }
