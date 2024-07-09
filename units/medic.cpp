@@ -6,6 +6,7 @@
 Medic::Medic() : Unit("The Medic", "Health Pack", 110, 1, 4, 15) {
     minHeal = 6;
     maxHeal = 8;
+    specialTarget = ally;
 }
 
 Medic::~Medic() {}

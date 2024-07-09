@@ -3,7 +3,9 @@
 #include <random>
 
 
-Tank::Tank() : Unit("The Tank", "Big Iroh Block", 200, 6, 10, 45) {}
+Tank::Tank() : Unit("The Tank", "Big Iroh Block", 200, 6, 10, 45) {
+    specialTarget = ally;
+}
 
 Tank::~Tank() {}
 

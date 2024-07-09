@@ -30,6 +30,10 @@ enum Player_Turn {
     PLAYER2 = 2
 };
 
+enum Turn_State {
+    selectAction, selectEnemy, selectAlly, endTurn
+};
+
 class Game {
     public:
         Game();
@@ -44,14 +48,16 @@ class Game {
         void initializeCSelectElements(SDL_Renderer* renderer);
         void populateUnitMap();
         Unit* createUnit(const std::string& unitName);
+
         void handleEvents();
         int checkMouseEvent(Button* button, SDL_Event e);
         void handleTitleEvents(SDL_Event e);
         void handleCSelectEvents(SDL_Event e);
-        void handlePlayEvents(SDL_Event e);
         void addUnitToRoster(std::string unit);
         void initializeMatch();
         void populateUnitButtonMap();
+        void handlePlayEvents(SDL_Event e);
+        
         void update();
         Unit* findNextUnit(Unit* currentUnit);
         void render();
@@ -66,7 +72,7 @@ class Game {
         bool running;
         Game_State gameState;
         bool cSelectDone;
-        bool endTurn;
+        Turn_State turnState;
 
         std::map<std::string, SDL_Color> colorMap;
 

@@ -12,6 +12,7 @@ Unit::Unit(std::string name, const std::string specialName, int hp, int minDmg, 
     this->maxDmg = maxDmg;
     this->speed = speed;
     basicAttack = "Basic Attack";
+    specialTarget = enemy;
 }
 
 Unit::~Unit() {}
@@ -22,6 +23,10 @@ std::string Unit::getName() {
 
 std::string Unit::getSpecialName() {
     return specialName;
+}
+
+Special_Target Unit::getSpecialTarget() {
+    return specialTarget;
 }
 
 int Unit::getMaxHp() {

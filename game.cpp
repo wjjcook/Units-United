@@ -7,7 +7,6 @@ Game::Game() {
     running = false;
     gameState = title;
     cSelectDone = false;
-    endTurn = false;
 
     titleText = nullptr;
     playerTurnText = nullptr;
@@ -310,10 +309,6 @@ void Game::handleCSelectEvents(SDL_Event e) {
     }
 }
 
-void Game::handlePlayEvents(SDL_Event e) {
-
-}
-
 void Game::addUnitToRoster(std::string unit) {
     if (playerTurn == PLAYER1) {
         if (player1->hasUnit(unit)) {
@@ -422,7 +417,7 @@ void Game::initializeMatch() {
     manaText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
 
     populateUnitButtonMap();
-    endTurn = false;
+    turnState = selectAction;
 }
 
 void Game::populateUnitButtonMap() {
@@ -455,6 +450,34 @@ void Game::populateUnitButtonMap() {
     }  
 }
 
+void Game::handlePlayEvents(SDL_Event e) {
+    if (turnState == selectAction) {
+        for (unsigned int i = 0; i < unitButtonMap[currentUnit->getName()].size(); i++) {
+            if (checkMouseEvent(unitButtonMap[currentUnit->getName()][i], e) == 1) {
+                std::string currentButtonText = unitButtonMap[currentUnit->getName()][i]->getText();
+                if (currentButtonText == "Heal") {
+                    turnState = selectAlly;
+                } else if (currentButtonText == "Attack") {
+                    turnState = selectEnemy;
+                } else if (currentButtonText == currentUnit->getSpecialName()) {
+                    if (currentUnit->getSpecialTarget() == ally) {
+                        turnState = selectAlly;
+                    } else {
+                        turnState = selectEnemy;
+                    }
+                } else if (currentButtonText == "Skip Turn") {
+                    turnState = endTurn;
+                }
+                break;
+            }
+        }
+    } else if (turnState == selectEnemy) {
+        turnState = endTurn; // Temporary
+    } else if (turnState == selectAlly) {
+        turnState = endTurn; // Temporary
+    }
+}
+
 void Game::update() {
     if (gameState == cSelect) {
         if (player1->getUnits().size() >= 4 && player2->getUnits().size() >= 4) {
@@ -473,8 +496,9 @@ void Game::update() {
     } else if (gameState == play) {
         if (currentUnit == nullptr) {
             currentUnit = gameUnits.front();
-        } else if (endTurn) {
+        } else if (turnState == endTurn) {
             currentUnit = findNextUnit(currentUnit);
+            turnState = selectAction;
         }
         if (currentUnit->getPlayerNum() == 1) {
             playerTurn = PLAYER1;
@@ -551,15 +575,14 @@ void Game::render() {
             }
             
         }
-        std::string currentAction = ""; // Change when unit is attacking/using special
         if (currentUnit != nullptr) {
             for (unsigned int i = 0; i < unitButtonMap[currentUnit->getName()].size() - 1; i++) {
-                if (unitButtonMap[currentUnit->getName()][i]->getText() == currentAction) {
-                    unitButtonMap[currentUnit->getName()][-1]->render((i*175)+25, 425);
-                } else {
-                    unitButtonMap[currentUnit->getName()][i]->render((i*175)+25, 425);
-                }
-                
+                // if (turnState != selectAction) {
+                //     unitButtonMap[currentUnit->getName()][-1]->render((i*175)+25, 425);
+                // } else {
+                //     unitButtonMap[currentUnit->getName()][i]->render((i*175)+25, 425);
+                // }
+                unitButtonMap[currentUnit->getName()][i]->render((i*175)+25, 425);
             }
         }
         
