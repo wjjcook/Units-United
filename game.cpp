@@ -71,6 +71,8 @@ Game::~Game() {
     delete player2;
 
     // SDL clean up
+    SDLNet_TCP_Close(client);
+    SDLNet_Quit();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(gameWindow);
     TTF_Quit();
@@ -124,6 +126,33 @@ bool Game::init(const std::string& title, int width, int height) {
     populateUnitMap();
 
     running = true;
+    return true;
+}
+
+bool Game::initializeNetwork(const char* host, Uint16 port) {
+    if (SDLNet_Init() != 0) {
+        std::cerr << "SDLNet_Init Error: " << SDLNet_GetError() << std::endl;
+        return false;
+    }
+
+    if (SDLNet_ResolveHost(&ip, host, port) != 0) {
+        std::cerr << "SDLNet_ResolveHost Error: " << SDLNet_GetError() << std::endl;
+        SDLNet_Quit();
+        return false;
+    }
+
+    Uint32 resolvedIp = SDL_SwapBE32(ip.host);
+    std::cout << "Resolved IP: " << (resolvedIp >> 24) << "." << ((resolvedIp >> 16) & 0xFF) << "." 
+              << ((resolvedIp >> 8) & 0xFF) << "." << (resolvedIp & 0xFF) << std::endl;
+
+    client = SDLNet_TCP_Open(&ip);
+    if (!client) {
+        std::cerr << "SDLNet_TCP_Open Error: " << SDLNet_GetError() << std::endl;
+        std::cerr << "Could not connect to " << host << " on port " << port << std::endl;
+        SDLNet_Quit();
+        return false;
+    }
+
     return true;
 }
 
@@ -286,6 +315,14 @@ int Game::checkMouseEvent(Button* button, SDL_Event e) {
 void Game::handleTitleEvents(SDL_Event e) {
     if (checkMouseEvent(titleStartButton, e) == 1) {
         gameState = cSelect;
+        // if (!initializeNetwork("127.0.0.1", 12345)) {
+        //     std::cerr << "Failed to initialize network." << std::endl;
+        //     return;
+        // }
+        // const char* message = "Hello, server!";
+        // SDLNet_TCP_Send(client, message, strlen(message) + 1);
+        // SDLNet_TCP_Close(client);
+        // SDLNet_Quit();
         player1 = new Player();
         player2 = new Player();
     }

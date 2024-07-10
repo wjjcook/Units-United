@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_NET.h>
 #include <string>
 #include <map>
 #include <unordered_map>
@@ -43,6 +44,7 @@ class Game {
         void run();
 
     private:
+        bool initializeNetwork(const char* host, Uint16 port);
         void initializeColors();
         void initializeTitleElements(SDL_Renderer* renderer);
         void initializeCSelectElements(SDL_Renderer* renderer);
@@ -62,6 +64,8 @@ class Game {
         Unit* findNextUnit(Unit* currentUnit);
         void render();
 
+        IPaddress ip;
+        TCPsocket client;
         SDL_Window* gameWindow;
         SDL_Renderer* renderer;
         int screenWidth;

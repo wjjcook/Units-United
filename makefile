@@ -1,7 +1,7 @@
 CXX := g++
 CXXFLAGS := -g -Wall -I src/include
 LDFLAGS := -L src/lib
-LIBS := -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf
+LIBS := -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_NET
 
 # Source files and object files
 SRCS := $(wildcard *.cpp units/*.cpp)
