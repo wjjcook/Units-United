@@ -44,7 +44,8 @@ class Game {
         void run();
 
     private:
-        bool initializeNetwork(const char* host, Uint16 port);
+        bool initializeServer(Uint16 port);
+        bool connectToServer(const char* serverIP, int port);
         void initializeColors();
         void initializeTitleElements(SDL_Renderer* renderer);
         void initializeCSelectElements(SDL_Renderer* renderer);
@@ -65,6 +66,7 @@ class Game {
         void render();
 
         IPaddress ip;
+        TCPsocket server;
         TCPsocket client;
         SDL_Window* gameWindow;
         SDL_Renderer* renderer;

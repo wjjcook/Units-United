@@ -129,13 +129,13 @@ bool Game::init(const std::string& title, int width, int height) {
     return true;
 }
 
-bool Game::initializeNetwork(const char* host, Uint16 port) {
+bool Game::initializeServer(Uint16 port) {
     if (SDLNet_Init() != 0) {
         std::cerr << "SDLNet_Init Error: " << SDLNet_GetError() << std::endl;
         return false;
     }
 
-    if (SDLNet_ResolveHost(&ip, host, port) != 0) {
+    if (SDLNet_ResolveHost(&ip, NULL, port) != 0) {
         std::cerr << "SDLNet_ResolveHost Error: " << SDLNet_GetError() << std::endl;
         SDLNet_Quit();
         return false;
@@ -145,14 +145,41 @@ bool Game::initializeNetwork(const char* host, Uint16 port) {
     std::cout << "Resolved IP: " << (resolvedIp >> 24) << "." << ((resolvedIp >> 16) & 0xFF) << "." 
               << ((resolvedIp >> 8) & 0xFF) << "." << (resolvedIp & 0xFF) << std::endl;
 
-    client = SDLNet_TCP_Open(&ip);
-    if (!client) {
+    server = SDLNet_TCP_Open(&ip);
+    if (!server) {
         std::cerr << "SDLNet_TCP_Open Error: " << SDLNet_GetError() << std::endl;
-        std::cerr << "Could not connect to " << host << " on port " << port << std::endl;
         SDLNet_Quit();
         return false;
     }
 
+    while (true) {
+        client = SDLNet_TCP_Accept(server);
+        if (client) {
+            std::cout << "Match Found!" << std::endl;
+            break;
+        }
+    }
+
+    return true;
+}
+
+bool Game::connectToServer(const char* serverIP, int port) {
+    if (SDLNet_Init() != 0) {
+        std::cerr << "SDLNet_Init Error: " << SDLNet_GetError() << std::endl;
+        return false;
+    }
+    if (SDLNet_ResolveHost(&ip, serverIP, port) != 0) {
+        std::cerr << "SDLNet_ResolveHost Error: " << SDLNet_GetError() << std::endl;
+        SDLNet_Quit();
+        return false;
+    }
+
+    client = SDLNet_TCP_Open(&ip);
+    if (!client) {
+        std::cerr << "SDLNet_TCP_Open Error: " << SDLNet_GetError() << std::endl;
+        SDLNet_Quit();
+        return false;
+    }
     return true;
 }
 
@@ -315,14 +342,13 @@ int Game::checkMouseEvent(Button* button, SDL_Event e) {
 void Game::handleTitleEvents(SDL_Event e) {
     if (checkMouseEvent(titleStartButton, e) == 1) {
         gameState = cSelect;
-        // if (!initializeNetwork("127.0.0.1", 12345)) {
-        //     std::cerr << "Failed to initialize network." << std::endl;
-        //     return;
-        // }
-        // const char* message = "Hello, server!";
-        // SDLNet_TCP_Send(client, message, strlen(message) + 1);
-        // SDLNet_TCP_Close(client);
-        // SDLNet_Quit();
+        if (!connectToServer("0.0.0.0", 12345)) { // Need a way to not hard code my personal IP address. For now, replace 0.0.0.0 wuth my IP address
+            std::cout << "Initializing server" << std::endl;
+            if (!initializeServer(12345)) {
+                std::cerr << "Failed to initialize network." << std::endl;
+                return;
+            }
+        }
         player1 = new Player();
         player2 = new Player();
     }
