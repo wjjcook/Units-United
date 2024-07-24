@@ -10,6 +10,8 @@ class Player {
         Player();
         ~Player();
 
+        bool isLocalPlayer();
+        void setLocalPlayer(bool lp);
         int getMana();
         std::vector<Unit*> getUnits();
         void addUnit(Unit* newUnit, int playerNum);
@@ -17,9 +19,11 @@ class Player {
         void sortUnitsBySpeed();
 
     private:
+        bool localPlayer;
         std::vector<Unit*> units;
         std::set<std::string> unitNames;
-        int mana;        
+        int mana;
+                
 };
 
 #endif

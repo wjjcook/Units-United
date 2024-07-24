@@ -341,16 +341,19 @@ int Game::checkMouseEvent(Button* button, SDL_Event e) {
 
 void Game::handleTitleEvents(SDL_Event e) {
     if (checkMouseEvent(titleStartButton, e) == 1) {
-        gameState = cSelect;
+        player1 = new Player();
+        player2 = new Player();
         if (!connectToServer("0.0.0.0", 12345)) { // Need a way to not hard code my personal IP address. For now, replace 0.0.0.0 wuth my IP address
             std::cout << "Initializing server" << std::endl;
             if (!initializeServer(12345)) {
                 std::cerr << "Failed to initialize network." << std::endl;
                 return;
             }
+            player1->setLocalPlayer(true);
+        } else {
+            player2->setLocalPlayer(true);
         }
-        player1 = new Player();
-        player2 = new Player();
+        gameState = cSelect;
     }
     if (checkMouseEvent(quitButton, e) == 1) {
         running = false;
@@ -359,9 +362,11 @@ void Game::handleTitleEvents(SDL_Event e) {
 
 void Game::handleCSelectEvents(SDL_Event e) {
     if (!cSelectDone) {
-        for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++){
-            if (checkMouseEvent(cSelectUnitButtons[i], e) == 1) {
-                addUnitToRoster(cSelectUnitButtons[i]->getText());
+        if (!(player1->isLocalPlayer() && player1->getUnits().size() >= 4) && !(player2->isLocalPlayer() && player2->getUnits().size() >= 4)) {
+            for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++){
+                if (checkMouseEvent(cSelectUnitButtons[i], e) == 1) {
+                    addUnitToRoster(cSelectUnitButtons[i]->getText());
+                }
             }
         }
     } else {
@@ -373,7 +378,7 @@ void Game::handleCSelectEvents(SDL_Event e) {
 }
 
 void Game::addUnitToRoster(std::string unit) {
-    if (playerTurn == PLAYER1) {
+    if (player1->isLocalPlayer()) {
         if (player1->hasUnit(unit)) {
             std::cout << "Unit already in roster!" << std::endl;
             return;
@@ -383,9 +388,6 @@ void Game::addUnitToRoster(std::string unit) {
         Text* unitText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
         unitText->setText(unit, colorMap["light blue"]);
         player1SelectText.push_back(unitText);
-
-        playerTurn = PLAYER2;
-
     } else {
         if (player2->hasUnit(unit)) {
             std::cout << "Unit already in roster!" << std::endl;
@@ -396,8 +398,6 @@ void Game::addUnitToRoster(std::string unit) {
         Text* unitText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
         unitText->setText(unit, colorMap["light red"]);
         player2SelectText.push_back(unitText);
-
-        playerTurn = PLAYER1;
     }
 }
 
@@ -549,11 +549,24 @@ void Game::update() {
             for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++){
                 cSelectUnitButtons[i]->setHovered(false);
             }
-        } else {
-            if (playerTurn == PLAYER1) {
-                announcerText->setText("Player 1: Select a Unit", colorMap["light blue"]);
+        }
+        if (player1->isLocalPlayer()) {
+            if (player1->getUnits().size() >= 4) {
+                announcerText->setText("Waiting for Player 2 to finish character selection!", colorMap["white"]);
+                for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++){
+                    cSelectUnitButtons[i]->setHovered(false);
+                }
             } else {
-                announcerText->setText("Player 2: Select a Unit", colorMap["light red"]);
+                announcerText->setText("Select your units!", colorMap["white"]);
+            }
+        } else {
+            if (player2->getUnits().size() >= 4) {
+                announcerText->setText("Waiting for Player 1 to finish character selection!", colorMap["white"]);
+                for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++){
+                    cSelectUnitButtons[i]->setHovered(false);
+                }
+            } else {
+                announcerText->setText("Select your units!", colorMap["white"]);
             }
         }
     } else if (gameState == play) {
@@ -605,7 +618,7 @@ void Game::render() {
     } else if (gameState == cSelect) {
         announcerText->render(25, 450);
         tempText->render(50, 300);
-        cSelectStartButton->render(475, 430);
+        cSelectStartButton->render(725, 430);
         for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++) {
             if (i < 4) {
                 cSelectUnitButtons[i]->render((i*175)+25, 50);
@@ -614,11 +627,14 @@ void Game::render() {
             }
             
         }
-        for (unsigned int i = 0; i < player1SelectText.size(); i++) {
-            player1SelectText[i]->render(725, ((i)*35)+50);
-        }
-        for (unsigned int i = 0; i < player2SelectText.size(); i++) {
-            player2SelectText[i]->render(725, ((i)*35)+270);
+        if (player1->isLocalPlayer()) {
+            for (unsigned int i = 0; i < player1SelectText.size(); i++) {
+                player1SelectText[i]->render(725, ((i)*35)+50);
+            }
+        } else {
+            for (unsigned int i = 0; i < player2SelectText.size(); i++) {
+                player2SelectText[i]->render(725, ((i)*35)+50);
+            }
         }
     } else if (gameState == play) {
         playerTurnText->render(25, 340);

@@ -3,6 +3,7 @@
 #include <algorithm>
 
 Player::Player() {
+    localPlayer = false;
     mana = 5;
 }
 
@@ -10,6 +11,14 @@ Player::~Player() {
     for (unsigned int i = 0; i < units.size(); i++) {
         delete units[i];
     }
+}
+
+bool Player::isLocalPlayer() {
+    return localPlayer;
+}
+
+void Player::setLocalPlayer(bool lp) {
+    localPlayer = lp;
 }
 
 int Player::getMana() {
