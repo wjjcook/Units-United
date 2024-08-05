@@ -5,6 +5,8 @@ Game::Game() {
     gameWindow = nullptr;
     renderer = nullptr;
     running = false;
+    searchForClient = false;
+    receiveIpInput = false;
     gameState = title;
     cSelectDone = false;
 
@@ -78,6 +80,7 @@ Game::~Game() {
     delete player2;
 
     // SDL clean up
+    SDL_StopTextInput();
     SDLNet_TCP_Close(client);
     SDLNet_Quit();
     SDL_DestroyRenderer(renderer);
@@ -159,32 +162,9 @@ bool Game::initializeServer(Uint16 port) {
         return false;
     }
 
-    while (true) {
-        client = SDLNet_TCP_Accept(server);
-        if (client) {
-            std::cout << "Match Found!" << std::endl;
-            break;
-        }
-    }
-
-    return true;
-}
-
-void Game::closeServer() {
-    if (client) {
-        SDLNet_TCP_Close(client);
-        client = nullptr;
-    }
-
-    if (server) {
-        SDLNet_TCP_Close(server);
-        server = nullptr;
-    }
-
-    SDLNet_Quit();
-    SDL_Quit();
+    searchForClient = true;
     
-    std::cout << "Server closed and resources cleaned up." << std::endl;
+    return true;
 }
 
 bool Game::connectToServer(const char* serverIP, int port) {
@@ -348,7 +328,36 @@ void Game::handleEvents() {
             running = false;
         } else {
             if (gameState == title) {
-                handleTitleEvents(e);
+                if (receiveIpInput) {                   
+                    if (e.type == SDL_TEXTINPUT) {
+                        // Append new text to the current input text
+                        inputText += e.text.text;
+                    } else if (e.type == SDL_KEYDOWN) {
+                        if (e.key.keysym.sym == SDLK_BACKSPACE && inputText.length() > 0) {
+                            // Handle backspace
+                            inputText.pop_back();
+                        } else if (e.key.keysym.sym == SDLK_RETURN) {
+                            // Handle Enter key (finish input)
+                            std::cout << "Input: " << inputText << std::endl;
+                            SDL_StopTextInput();
+                            ipInputDone = true;
+                            receiveIpInput = false;
+                        }
+                    } 
+                    if (ipInputDone) {
+                        if (!connectToServer(inputText.c_str(), 12345)) { 
+                            std::cout << "Failed to connect to IP address" << std::endl;
+                            return;
+                        }
+                        player1 = new Player();
+                        player2 = new Player();
+                        player2->setLocalPlayer(true);
+                        gameState = cSelect;
+                    }
+                    announcerText->setText("Enter Remote IP: " + inputText, colorMap["white"]);
+                } else {
+                    handleTitleEvents(e);
+                }
             } else if (gameState == cSelect) {
                 handleCSelectEvents(e);
             } else if (gameState == play) {
@@ -381,48 +390,14 @@ void Game::handleTitleEvents(SDL_Event e) {
         if (!initializeServer(12345)) {
             std::cerr << "Failed to initialize network." << std::endl;
             return;
-        }
-        player1 = new Player();
-        player2 = new Player();
-        player1->setLocalPlayer(true);
-        gameState = cSelect;
-        
+        }        
     }
     if (checkMouseEvent(titleJoinButton, e) == 1) {
-        announcerText->setText("Enter Remote IP...", colorMap["white"]);
+        announcerText->setText("Enter Remote IP: ", colorMap["white"]);
         SDL_StartTextInput();
-        bool quit = false;
-        SDL_Event e2;
-        inputText = "";
-        while (!quit) {
-            while (SDL_PollEvent(&e2) != 0) {
-                if (e2.type == SDL_QUIT) {
-                    quit = true;
-                } else if (e2.type == SDL_TEXTINPUT) {
-                    // Append new text to the current input text
-                    inputText += e2.text.text;
-                } else if (e2.type == SDL_KEYDOWN) {
-                    if (e2.key.keysym.sym == SDLK_BACKSPACE && inputText.length() > 0) {
-                        // Handle backspace
-                        inputText.pop_back();
-                    } else if (e2.key.keysym.sym == SDLK_RETURN) {
-                        // Handle Enter key (finish input)
-                        std::cout << "Input: " << inputText << std::endl;
-                        quit = true;
-                    }
-                }
-            }
-        }
-        
-        if (!connectToServer(inputText.c_str(), 12345)) { 
-            std::cout << "Failed to connect to IP address" << std::endl;
-            return;
-        }
-        player1 = new Player();
-        player2 = new Player();
-        player2->setLocalPlayer(true);
-        gameState = cSelect;
-
+        ipInput = "";
+        ipInputDone = false;
+        receiveIpInput = true;
     }
     if (checkMouseEvent(quitButton, e) == 1) {
         running = false;
@@ -610,8 +585,20 @@ void Game::handlePlayEvents(SDL_Event e) {
     }
 }
 
-void Game::update() {  
-    if (gameState == cSelect) {
+void Game::update() {
+    if (gameState == title) {
+        if (searchForClient) {
+            client = SDLNet_TCP_Accept(server);
+            if (client) {
+                std::cout << "Match Found!" << std::endl;
+                searchForClient = false;
+                player1 = new Player();
+                player2 = new Player();
+                player1->setLocalPlayer(true);
+                gameState = cSelect;
+            }
+        }
+    } else if (gameState == cSelect) {
         if (player1->getUnits().size() >= 4 && player2->getUnits().size() >= 4) {
             cSelectDone = true;
             announcerText->setText("All units selected, ready to start!", colorMap["white"]);
@@ -658,8 +645,7 @@ void Game::update() {
             playerTurnText->setText("Player 2's Turn: " + currentUnit->getName(), colorMap["light red"]);
             manaText->setText("Mana: " + std::to_string(player2->getMana()), colorMap["light red"]);
         }
-    }
-    
+    }  
 }
 
 Unit* Game::findNextUnit(Unit* currentUnit) {
@@ -682,6 +668,7 @@ void Game::render() {
 
     if (gameState == title) {
         titleText->render(325, 100);
+        announcerText->render(300, 200);
         titleStartButton->render(300, 300);
         titleJoinButton->render(500, 300);
         quitButton->render(400, 400);

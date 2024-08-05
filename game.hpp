@@ -77,6 +77,10 @@ class Game {
         float scaleY;
 
         bool running;
+        bool searchForClient;
+        bool receiveIpInput;
+        std::string ipInput;
+        bool ipInputDone;
         Game_State gameState;
         bool cSelectDone;
         Turn_State turnState;
