@@ -45,6 +45,7 @@ class Game {
 
     private:
         bool initializeServer(Uint16 port);
+        void closeServer();
         bool connectToServer(const char* serverIP, int port);
         void initializeColors();
         void initializeTitleElements(SDL_Renderer* renderer);
@@ -89,6 +90,7 @@ class Game {
 
         // Text objects
         Text* titleText;
+        Text* ipText;
         Text* playerTurnText;
         Text* announcerText;
         Text* timelineHeader;
@@ -98,9 +100,12 @@ class Game {
         std::vector<Text*> player2SelectText;
         std::deque<Text*> timeline;
         std::vector<Text*> playUnitTexts;
+        std::string inputText;
 
         // Button objects
         Button* titleStartButton;
+        Button* titleJoinButton;
+        Button* titleCancelButton;
         Button* quitButton;
         Button* cSelectStartButton;
         std::vector<Button*> cSelectUnitButtons;
