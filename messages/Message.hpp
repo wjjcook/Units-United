@@ -5,11 +5,9 @@
 #include <iostream>
 
 enum class MessageType {
-    DONE_SELECTING,
+    CHARACTER_SELECTION,
     ATTACK,
     MOVE,
-    START_GAME,
-    END_GAME,
 };
 
 class Message {
