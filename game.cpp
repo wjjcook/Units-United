@@ -167,6 +167,22 @@ bool Game::initializeServer(Uint16 port) {
     return true;
 }
 
+void Game::closeServer() {
+    if (client) {
+        SDLNet_TCP_Close(client);
+        client = nullptr;
+    }
+
+    if (server) {
+        SDLNet_TCP_Close(server);
+        server = nullptr;
+    }
+
+    SDLNet_Quit();
+
+    std::cout << "Server closed." << std::endl;
+}
+
 bool Game::connectToServer(const char* serverIP, int port) {
     if (SDLNet_Init() != 0) {
         std::cerr << "SDLNet_Init Error: " << SDLNet_GetError() << std::endl;
@@ -355,9 +371,9 @@ void Game::handleEvents() {
                         gameState = cSelect;
                     }
                     announcerText->setText("Enter Remote IP: " + inputText, colorMap["white"]);
-                } else {
-                    handleTitleEvents(e);
                 }
+                handleTitleEvents(e);
+                
             } else if (gameState == cSelect) {
                 handleCSelectEvents(e);
             } else if (gameState == play) {
@@ -384,6 +400,7 @@ int Game::checkMouseEvent(Button* button, SDL_Event e) {
 
 void Game::handleTitleEvents(SDL_Event e) {
     if (checkMouseEvent(titleStartButton, e) == 1) {
+        receiveIpInput = false;
         announcerText->setText("Finding Match...", colorMap["white"]);
         announcerText->render(400, 200);
         SDL_RenderPresent(renderer);
@@ -393,6 +410,10 @@ void Game::handleTitleEvents(SDL_Event e) {
         }        
     }
     if (checkMouseEvent(titleJoinButton, e) == 1) {
+        if (searchForClient) {
+            closeServer();
+            searchForClient = false;
+        }
         announcerText->setText("Enter Remote IP: ", colorMap["white"]);
         SDL_StartTextInput();
         ipInput = "";
