@@ -18,7 +18,6 @@ class Message {
         virtual void deserialize(const char* buffer) = 0;
 
         static Message* createMessage(MessageType type);
-    private:
 };
 
 #endif
