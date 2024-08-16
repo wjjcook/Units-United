@@ -247,7 +247,7 @@ void Game::initializeCSelectElements(SDL_Renderer* renderer) {
     tempText = new Text(renderer, "Terminal.ttf", 48, scaleX, scaleY);
     tempText->setText("NEW UNITS COMING SOON...", colorMap["white"]);
 
-    cSelectStartButton = new Button(renderer, "Terminal.ttf", 24, "Start Game", colorMap["white"], colorMap["green"], 150, 60, scaleX, scaleY);
+    cSelectStartButton = new Button(renderer, "Terminal.ttf", 24, "Ready!", colorMap["white"], colorMap["green"], 150, 60, scaleX, scaleY);
     cSelectStartButton->setOutline(true, colorMap["black"]);
 
     Text* player1HeaderText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
@@ -433,11 +433,12 @@ void Game::handleCSelectEvents(SDL_Event e) {
                     addUnitToRoster(cSelectUnitButtons[i]->getText());
                 }
             }
-        }
-    } else {
-        if (checkMouseEvent(cSelectStartButton, e) == 1) {
-            gameState = play;
-            initializeMatch();
+        } else {
+            if (checkMouseEvent(cSelectStartButton, e) == 1) {
+                cSelectDone = true;
+                // gameState = play;
+                // initializeMatch();
+            }
         }
     }
 }
@@ -620,16 +621,9 @@ void Game::update() {
             }
         }
     } else if (gameState == cSelect) {
-        if (player1->getUnits().size() >= 4 && player2->getUnits().size() >= 4) {
-            cSelectDone = true;
-            announcerText->setText("All units selected, ready to start!", colorMap["white"]);
-            for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++){
-                cSelectUnitButtons[i]->setHovered(false);
-            }
-        }
-        if (player1->isLocalPlayer()) {
-            if (player1->getUnits().size() >= 4) {
-                announcerText->setText("Waiting for Player 2 to finish character selection!", colorMap["white"]);
+        if (!cSelectDone) {
+            if ((player1->isLocalPlayer() && player1->getUnits().size() >= 4) || (player2->isLocalPlayer() && player2->getUnits().size() >= 4)) {
+                announcerText->setText("Ready to start!", colorMap["white"]);
                 for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++){
                     cSelectUnitButtons[i]->setHovered(false);
                 }
@@ -637,13 +631,10 @@ void Game::update() {
                 announcerText->setText("Select your units!", colorMap["white"]);
             }
         } else {
-            if (player2->getUnits().size() >= 4) {
-                announcerText->setText("Waiting for Player 1 to finish character selection!", colorMap["white"]);
-                for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++){
-                    cSelectUnitButtons[i]->setHovered(false);
-                }
+            if (player1->isLocalPlayer()) {
+                announcerText->setText("Waiting for Player 2 to finish character selection!", colorMap["white"]);
             } else {
-                announcerText->setText("Select your units!", colorMap["white"]);
+                announcerText->setText("Waiting for Player 1 to finish character selection!", colorMap["white"]);
             }
         }
     } else if (gameState == play) {
