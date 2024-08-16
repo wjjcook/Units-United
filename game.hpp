@@ -13,6 +13,9 @@
 #include "text.hpp"
 #include "button.hpp"
 #include "player.hpp"
+
+#include "messages/character_selection_message.hpp"
+
 #include "units/blademaster.hpp"
 #include "units/caveman.hpp"
 #include "units/duelist.hpp"
@@ -47,6 +50,10 @@ class Game {
         bool initializeServer(Uint16 port);
         void closeServer();
         bool connectToServer(const char* serverIP, int port);
+        void setNonBlocking(TCPsocket socket);
+        void sendMessage(TCPsocket socket, const Message& msg);
+        Message* receiveMessage(TCPsocket socket);
+
         void initializeColors();
         void initializeTitleElements(SDL_Renderer* renderer);
         void initializeCSelectElements(SDL_Renderer* renderer);

@@ -200,7 +200,36 @@ bool Game::connectToServer(const char* serverIP, int port) {
         SDLNet_Quit();
         return false;
     }
+    // setNonBlocking(client);
     return true;
+}
+
+void Game::setNonBlocking(TCPsocket socket) {
+    SDLNet_SocketSet set = SDLNet_AllocSocketSet(1);
+    SDLNet_TCP_AddSocket(set, socket);
+    SDLNet_CheckSockets(set, 0); // Set to non-blocking mode
+    SDLNet_FreeSocketSet(set);
+}
+
+void Game::sendMessage(TCPsocket socket, const Message& msg) {
+    char buffer[256];  // Adjust size as needed
+    msg.serialize(buffer);
+    SDLNet_TCP_Send(socket, buffer, sizeof(buffer));
+}
+
+Message* Game::receiveMessage(TCPsocket socket) {
+    char buffer[256];
+    int received = SDLNet_TCP_Recv(socket, buffer, sizeof(buffer));
+    if (received > 0) {
+        MessageType type;
+        memcpy(&type, buffer, sizeof(type));
+        Message* msg = Message::createMessage(type);
+        if (msg) {
+            msg->deserialize(buffer);
+            return msg;
+        }
+    }
+    return nullptr;
 }
 
 void Game::initializeColors() {
@@ -436,6 +465,13 @@ void Game::handleCSelectEvents(SDL_Event e) {
         } else {
             if (checkMouseEvent(cSelectStartButton, e) == 1) {
                 cSelectDone = true;
+                CharacterSelectionMessage cSelectMsg;
+                if (player1->isLocalPlayer()) {
+                    cSelectMsg.setUnits(player1->getUnitNames());
+                } else {
+                    cSelectMsg.setUnits(player2->getUnitNames());
+                }
+                sendMessage(client, cSelectMsg);
                 // gameState = play;
                 // initializeMatch();
             }
@@ -612,6 +648,7 @@ void Game::update() {
         if (searchForClient) {
             client = SDLNet_TCP_Accept(server);
             if (client) {
+                // setNonBlocking(client);
                 std::cout << "Match Found!" << std::endl;
                 searchForClient = false;
                 player1 = new Player();
@@ -637,6 +674,14 @@ void Game::update() {
                 announcerText->setText("Waiting for Player 1 to finish character selection!", colorMap["white"]);
             }
         }
+        // Message* receivedMsg = receiveMessage(client);
+        // if (receivedMsg) {
+        //     std::cout << "Message Received!" << std::endl;
+        //     if (receivedMsg->getType() == MessageType::CHARACTER_SELECTION) {
+        //         CharacterSelectionMessage* cSelectMsg = static_cast<CharacterSelectionMessage*>(receivedMsg);
+        //     }
+        //     delete receivedMsg;
+        // }
     } else if (gameState == play) {
         if (currentUnit == nullptr) {
             currentUnit = gameUnits.front();

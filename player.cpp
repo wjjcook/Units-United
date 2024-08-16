@@ -29,6 +29,10 @@ std::vector<Unit*> Player::getUnits() {
     return units;
 }
 
+std::set<std::string> Player::getUnitNames() {
+    return unitNames;
+}
+
 void Player::addUnit(Unit* newUnit, int playerNum) {
     newUnit->setPlayerNum(playerNum);
     units.push_back(newUnit);

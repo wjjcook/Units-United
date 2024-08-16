@@ -14,6 +14,7 @@ class Player {
         void setLocalPlayer(bool lp);
         int getMana();
         std::vector<Unit*> getUnits();
+        std::set<std::string> getUnitNames();
         void addUnit(Unit* newUnit, int playerNum);
         bool hasUnit(const std::string& unitName) const;
         void sortUnitsBySpeed();
