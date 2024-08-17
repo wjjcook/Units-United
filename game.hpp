@@ -50,9 +50,8 @@ class Game {
         bool initializeServer(Uint16 port);
         void closeServer();
         bool connectToServer(const char* serverIP, int port);
-        void setNonBlocking(TCPsocket socket);
-        void sendMessage(TCPsocket socket, const Message& msg);
-        Message* receiveMessage(TCPsocket socket);
+        void sendMessage(const Message& msg);
+        Message* receiveMessage();
 
         void initializeColors();
         void initializeTitleElements(SDL_Renderer* renderer);
@@ -76,6 +75,9 @@ class Game {
         IPaddress ip;
         TCPsocket server;
         TCPsocket client;
+        SDLNet_SocketSet socketSet;
+        Message* receivedMsg;
+
         SDL_Window* gameWindow;
         SDL_Renderer* renderer;
         int screenWidth;

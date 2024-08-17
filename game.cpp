@@ -79,8 +79,12 @@ Game::~Game() {
     delete player1;
     delete player2;
 
+    // Message object
+    delete receivedMsg;
+
     // SDL clean up
     SDL_StopTextInput();
+    SDLNet_FreeSocketSet(socketSet);
     SDLNet_TCP_Close(client);
     SDLNet_Quit();
     SDL_DestroyRenderer(renderer);
@@ -200,36 +204,39 @@ bool Game::connectToServer(const char* serverIP, int port) {
         SDLNet_Quit();
         return false;
     }
-    // setNonBlocking(client);
+    socketSet = SDLNet_AllocSocketSet(1);
+    SDLNet_TCP_AddSocket(socketSet, client);
     return true;
 }
 
-void Game::setNonBlocking(TCPsocket socket) {
-    SDLNet_SocketSet set = SDLNet_AllocSocketSet(1);
-    SDLNet_TCP_AddSocket(set, socket);
-    SDLNet_CheckSockets(set, 0); // Set to non-blocking mode
-    SDLNet_FreeSocketSet(set);
-}
-
-void Game::sendMessage(TCPsocket socket, const Message& msg) {
+void Game::sendMessage(const Message& msg) {
     char buffer[256];  // Adjust size as needed
     msg.serialize(buffer);
-    SDLNet_TCP_Send(socket, buffer, sizeof(buffer));
+    SDLNet_TCP_Send(client, buffer, sizeof(buffer));
 }
 
-Message* Game::receiveMessage(TCPsocket socket) {
-    char buffer[256];
-    int received = SDLNet_TCP_Recv(socket, buffer, sizeof(buffer));
-    if (received > 0) {
-        MessageType type;
-        memcpy(&type, buffer, sizeof(type));
-        Message* msg = Message::createMessage(type);
-        if (msg) {
-            msg->deserialize(buffer);
-            return msg;
+Message* Game::receiveMessage() {
+    int numReady = SDLNet_CheckSockets(socketSet, 0);  // Check with a 0 timeout (non-blocking)
+    if (numReady == -1) {
+        // Error handling
+        printf("SDLNet_CheckSockets error: %s\n", SDLNet_GetError());
+        return nullptr;
+    }
+
+    if (numReady > 0 && SDLNet_SocketReady(client)) {
+        char buffer[512];  // Adjust buffer size as needed
+        int received = SDLNet_TCP_Recv(client, buffer, sizeof(buffer));
+        if (received > 0) {
+            MessageType type;
+            memcpy(&type, buffer, sizeof(type));
+            Message* msg = Message::createMessage(type);
+            if (msg) {
+                msg->deserialize(buffer);
+                return msg;
+            }
         }
     }
-    return nullptr;
+    return nullptr;    
 }
 
 void Game::initializeColors() {
@@ -471,7 +478,8 @@ void Game::handleCSelectEvents(SDL_Event e) {
                 } else {
                     cSelectMsg.setUnits(player2->getUnitNames());
                 }
-                sendMessage(client, cSelectMsg);
+                sendMessage(cSelectMsg);
+                
                 // gameState = play;
                 // initializeMatch();
             }
@@ -648,7 +656,8 @@ void Game::update() {
         if (searchForClient) {
             client = SDLNet_TCP_Accept(server);
             if (client) {
-                // setNonBlocking(client);
+                socketSet = SDLNet_AllocSocketSet(1);
+                SDLNet_TCP_AddSocket(socketSet, client);
                 std::cout << "Match Found!" << std::endl;
                 searchForClient = false;
                 player1 = new Player();
@@ -674,14 +683,15 @@ void Game::update() {
                 announcerText->setText("Waiting for Player 1 to finish character selection!", colorMap["white"]);
             }
         }
-        // Message* receivedMsg = receiveMessage(client);
-        // if (receivedMsg) {
-        //     std::cout << "Message Received!" << std::endl;
-        //     if (receivedMsg->getType() == MessageType::CHARACTER_SELECTION) {
-        //         CharacterSelectionMessage* cSelectMsg = static_cast<CharacterSelectionMessage*>(receivedMsg);
-        //     }
-        //     delete receivedMsg;
-        // }
+        
+        receivedMsg = receiveMessage();
+        if (receivedMsg) {
+            std::cout << "Message Received!" << std::endl;
+            // if (receivedMsg->getType() == MessageType::CHARACTER_SELECTION) {
+            //     CharacterSelectionMessage* cSelectMsg = static_cast<CharacterSelectionMessage*>(receivedMsg);
+            // }
+        }
+        
     } else if (gameState == play) {
         if (currentUnit == nullptr) {
             currentUnit = gameUnits.front();
@@ -770,11 +780,6 @@ void Game::render() {
         }
         if (currentUnit != nullptr) {
             for (unsigned int i = 0; i < unitButtonMap[currentUnit->getName()].size() - 1; i++) {
-                // if (turnState != selectAction) {
-                //     unitButtonMap[currentUnit->getName()][-1]->render((i*175)+25, 425);
-                // } else {
-                //     unitButtonMap[currentUnit->getName()][i]->render((i*175)+25, 425);
-                // }
                 unitButtonMap[currentUnit->getName()][i]->render((i*175)+25, 425);
             }
         }
