@@ -473,11 +473,17 @@ void Game::handleCSelectEvents(SDL_Event e) {
             if (checkMouseEvent(cSelectStartButton, e) == 1) {
                 cSelectDone = true;
                 CharacterSelectionMessage cSelectMsg;
-                if (player1->isLocalPlayer()) {
-                    cSelectMsg.setUnits(player1->getUnitNames());
-                } else {
-                    cSelectMsg.setUnits(player2->getUnitNames());
+                std::vector<std::string> unitNames;
+                
+                for (unsigned int i = 0; i < 4; i++) {
+                    if (player1->isLocalPlayer()) {
+                        unitNames.push_back(player1->getUnits()[i]->getName());
+                    } else {
+                        unitNames.push_back(player2->getUnits()[i]->getName());
+                    }
                 }
+            
+                cSelectMsg.setUnits(unitNames);
                 sendMessage(cSelectMsg);
                 
                 // gameState = play;
@@ -687,9 +693,17 @@ void Game::update() {
         receivedMsg = receiveMessage();
         if (receivedMsg) {
             std::cout << "Message Received!" << std::endl;
-            // if (receivedMsg->getType() == MessageType::CHARACTER_SELECTION) {
-            //     CharacterSelectionMessage* cSelectMsg = static_cast<CharacterSelectionMessage*>(receivedMsg);
-            // }
+            if (receivedMsg->getType() == MessageType::CHARACTER_SELECTION) {
+                CharacterSelectionMessage* cSelectMsg = static_cast<CharacterSelectionMessage*>(receivedMsg);
+                for (unsigned int i = 0; i < 4; i++) {
+                    if (player1->isLocalPlayer()) {
+                        player2->addUnit(createUnit(cSelectMsg->getUnits()[i]), 2);
+                    } else {
+                        player1->addUnit(createUnit(cSelectMsg->getUnits()[i]), 1);
+                    }
+                    
+                }
+            }
         }
         
     } else if (gameState == play) {
