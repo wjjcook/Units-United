@@ -9,6 +9,7 @@ Game::Game() {
     receiveIpInput = false;
     gameState = title;
     cSelectDone = false;
+    remoteCSelectDone = false;
 
     titleText = nullptr;
     ipText = nullptr;
@@ -485,9 +486,6 @@ void Game::handleCSelectEvents(SDL_Event e) {
             
                 cSelectMsg.setUnits(unitNames);
                 sendMessage(cSelectMsg);
-                
-                // gameState = play;
-                // initializeMatch();
             }
         }
     }
@@ -701,9 +699,13 @@ void Game::update() {
                     } else {
                         player1->addUnit(createUnit(cSelectMsg->getUnits()[i]), 1);
                     }
-                    
                 }
+                remoteCSelectDone = true;
             }
+        }
+        if (cSelectDone && remoteCSelectDone) {
+            gameState = play;
+            initializeMatch();
         }
         
     } else if (gameState == play) {

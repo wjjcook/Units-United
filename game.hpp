@@ -92,6 +92,7 @@ class Game {
         bool ipInputDone;
         Game_State gameState;
         bool cSelectDone;
+        bool remoteCSelectDone;
         Turn_State turnState;
 
         std::map<std::string, SDL_Color> colorMap;
