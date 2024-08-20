@@ -473,7 +473,6 @@ void Game::handleCSelectEvents(SDL_Event e) {
         } else {
             if (checkMouseEvent(cSelectStartButton, e) == 1) {
                 cSelectDone = true;
-                CharacterSelectionMessage cSelectMsg;
                 std::vector<std::string> unitNames;
                 
                 for (unsigned int i = 0; i < 4; i++) {
@@ -483,8 +482,7 @@ void Game::handleCSelectEvents(SDL_Event e) {
                         unitNames.push_back(player2->getUnits()[i]->getName());
                     }
                 }
-            
-                cSelectMsg.setUnits(unitNames);
+                CharacterSelectionMessage cSelectMsg(unitNames);
                 sendMessage(cSelectMsg);
             }
         }
@@ -516,38 +514,68 @@ void Game::addUnitToRoster(std::string unit) {
 }
 
 void Game::initializeMatch() {
-    player1->sortUnitsBySpeed();
-    player2->sortUnitsBySpeed();
-    int i = 0;
-    int j = 0;
-    while (i < 4 && j < 4) {
-        if (player1->getUnits()[i]->getSpeed() > player2->getUnits()[j]->getSpeed()) {
-            gameUnits.push_back(player1->getUnits()[i]);
-            i++;
-        } else if (player1->getUnits()[i]->getSpeed() < player2->getUnits()[j]->getSpeed()) {
-            gameUnits.push_back(player2->getUnits()[j]);
-            j++;
-        } else {
-            std::random_device rd;
-            std::mt19937 gen(rd());
-            std::uniform_int_distribution<> dist(0, 1);
-            int randomChoice = dist(gen);
-            if (randomChoice == 0) {
+
+    if (player1->isLocalPlayer()) {
+        player1->sortUnitsBySpeed();
+        player2->sortUnitsBySpeed();
+        int i = 0;
+        int j = 0;
+        std::vector<std::string> unitNames;
+        while (i < 4 && j < 4) {
+            if (player1->getUnits()[i]->getSpeed() > player2->getUnits()[j]->getSpeed()) {
                 gameUnits.push_back(player1->getUnits()[i]);
+                unitNames.push_back(player1->getUnits()[i]->getName());
                 i++;
-            } else {
+            } else if (player1->getUnits()[i]->getSpeed() < player2->getUnits()[j]->getSpeed()) {
                 gameUnits.push_back(player2->getUnits()[j]);
+                unitNames.push_back(player2->getUnits()[j]->getName());
                 j++;
+            } else {
+                std::random_device rd;
+                std::mt19937 gen(rd());
+                std::uniform_int_distribution<> dist(0, 1);
+                int randomChoice = dist(gen);
+                if (randomChoice == 0) {
+                    gameUnits.push_back(player1->getUnits()[i]);
+                    unitNames.push_back(player1->getUnits()[i]->getName());
+                    i++;
+                } else {
+                    gameUnits.push_back(player2->getUnits()[j]);
+                    unitNames.push_back(player2->getUnits()[j]->getName());
+                    j++;
+                }
             }
         }
-    }
-    while (i < 4) {
-        gameUnits.push_back(player1->getUnits()[i]);
-        i++;
-    }
-    while (j < 4) {
-        gameUnits.push_back(player2->getUnits()[j]);
-        j++;
+        while (i < 4) {
+            gameUnits.push_back(player1->getUnits()[i]);
+            unitNames.push_back(player1->getUnits()[i]->getName());
+            i++;
+        }
+        while (j < 4) {
+            gameUnits.push_back(player2->getUnits()[j]);
+            unitNames.push_back(player2->getUnits()[j]->getName());
+            j++;
+        }
+
+        CharacterSelectionMessage gameUnitsInitMsg(unitNames);
+        sendMessage(gameUnitsInitMsg);
+    } else { // Need to create new Message subclass for gameUnits including the player number
+        // while (!receivedMsg) {
+        //     receivedMsg = receiveMessage();
+        // }
+        // if (receivedMsg->getType() == MessageType::CHARACTER_SELECTION) {
+        //     CharacterSelectionMessage* gameUnitsInitMsg = static_cast<CharacterSelectionMessage*>(receivedMsg);
+        //     for (unsigned int i = 0; i < 8; i++) {
+                
+        //     }
+            
+        // } else {
+        //     std::cout << "Error: Wrong type of message received, trying again." << std::endl;
+        //     delete receivedMsg;
+        //     initializeMatch();
+        //     return;
+        // }
+        // delete receivedMsg;
     }
 
     timelineHeader = new Text(renderer, "Terminal.ttf", 32, scaleX, scaleY);
@@ -702,6 +730,7 @@ void Game::update() {
                 }
                 remoteCSelectDone = true;
             }
+            delete receivedMsg;
         }
         if (cSelectDone && remoteCSelectDone) {
             gameState = play;
