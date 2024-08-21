@@ -1,7 +1,7 @@
 #ifndef UNIT_ORDER_MESSAGE_H
 #define UNIT_ORDER_MESSAGE_H
 
-#include <map>
+#include <vector>
 #include <string>
 
 #include "Message.hpp"
@@ -9,16 +9,16 @@
 class UnitOrderMessage : public Message {
     public:
         UnitOrderMessage();
-        UnitOrderMessage(std::map<std::string, int> selectedUnits);
+        UnitOrderMessage(std::vector<std::pair<std::string, int>> selectedUnits);
 
         MessageType getType() const override;
-        std::map<std::string, int> getUnits();
-        void setUnits(std::map<std::string, int> selectedUnits);
+        std::vector<std::pair<std::string, int>> getUnits();
+        void setUnits(std::vector<std::pair<std::string, int>> selectedUnits);
         void serialize(char* buffer) const override;
         void deserialize(const char* buffer) override;
 
     private:
-        std::map<std::string, int> units;
+        std::vector<std::pair<std::string, int>> units;
 };
 
 #endif

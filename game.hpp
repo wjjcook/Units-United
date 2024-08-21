@@ -15,6 +15,7 @@
 #include "player.hpp"
 
 #include "messages/character_selection_message.hpp"
+#include "messages/unit_order_message.hpp"
 
 #include "units/blademaster.hpp"
 #include "units/caveman.hpp"
@@ -76,7 +77,6 @@ class Game {
         TCPsocket server;
         TCPsocket client;
         SDLNet_SocketSet socketSet;
-        Message* receivedMsg;
 
         SDL_Window* gameWindow;
         SDL_Renderer* renderer;
