@@ -675,6 +675,8 @@ void Game::handlePlayEvents(SDL_Event e) {
                     StringMessage skipMsg("skip");
                     sendMessage(skipMsg);
                     turnState = endTurn;
+                    std::string currentAnnoucement = "You skipped " + currentUnit->getName() + "'s turn!";
+                    announcerText->setText(currentAnnoucement, colorMap["white"]);
                 }
                 unitButtonMap[currentUnit->getName()][i]->setHovered(false);
                 break;
@@ -694,6 +696,8 @@ void Game::handlePlayEvents(SDL_Event e) {
                         playUnitHpTexts[i]->setText(hpString, colorMap["white"]);
                         turnState = endTurn;
                         playUnitButtons[i]->setHovered(false);
+                        std::string currentAnnoucement = currentUnit->getName() + " attacked " + gameUnits[j]->getName() + " for " + std::to_string(damageDone) + " damage!";
+                        announcerText->setText(currentAnnoucement, colorMap["white"]);
                         break;
                     }
                 }
@@ -786,6 +790,14 @@ void Game::update() {
                     StringMessage* strMsg = static_cast<StringMessage*>(receivedMsg);
                     if (strMsg->getString() == "skip") {
                         turnState = endTurn;
+                        if (playerTurn == PLAYER1) {
+                            std::string currentAnnoucement = "Player 1 skipped " + currentUnit->getName() + "'s turn!";
+                            announcerText->setText(currentAnnoucement, colorMap["white"]);
+                        } else {
+                            std::string currentAnnoucement = "Player 2 skipped " + currentUnit->getName() + "'s turn!";
+                            announcerText->setText(currentAnnoucement, colorMap["white"]);
+                        }
+                        
                     }
                 }
                 delete receivedMsg;
