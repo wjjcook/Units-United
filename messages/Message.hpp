@@ -7,6 +7,7 @@
 enum class MessageType {
     CHARACTER_SELECTION,
     UNIT_ORDER,
+    STRING,
     ATTACK,
     MOVE,
 };
