@@ -672,6 +672,8 @@ void Game::handlePlayEvents(SDL_Event e) {
                         turnState = selectEnemy;
                     }
                 } else if (currentButtonText == "Skip Turn") {
+                    StringMessage skipMsg("skip");
+                    sendMessage(skipMsg);
                     turnState = endTurn;
                 }
                 break;
@@ -738,6 +740,7 @@ void Game::update() {
         }
         
     } else if (gameState == play) {
+
         if (currentUnit == nullptr) {
             currentUnit = gameUnits.front();
         } else if (turnState == endTurn) {
@@ -756,6 +759,19 @@ void Game::update() {
         } else {
             playerTurnText->setText("Player 2's Turn: " + currentUnit->getName(), colorMap["light red"]);
             manaText->setText("Mana: " + std::to_string(player2->getMana()), colorMap["light red"]);
+        }
+
+        if ((playerTurn == PLAYER1 && player2->isLocalPlayer()) || (playerTurn == PLAYER2 && player1->isLocalPlayer())) {
+            Message* receivedMsg = receiveMessage();
+            if (receivedMsg) {
+                if (receivedMsg->getType() == MessageType::STRING) {
+                    StringMessage* strMsg = static_cast<StringMessage*>(receivedMsg);
+                    if (strMsg->getString() == "skip") {
+                        turnState = endTurn;
+                    }
+                }
+                delete receivedMsg;
+            }
         }
     }  
 }
