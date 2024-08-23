@@ -37,7 +37,7 @@ enum Player_Turn {
 };
 
 enum Turn_State {
-    selectAction, selectEnemy, selectAlly, endTurn
+    selectAction, attackEnemy, specialEnemy, healAlly, specialAlly, endTurn
 };
 
 class Game {
@@ -114,7 +114,7 @@ class Game {
         std::vector<Text*> player1SelectText;
         std::vector<Text*> player2SelectText;
         std::deque<Text*> timeline;
-        std::vector<Text*> playUnitTexts;
+        std::vector<Text*> playUnitHpTexts;
         std::string inputText;
 
         // Button objects

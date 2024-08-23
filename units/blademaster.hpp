@@ -7,7 +7,7 @@ class Blademaster: public Unit {
     public:
         Blademaster();
         ~Blademaster() override;
-        void attack() const override;
+        int attack() const override;
 
     private:
 };

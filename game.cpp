@@ -56,8 +56,8 @@ Game::~Game() {
         delete timeline[i];
     }
 
-    for (unsigned int i = 0; i < playUnitTexts.size(); i++) {
-        delete playUnitTexts[i];
+    for (unsigned int i = 0; i < playUnitHpTexts.size(); i++) {
+        delete playUnitHpTexts[i];
     }
 
     // Button objects
@@ -603,7 +603,7 @@ void Game::initializeMatch() {
         int maxHp = player1->getUnits()[i]->getMaxHp();
         std::string hpString = "HP: " + std::to_string(currentHp) + "/" + std::to_string(maxHp);
         newHpText->setText(hpString, colorMap["white"]);
-        playUnitTexts.push_back(newHpText);
+        playUnitHpTexts.push_back(newHpText);
     }
     for (unsigned int i = 0; i < player2->getUnits().size(); i++) {
         Button* newButton = new Button(renderer, "Terminal.ttf", 12, player2->getUnits()[i]->getName(), colorMap["white"], colorMap["dark red"], 120, 40, scaleX, scaleY);
@@ -615,7 +615,7 @@ void Game::initializeMatch() {
         int maxHp = player2->getUnits()[i]->getMaxHp();
         std::string hpString = "HP: " + std::to_string(currentHp) + "/" + std::to_string(maxHp);
         newHpText->setText(hpString, colorMap["white"]);
-        playUnitTexts.push_back(newHpText);
+        playUnitHpTexts.push_back(newHpText);
     }
     
     playerTurnText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
@@ -662,26 +662,44 @@ void Game::handlePlayEvents(SDL_Event e) {
             if (checkMouseEvent(unitButtonMap[currentUnit->getName()][i], e) == 1) {
                 std::string currentButtonText = unitButtonMap[currentUnit->getName()][i]->getText();
                 if (currentButtonText == "Heal") {
-                    turnState = selectAlly;
+                    turnState = healAlly;
                 } else if (currentButtonText == "Attack") {
-                    turnState = selectEnemy;
+                    turnState = attackEnemy;
                 } else if (currentButtonText == currentUnit->getSpecialName()) {
                     if (currentUnit->getSpecialTarget() == ally) {
-                        turnState = selectAlly;
+                        turnState = specialAlly;
                     } else {
-                        turnState = selectEnemy;
+                        turnState = specialEnemy;
                     }
                 } else if (currentButtonText == "Skip Turn") {
                     StringMessage skipMsg("skip");
                     sendMessage(skipMsg);
                     turnState = endTurn;
                 }
+                unitButtonMap[currentUnit->getName()][i]->setHovered(false);
                 break;
             }
         }
-    } else if (turnState == selectEnemy) {
-        turnState = endTurn; // Temporary
-    } else if (turnState == selectAlly) {
+    } else if (turnState == attackEnemy) {
+        unsigned int start = (playerTurn == PLAYER2) ? 0 : 4;
+        unsigned int end = start + 4;
+
+        for (unsigned int i = start; i < end; i++) {
+            if (checkMouseEvent(playUnitButtons[i], e) == 1) {
+                for (unsigned int j = 0; j < 8; j++) {
+                    if (gameUnits[j]->getName() == playUnitButtons[i]->getText() && gameUnits[j]->getPlayerNum() != playerTurn) {
+                        int damageDone = currentUnit->attack();
+                        gameUnits[j]->damageUnit(damageDone);
+                        std::string hpString = "HP: " + std::to_string(gameUnits[j]->getCurrHp()) + "/" + std::to_string(gameUnits[j]->getMaxHp());
+                        playUnitHpTexts[i]->setText(hpString, colorMap["white"]);
+                        turnState = endTurn;
+                        playUnitButtons[i]->setHovered(false);
+                        break;
+                    }
+                }
+            }
+        }
+    } else if (turnState == healAlly) {
         turnState = endTurn; // Temporary
     }
 }
@@ -832,10 +850,10 @@ void Game::render() {
         for (unsigned int i = 0; i < 8; i++) {
             if (i < 4) {
                 playUnitButtons[i]->render((i*150)+25, 50);
-                playUnitTexts[i]->render((i*150)+27, 100);
+                playUnitHpTexts[i]->render((i*150)+27, 100);
             } else {
                 playUnitButtons[i]->render(((i-4)*150)+25, 175);
-                playUnitTexts[i]->render(((i-4)*150)+27, 225);
+                playUnitHpTexts[i]->render(((i-4)*150)+27, 225);
             }
             
         }

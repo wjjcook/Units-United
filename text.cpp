@@ -27,7 +27,12 @@ bool Text::loadFont(const std::string& fontPath, int fontSize) {
     return true;
 }
 
+std::string Text::getContent() {
+    return content;
+}
+
 void Text::setText(const std::string& text, SDL_Color color) {
+    content = text;
     if (mTexture != nullptr) {
         SDL_DestroyTexture(mTexture);
         mTexture = nullptr;

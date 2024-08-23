@@ -11,6 +11,7 @@ class Text {
         ~Text();
 
         bool loadFont(const std::string& fontPath, int fontSize);
+        std::string getContent();
         void setText(const std::string& text, SDL_Color color);
         void render(int x, int y);
 
@@ -22,6 +23,8 @@ class Text {
         int mHeight;
         float scaleX;
         float scaleY;
+
+        std::string content;
 };
 
 #endif

@@ -7,7 +7,7 @@ class Medic: public Unit {
     public:
         Medic();
         ~Medic() override;
-        void attack() const override;
+        int attack() const override;
 
     private:
         int minHeal;

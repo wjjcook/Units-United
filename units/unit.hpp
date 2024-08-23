@@ -20,9 +20,13 @@ class Unit {
         int getCurrHp();
         int getSpeed();
         int getPlayerNum();
+
+        void setCurrHp(int hp);
         void setPlayerNum(int playerNum);
 
-        virtual void attack() const;
+        void damageUnit(int dmg);
+
+        virtual int attack() const;
 
     protected:
         std::string name;
@@ -36,6 +40,7 @@ class Unit {
         int speed;
 
         int playerNum;
+        bool alive;
 
         
 };
