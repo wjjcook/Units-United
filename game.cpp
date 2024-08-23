@@ -361,6 +361,9 @@ Unit* Game::createUnit(const std::string& unitName) {
 void Game::run() {
     while (running) {
         handleEvents();
+        if (!running) {
+            break;
+        }
         update();
         render();
     }
@@ -428,7 +431,7 @@ int Game::checkMouseEvent(Button* button, SDL_Event e) {
 }
 
 void Game::handleTitleEvents(SDL_Event e) {
-    if (checkMouseEvent(titleStartButton, e) == 1) {
+    if (!searchForClient && checkMouseEvent(titleStartButton, e) == 1) {
         receiveIpInput = false;
         announcerText->setText("Finding Match...", colorMap["white"]);
         announcerText->render(400, 200);
@@ -436,7 +439,8 @@ void Game::handleTitleEvents(SDL_Event e) {
         if (!initializeServer(12345)) {
             std::cerr << "Failed to initialize network." << std::endl;
             return;
-        }        
+        }
+        titleStartButton->setHovered(false);  
     }
     if (checkMouseEvent(titleJoinButton, e) == 1) {
         if (searchForClient) {
@@ -450,6 +454,10 @@ void Game::handleTitleEvents(SDL_Event e) {
         receiveIpInput = true;
     }
     if (checkMouseEvent(quitButton, e) == 1) {
+        if (searchForClient) {
+            closeServer();
+            searchForClient = false;
+        }
         running = false;
     }
 }
