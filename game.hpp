@@ -119,7 +119,6 @@ class Game {
         // Button objects
         Button* titleStartButton;
         Button* titleJoinButton;
-        Button* titleCancelButton;
         Button* quitButton;
         Button* cSelectStartButton;
         std::vector<Button*> cSelectUnitButtons;

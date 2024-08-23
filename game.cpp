@@ -22,7 +22,6 @@ Game::Game() {
 
     titleStartButton = nullptr;
     titleJoinButton = nullptr;
-    titleCancelButton = nullptr;
     quitButton = nullptr;
     cSelectStartButton = nullptr;
 
@@ -64,7 +63,6 @@ Game::~Game() {
     // Button objects
     delete titleStartButton;
     delete titleJoinButton;
-    delete titleCancelButton;
     delete quitButton;
     delete cSelectStartButton;
     
@@ -268,9 +266,6 @@ void Game::initializeTitleElements(SDL_Renderer* renderer) {
 
     titleJoinButton = new Button(renderer, "Terminal.ttf", 24, "Join Game", colorMap["white"], colorMap["green"], 150, 60, scaleX, scaleY);
     titleJoinButton->setOutline(true, colorMap["black"]);
-
-    titleCancelButton = new Button(renderer, "Terminal.ttf", 24, "Cancel", colorMap["white"], colorMap["dark red"], 150, 60, scaleX, scaleY);
-    titleCancelButton->setOutline(true, colorMap["black"]);
 
     quitButton = new Button(renderer, "Terminal.ttf", 24, "Quit", colorMap["white"], colorMap["dark red"], 150, 60, scaleX, scaleY);
     quitButton->setOutline(true, colorMap["black"]);
@@ -829,9 +824,12 @@ void Game::render() {
             
         }
         if (currentUnit != nullptr) {
-            for (unsigned int i = 0; i < unitButtonMap[currentUnit->getName()].size() - 1; i++) {
-                unitButtonMap[currentUnit->getName()][i]->render((i*175)+25, 425);
+            if ((playerTurn == PLAYER1 && player1->isLocalPlayer()) || (playerTurn == PLAYER2 && player2->isLocalPlayer())) {
+                for (unsigned int i = 0; i < unitButtonMap[currentUnit->getName()].size() - 1; i++) {
+                    unitButtonMap[currentUnit->getName()][i]->render((i*175)+25, 425);
+                }
             }
+            
         }
         
     }
