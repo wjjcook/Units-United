@@ -17,6 +17,7 @@
 #include "messages/character_selection_message.hpp"
 #include "messages/unit_order_message.hpp"
 #include "messages/string_message.hpp"
+#include "messages/attack_message.hpp"
 
 #include "units/blademaster.hpp"
 #include "units/caveman.hpp"
