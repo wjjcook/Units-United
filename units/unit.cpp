@@ -42,12 +42,20 @@ int Unit::getSpeed() {
     return speed;
 }
 
+int Unit::getId(){
+    return id;
+}
+
 int Unit::getPlayerNum(){
     return playerNum;
 }
 
 void Unit::setCurrHp(int hp) {
     currHp = hp;
+}
+
+void Unit::setId(int id) {
+    this->id = id;
 }
 
 void Unit::setPlayerNum(int pNum) {

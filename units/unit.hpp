@@ -19,9 +19,11 @@ class Unit {
         int getMaxHp();
         int getCurrHp();
         int getSpeed();
+        int getId();
         int getPlayerNum();
 
         void setCurrHp(int hp);
+        void setId(int id);
         void setPlayerNum(int playerNum);
 
         void damageUnit(int dmg);
@@ -39,6 +41,7 @@ class Unit {
         int maxDmg;
         int speed;
 
+        int id;
         int playerNum;
         bool alive;
 

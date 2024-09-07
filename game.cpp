@@ -521,13 +521,16 @@ void Game::initializeMatch() {
     if (player1->isLocalPlayer()) {
         int i = 0;
         int j = 0;
+        int id = 0;
         std::vector<std::pair<std::string, int>> unitOrder;
         while (i < 4 && j < 4) {
             if (player1->getUnits()[i]->getSpeed() > player2->getUnits()[j]->getSpeed()) {
+                player1->getUnits()[i]->setId(id);
                 gameUnits.push_back(player1->getUnits()[i]);
                 unitOrder.push_back({player1->getUnits()[i]->getName(), 1});
                 i++;
             } else if (player1->getUnits()[i]->getSpeed() < player2->getUnits()[j]->getSpeed()) {
+                player2->getUnits()[j]->setId(id);
                 gameUnits.push_back(player2->getUnits()[j]);
                 unitOrder.push_back({player2->getUnits()[j]->getName(), 2});
                 j++;
@@ -537,25 +540,32 @@ void Game::initializeMatch() {
                 std::uniform_int_distribution<> dist(0, 1);
                 int randomChoice = dist(gen);
                 if (randomChoice == 0) {
+                    player1->getUnits()[i]->setId(id);
                     gameUnits.push_back(player1->getUnits()[i]);
                     unitOrder.push_back({player1->getUnits()[i]->getName(), 1});
                     i++;
                 } else {
+                    player2->getUnits()[j]->setId(id);
                     gameUnits.push_back(player2->getUnits()[j]);
                     unitOrder.push_back({player2->getUnits()[j]->getName(), 2});
                     j++;
                 }
             }
+            id++;
         }
         while (i < 4) {
+            player1->getUnits()[i]->setId(id);
             gameUnits.push_back(player1->getUnits()[i]);
             unitOrder.push_back({player1->getUnits()[i]->getName(), 1});
             i++;
+            id++;
         }
         while (j < 4) {
+            player2->getUnits()[j]->setId(id);
             gameUnits.push_back(player2->getUnits()[j]);
             unitOrder.push_back({player2->getUnits()[j]->getName(), 2});
             j++;
+            id++;
         }
 
         UnitOrderMessage unitOrderMsg(unitOrder);
@@ -569,14 +579,18 @@ void Game::initializeMatch() {
             UnitOrderMessage* unitOrderMsg = static_cast<UnitOrderMessage*>(receivedMsg);
             int i = 0;
             int j = 0;
+            int id = 0;
             for (unsigned int k = 0; k < 8; k++) {
                 if (unitOrderMsg->getUnits()[k].second == 1) {
+                    player1->getUnits()[i]->setId(id);
                     gameUnits.push_back(player1->getUnits()[i]);
                     i++;
                 } else {
+                    player2->getUnits()[j]->setId(id);
                     gameUnits.push_back(player2->getUnits()[j]);
                     j++;
                 }
+                id++;
             }
         } else {
             std::cout << "Error: Wrong type of message received, trying again." << std::endl;
@@ -807,6 +821,8 @@ void Game::update() {
                         }
                         
                     }
+                } else if (receivedMsg->getType() == MessageType::ATTACK) {
+
                 }
                 delete receivedMsg;
             }
