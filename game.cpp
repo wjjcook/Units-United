@@ -521,16 +521,13 @@ void Game::initializeMatch() {
     if (player1->isLocalPlayer()) {
         int i = 0;
         int j = 0;
-        int id = 0;
         std::vector<std::pair<std::string, int>> unitOrder;
         while (i < 4 && j < 4) {
             if (player1->getUnits()[i]->getSpeed() > player2->getUnits()[j]->getSpeed()) {
-                player1->getUnits()[i]->setId(id);
                 gameUnits.push_back(player1->getUnits()[i]);
                 unitOrder.push_back({player1->getUnits()[i]->getName(), 1});
                 i++;
             } else if (player1->getUnits()[i]->getSpeed() < player2->getUnits()[j]->getSpeed()) {
-                player2->getUnits()[j]->setId(id);
                 gameUnits.push_back(player2->getUnits()[j]);
                 unitOrder.push_back({player2->getUnits()[j]->getName(), 2});
                 j++;
@@ -540,34 +537,29 @@ void Game::initializeMatch() {
                 std::uniform_int_distribution<> dist(0, 1);
                 int randomChoice = dist(gen);
                 if (randomChoice == 0) {
-                    player1->getUnits()[i]->setId(id);
                     gameUnits.push_back(player1->getUnits()[i]);
                     unitOrder.push_back({player1->getUnits()[i]->getName(), 1});
                     i++;
                 } else {
-                    player2->getUnits()[j]->setId(id);
                     gameUnits.push_back(player2->getUnits()[j]);
                     unitOrder.push_back({player2->getUnits()[j]->getName(), 2});
                     j++;
                 }
             }
-            id++;
         }
         while (i < 4) {
-            player1->getUnits()[i]->setId(id);
             gameUnits.push_back(player1->getUnits()[i]);
             unitOrder.push_back({player1->getUnits()[i]->getName(), 1});
             i++;
-            id++;
         }
         while (j < 4) {
-            player2->getUnits()[j]->setId(id);
             gameUnits.push_back(player2->getUnits()[j]);
             unitOrder.push_back({player2->getUnits()[j]->getName(), 2});
             j++;
-            id++;
         }
-
+        for (unsigned int i = 0; i < 8; i++) {
+            gameUnits[i]->setId(i);
+        }
         UnitOrderMessage unitOrderMsg(unitOrder);
         sendMessage(unitOrderMsg);
     } else {
@@ -579,19 +571,16 @@ void Game::initializeMatch() {
             UnitOrderMessage* unitOrderMsg = static_cast<UnitOrderMessage*>(receivedMsg);
             int i = 0;
             int j = 0;
-            int id = 0;
             for (unsigned int k = 0; k < 8; k++) {
                 if (unitOrderMsg->getUnits()[k].second == 1) {
-                    player1->getUnits()[i]->setId(id);
                     gameUnits.push_back(player1->getUnits()[i]);
                     i++;
                 } else {
-                    player2->getUnits()[j]->setId(id);
                     gameUnits.push_back(player2->getUnits()[j]);
                     j++;
                 }
-                id++;
             }
+            std::cout << "Units received" << std::endl;
         } else {
             std::cout << "Error: Wrong type of message received, trying again." << std::endl;
             delete receivedMsg;
@@ -599,6 +588,13 @@ void Game::initializeMatch() {
             return;
         }
         delete receivedMsg;
+    }
+
+    for (unsigned int i = 0; i < 4; i++) {
+        player1->getUnits()[i]->setId(i);
+    }
+    for (unsigned int i = 0; i < 4; i++) {
+        player2->getUnits()[i]->setId(i+4);
     }
 
     timelineHeader = new Text(renderer, "Terminal.ttf", 32, scaleX, scaleY);
@@ -716,6 +712,10 @@ void Game::handlePlayEvents(SDL_Event e) {
                         gameUnits[j]->damageUnit(damageDone);
                         std::string hpString = "HP: " + std::to_string(gameUnits[j]->getCurrHp()) + "/" + std::to_string(gameUnits[j]->getMaxHp());
                         playUnitHpTexts[i]->setText(hpString, colorMap["white"]);
+
+                        AttackMessage attackMsg(currentUnit->getId(), gameUnits[j]->getId(), damageDone);
+                        sendMessage(attackMsg);
+
                         turnState = endTurn;
                         playUnitButtons[i]->setHovered(false);
                         std::string currentAnnoucement = currentUnit->getName() + " attacked " + gameUnits[j]->getName() + " for " + std::to_string(damageDone) + " damage!";
@@ -806,6 +806,7 @@ void Game::update() {
         }
 
         if ((playerTurn == PLAYER1 && player2->isLocalPlayer()) || (playerTurn == PLAYER2 && player1->isLocalPlayer())) {
+            
             Message* receivedMsg = receiveMessage();
             if (receivedMsg) {
                 if (receivedMsg->getType() == MessageType::STRING) {
@@ -822,7 +823,20 @@ void Game::update() {
                         
                     }
                 } else if (receivedMsg->getType() == MessageType::ATTACK) {
+                    AttackMessage* attackMsg = static_cast<AttackMessage*>(receivedMsg);
+                    for (unsigned int i = 0; i < 8; i++) {
+                        if (attackMsg->getTargetId() == gameUnits[i]->getId()) {
+                            std::cout << gameUnits[i]->getName() << gameUnits[i]->getId() << std::endl;
+                            gameUnits[i]->damageUnit(attackMsg->getDamage());
+                            std::string hpString = "HP: " + std::to_string(gameUnits[i]->getCurrHp()) + "/" + std::to_string(gameUnits[i]->getMaxHp());
+                            playUnitHpTexts[attackMsg->getTargetId()]->setText(hpString, colorMap["white"]);
 
+                            turnState = endTurn;
+                            std::string currentAnnoucement = currentUnit->getName() + " attacked " + gameUnits[i]->getName() + " for " + std::to_string(attackMsg->getDamage()) + " damage!";
+                            announcerText->setText(currentAnnoucement, colorMap["white"]);
+                            break;
+                        }
+                    }
                 }
                 delete receivedMsg;
             }
