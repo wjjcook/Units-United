@@ -704,6 +704,10 @@ void Game::handlePlayEvents(SDL_Event e) {
         unsigned int start = (playerTurn == PLAYER2) ? 0 : 4;
         unsigned int end = start + 4;
 
+        if (checkMouseEvent(unitButtonMap[currentUnit->getName()].back(), e) == 1) {
+            turnState = selectAction;
+        }
+
         for (unsigned int i = start; i < end; i++) {
             if (checkMouseEvent(playUnitButtons[i], e) == 1) {
                 for (unsigned int j = 0; j < 8; j++) {
@@ -909,8 +913,10 @@ void Game::render() {
         }
         if (currentUnit != nullptr) {
             if ((playerTurn == PLAYER1 && player1->isLocalPlayer()) || (playerTurn == PLAYER2 && player2->isLocalPlayer())) {
-                for (unsigned int i = 0; i < unitButtonMap[currentUnit->getName()].size() - 1; i++) {
-                    unitButtonMap[currentUnit->getName()][i]->render((i*175)+25, 425);
+                for (unsigned int i = 0; i < unitButtonMap[currentUnit->getName()].size(); i++) {
+                    if (i < unitButtonMap[currentUnit->getName()].size() - 1 || turnState == attackEnemy || turnState == specialEnemy || turnState == healAlly || turnState == specialAlly) {
+                        unitButtonMap[currentUnit->getName()][i]->render((i*175)+25, 425);
+                    }
                 }
             }
             
