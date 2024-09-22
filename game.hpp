@@ -131,6 +131,7 @@ class Game {
         std::unordered_map<std::string, std::function<Unit*()>> unitCreators;
         
         std::deque<Unit*> gameUnits;
+        std::vector<Unit*> unitsById;
         Unit* currentUnit;
 
 

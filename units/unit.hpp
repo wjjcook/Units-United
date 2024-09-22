@@ -21,6 +21,7 @@ class Unit {
         int getSpeed();
         int getId();
         int getPlayerNum();
+        bool isAlive();
 
         void setCurrHp(int hp);
         void setId(int id);

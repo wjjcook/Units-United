@@ -592,9 +592,11 @@ void Game::initializeMatch() {
 
     for (unsigned int i = 0; i < 4; i++) {
         player1->getUnits()[i]->setId(i);
+        unitsById.push_back(player1->getUnits()[i]);
     }
     for (unsigned int i = 0; i < 4; i++) {
         player2->getUnits()[i]->setId(i+4);
+        unitsById.push_back(player2->getUnits()[i]);
     }
 
     timelineHeader = new Text(renderer, "Terminal.ttf", 32, scaleX, scaleY);
@@ -828,7 +830,7 @@ void Game::update() {
                     }
                 } else if (receivedMsg->getType() == MessageType::ATTACK) {
                     AttackMessage* attackMsg = static_cast<AttackMessage*>(receivedMsg);
-                    for (unsigned int i = 0; i < 8; i++) {
+                    for (unsigned int i = 0; i < gameUnits.size(); i++) {
                         if (attackMsg->getTargetId() == gameUnits[i]->getId()) {
                             std::cout << gameUnits[i]->getName() << gameUnits[i]->getId() << std::endl;
                             gameUnits[i]->damageUnit(attackMsg->getDamage());
@@ -843,6 +845,13 @@ void Game::update() {
                     }
                 }
                 delete receivedMsg;
+            }
+        }
+        for (auto it = gameUnits.begin(); it != gameUnits.end(); ) {
+            if (!(*it)->isAlive()) {
+                it = gameUnits.erase(it);
+            } else {
+                ++it;
             }
         }
     }  
@@ -902,14 +911,15 @@ void Game::render() {
             timeline[i]->render(675, ((i+2)*35)+25);
         }
         for (unsigned int i = 0; i < 8; i++) {
-            if (i < 4) {
-                playUnitButtons[i]->render((i*150)+25, 50);
-                playUnitHpTexts[i]->render((i*150)+27, 100);
-            } else {
-                playUnitButtons[i]->render(((i-4)*150)+25, 175);
-                playUnitHpTexts[i]->render(((i-4)*150)+27, 225);
-            }
-            
+            if (unitsById[i]->isAlive()) {
+                if (i < 4) {
+                    playUnitButtons[i]->render((i*150)+25, 50);
+                    playUnitHpTexts[i]->render((i*150)+27, 100);
+                } else {
+                    playUnitButtons[i]->render(((i-4)*150)+25, 175);
+                    playUnitHpTexts[i]->render(((i-4)*150)+27, 225);
+                }
+            } 
         }
         if (currentUnit != nullptr) {
             if ((playerTurn == PLAYER1 && player1->isLocalPlayer()) || (playerTurn == PLAYER2 && player2->isLocalPlayer())) {

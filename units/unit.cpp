@@ -50,6 +50,10 @@ int Unit::getPlayerNum(){
     return playerNum;
 }
 
+bool Unit::isAlive(){
+    return alive;
+}
+
 void Unit::setCurrHp(int hp) {
     currHp = hp;
 }
