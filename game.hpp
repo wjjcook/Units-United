@@ -13,6 +13,7 @@
 #include "text.hpp"
 #include "button.hpp"
 #include "player.hpp"
+#include "timeline.hpp"
 
 #include "messages/character_selection_message.hpp"
 #include "messages/unit_order_message.hpp"
