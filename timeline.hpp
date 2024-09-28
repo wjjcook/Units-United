@@ -8,9 +8,13 @@
 class Timeline {
     public:
         Timeline();
+        ~Timeline();
         std::deque<Unit*> getUnits();
+        Unit* getUnit(int index);
+        unsigned int size();
 
         void append(Unit* unit);
+        void updateAliveUnits();
 
     private:
         std::deque<Unit*> gameUnits;

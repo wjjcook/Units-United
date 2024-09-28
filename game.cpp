@@ -1,5 +1,6 @@
 #include "game.hpp"
 #include <iostream>
+#include <typeinfo>
 
 Game::Game() {
     gameWindow = nullptr;
@@ -52,8 +53,8 @@ Game::~Game() {
         delete player2SelectText[i];
     }
 
-    for (unsigned int i = 0; i < timeline.size(); i++) {
-        delete timeline[i];
+    for (unsigned int i = 0; i < timelineText.size(); i++) {
+        delete timelineText[i];
     }
 
     for (unsigned int i = 0; i < playUnitHpTexts.size(); i++) {
@@ -77,6 +78,8 @@ Game::~Game() {
     // Player objects
     delete player1;
     delete player2;
+
+    delete timeline;
 
     // SDL clean up
     SDL_StopTextInput();
@@ -515,6 +518,8 @@ void Game::addUnitToRoster(std::string unit) {
 
 void Game::initializeMatch() {
 
+    timeline = new Timeline();
+
     player1->sortUnitsBySpeed();
     player2->sortUnitsBySpeed();
 
@@ -524,11 +529,11 @@ void Game::initializeMatch() {
         std::vector<std::pair<std::string, int>> unitOrder;
         while (i < 4 && j < 4) {
             if (player1->getUnits()[i]->getSpeed() > player2->getUnits()[j]->getSpeed()) {
-                gameUnits.push_back(player1->getUnits()[i]);
+                timeline->append(player1->getUnits()[i]);
                 unitOrder.push_back({player1->getUnits()[i]->getName(), 1});
                 i++;
             } else if (player1->getUnits()[i]->getSpeed() < player2->getUnits()[j]->getSpeed()) {
-                gameUnits.push_back(player2->getUnits()[j]);
+                timeline->append(player2->getUnits()[j]);
                 unitOrder.push_back({player2->getUnits()[j]->getName(), 2});
                 j++;
             } else {
@@ -537,28 +542,28 @@ void Game::initializeMatch() {
                 std::uniform_int_distribution<> dist(0, 1);
                 int randomChoice = dist(gen);
                 if (randomChoice == 0) {
-                    gameUnits.push_back(player1->getUnits()[i]);
+                    timeline->append(player1->getUnits()[i]);
                     unitOrder.push_back({player1->getUnits()[i]->getName(), 1});
                     i++;
                 } else {
-                    gameUnits.push_back(player2->getUnits()[j]);
+                    timeline->append(player2->getUnits()[j]);
                     unitOrder.push_back({player2->getUnits()[j]->getName(), 2});
                     j++;
                 }
             }
         }
         while (i < 4) {
-            gameUnits.push_back(player1->getUnits()[i]);
+            timeline->append(player1->getUnits()[i]);
             unitOrder.push_back({player1->getUnits()[i]->getName(), 1});
             i++;
         }
         while (j < 4) {
-            gameUnits.push_back(player2->getUnits()[j]);
+            timeline->append(player2->getUnits()[j]);
             unitOrder.push_back({player2->getUnits()[j]->getName(), 2});
             j++;
         }
         for (unsigned int i = 0; i < 8; i++) {
-            gameUnits[i]->setId(i);
+            timeline->getUnit(i)->setId(i);
         }
         UnitOrderMessage unitOrderMsg(unitOrder);
         sendMessage(unitOrderMsg);
@@ -573,10 +578,10 @@ void Game::initializeMatch() {
             int j = 0;
             for (unsigned int k = 0; k < 8; k++) {
                 if (unitOrderMsg->getUnits()[k].second == 1) {
-                    gameUnits.push_back(player1->getUnits()[i]);
+                    timeline->append(player1->getUnits()[i]);
                     i++;
                 } else {
-                    gameUnits.push_back(player2->getUnits()[j]);
+                    timeline->append(player2->getUnits()[j]);
                     j++;
                 }
             }
@@ -584,6 +589,7 @@ void Game::initializeMatch() {
         } else {
             std::cout << "Error: Wrong type of message received, trying again." << std::endl;
             delete receivedMsg;
+            delete timeline;
             initializeMatch();
             return;
         }
@@ -601,17 +607,8 @@ void Game::initializeMatch() {
 
     timelineHeader = new Text(renderer, "Terminal.ttf", 32, scaleX, scaleY);
     timelineHeader->setText("Timeline", colorMap["white"]);
-    
-    for (unsigned int i = 0; i < gameUnits.size(); i++) {
-        Text* unitText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
-        if (gameUnits[i]->getPlayerNum() == 1) {
-            unitText->setText("P1: " + gameUnits[i]->getName(), colorMap["light blue"]);
-        } else {
-            unitText->setText("P2: " + gameUnits[i]->getName(), colorMap["light red"]);
-        }
-        
-        timeline.push_back(unitText);
-    }
+
+    updateTimelineText();
 
     for (unsigned int i = 0; i < player1->getUnits().size(); i++) {
         Button* newButton = new Button(renderer, "Terminal.ttf", 12, player1->getUnits()[i]->getName(), colorMap["white"], colorMap["dark blue"], 120, 40, scaleX, scaleY);
@@ -644,6 +641,24 @@ void Game::initializeMatch() {
 
     populateUnitButtonMap();
     turnState = selectAction;
+
+    for (unsigned int i = 0; i < timeline->size(); i++) {
+        std::cout << timeline->getUnit(i)->getName() << std::endl;
+    }
+}
+
+void Game::updateTimelineText() {
+    timelineText.clear();
+    for (unsigned int i = 0; i < timeline->size(); i++) {
+        Text* unitText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
+        if (timeline->getUnit(i)->getPlayerNum() == 1) {
+            unitText->setText("P1: " + timeline->getUnit(i)->getName(), colorMap["light blue"]);
+        } else {
+            unitText->setText("P2: " + timeline->getUnit(i)->getName(), colorMap["light red"]);
+        }
+        
+        timelineText.push_back(unitText);
+    }
 }
 
 void Game::populateUnitButtonMap() {
@@ -656,23 +671,23 @@ void Game::populateUnitButtonMap() {
     Button* cancelButton = new Button(renderer, "Terminal.ttf", 16, "Cancel", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
     cancelButton->setOutline(true, colorMap["black"]);
 
-    for (unsigned int i = 0; i < gameUnits.size(); i++) {
-        if (unitButtonMap[gameUnits[i]->getName()].size() > 0) {
+    for (unsigned int i = 0; i < timeline->size(); i++) {
+        if (unitButtonMap[timeline->getUnit(i)->getName()].size() > 0) {
             continue;
         }
-        if (gameUnits[i]->getName() == "The Medic") {
+        if (timeline->getUnit(i)->getName() == "The Medic") {
             Button* healButton = new Button(renderer, "Terminal.ttf", 16, "Heal", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
             healButton->setOutline(true, colorMap["black"]);
             unitButtonMap["The Medic"].push_back(healButton);
         
         } 
-        Button* specialButton = new Button(renderer, "Terminal.ttf", 16, gameUnits[i]->getSpecialName(), colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
+        Button* specialButton = new Button(renderer, "Terminal.ttf", 16, timeline->getUnit(i)->getSpecialName(), colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
         specialButton->setOutline(true, colorMap["black"]);
 
-        unitButtonMap[gameUnits[i]->getName()].push_back(attackButton);
-        unitButtonMap[gameUnits[i]->getName()].push_back(specialButton);
-        unitButtonMap[gameUnits[i]->getName()].push_back(skipButton);
-        unitButtonMap[gameUnits[i]->getName()].push_back(cancelButton);
+        unitButtonMap[timeline->getUnit(i)->getName()].push_back(attackButton);
+        unitButtonMap[timeline->getUnit(i)->getName()].push_back(specialButton);
+        unitButtonMap[timeline->getUnit(i)->getName()].push_back(skipButton);
+        unitButtonMap[timeline->getUnit(i)->getName()].push_back(cancelButton);
     }  
 }
 
@@ -713,18 +728,18 @@ void Game::handlePlayEvents(SDL_Event e) {
         for (unsigned int i = start; i < end; i++) {
             if (checkMouseEvent(playUnitButtons[i], e) == 1) {
                 for (unsigned int j = 0; j < 8; j++) {
-                    if (gameUnits[j]->getName() == playUnitButtons[i]->getText() && gameUnits[j]->getPlayerNum() != playerTurn) {
+                    if (timeline->getUnit(j)->getName() == playUnitButtons[i]->getText() && timeline->getUnit(j)->getPlayerNum() != playerTurn) {
                         int damageDone = currentUnit->attack();
-                        gameUnits[j]->damageUnit(damageDone);
-                        std::string hpString = "HP: " + std::to_string(gameUnits[j]->getCurrHp()) + "/" + std::to_string(gameUnits[j]->getMaxHp());
+                        timeline->getUnit(j)->damageUnit(damageDone);
+                        std::string hpString = "HP: " + std::to_string(timeline->getUnit(j)->getCurrHp()) + "/" + std::to_string(timeline->getUnit(j)->getMaxHp());
                         playUnitHpTexts[i]->setText(hpString, colorMap["white"]);
 
-                        AttackMessage attackMsg(currentUnit->getId(), gameUnits[j]->getId(), damageDone);
+                        AttackMessage attackMsg(currentUnit->getId(), timeline->getUnit(j)->getId(), damageDone);
                         sendMessage(attackMsg);
 
                         turnState = endTurn;
                         playUnitButtons[i]->setHovered(false);
-                        std::string currentAnnoucement = currentUnit->getName() + " attacked " + gameUnits[j]->getName() + " for " + std::to_string(damageDone) + " damage!";
+                        std::string currentAnnoucement = currentUnit->getName() + " attacked " + timeline->getUnit(j)->getName() + " for " + std::to_string(damageDone) + " damage!";
                         announcerText->setText(currentAnnoucement, colorMap["white"]);
                         break;
                     }
@@ -792,7 +807,7 @@ void Game::update() {
     } else if (gameState == play) {
 
         if (currentUnit == nullptr) {
-            currentUnit = gameUnits.front();
+            currentUnit = timeline->getUnit(0);
         } else if (turnState == endTurn) {
             currentUnit = findNextUnit(currentUnit);
             turnState = selectAction;
@@ -810,9 +825,9 @@ void Game::update() {
             playerTurnText->setText("Player 2's Turn: " + currentUnit->getName(), colorMap["light red"]);
             manaText->setText("Mana: " + std::to_string(player2->getMana()), colorMap["light red"]);
         }
-
+        
         if ((playerTurn == PLAYER1 && player2->isLocalPlayer()) || (playerTurn == PLAYER2 && player1->isLocalPlayer())) {
-            
+
             Message* receivedMsg = receiveMessage();
             if (receivedMsg) {
                 if (receivedMsg->getType() == MessageType::STRING) {
@@ -830,15 +845,15 @@ void Game::update() {
                     }
                 } else if (receivedMsg->getType() == MessageType::ATTACK) {
                     AttackMessage* attackMsg = static_cast<AttackMessage*>(receivedMsg);
-                    for (unsigned int i = 0; i < gameUnits.size(); i++) {
-                        if (attackMsg->getTargetId() == gameUnits[i]->getId()) {
-                            std::cout << gameUnits[i]->getName() << gameUnits[i]->getId() << std::endl;
-                            gameUnits[i]->damageUnit(attackMsg->getDamage());
-                            std::string hpString = "HP: " + std::to_string(gameUnits[i]->getCurrHp()) + "/" + std::to_string(gameUnits[i]->getMaxHp());
+                    for (unsigned int i = 0; i < timeline->size(); i++) {
+                        if (attackMsg->getTargetId() == timeline->getUnit(i)->getId()) {
+                            std::cout << timeline->getUnit(i)->getName() << timeline->getUnit(i)->getId() << std::endl;
+                            timeline->getUnit(i)->damageUnit(attackMsg->getDamage());
+                            std::string hpString = "HP: " + std::to_string(timeline->getUnit(i)->getCurrHp()) + "/" + std::to_string(timeline->getUnit(i)->getMaxHp());
                             playUnitHpTexts[attackMsg->getTargetId()]->setText(hpString, colorMap["white"]);
 
                             turnState = endTurn;
-                            std::string currentAnnoucement = currentUnit->getName() + " attacked " + gameUnits[i]->getName() + " for " + std::to_string(attackMsg->getDamage()) + " damage!";
+                            std::string currentAnnoucement = currentUnit->getName() + " attacked " + timeline->getUnit(i)->getName() + " for " + std::to_string(attackMsg->getDamage()) + " damage!";
                             announcerText->setText(currentAnnoucement, colorMap["white"]);
                             break;
                         }
@@ -847,28 +862,23 @@ void Game::update() {
                 delete receivedMsg;
             }
         }
-        for (auto it = gameUnits.begin(); it != gameUnits.end(); ) {
-            if (!(*it)->isAlive()) {
-                it = gameUnits.erase(it);
-            } else {
-                ++it;
-            }
-        }
+        timeline->updateAliveUnits();
+        // updateTimelineText();
     }  
 }
 
 Unit* Game::findNextUnit(Unit* currentUnit) {
-    auto it = std::find(gameUnits.begin(), gameUnits.end(), currentUnit);
+    auto it = std::find(timeline->getUnits().begin(), timeline->getUnits().end(), currentUnit);
 
-    if (it != gameUnits.end()) {
+    if (it != timeline->getUnits().end()) {
         ++it;
-        if (it != gameUnits.end()) {
+        if (it != timeline->getUnits().end()) {
             return *it;
         } else {
-            return gameUnits.front();
+            return timeline->getUnits().front();
         }
     }
-    return gameUnits.front();
+    return timeline->getUnits().front();
 }
 
 void Game::render() {
@@ -907,8 +917,8 @@ void Game::render() {
         announcerText->render(25, 380);
         manaText->render(500, 340);
         timelineHeader->render(725, 50);
-        for (unsigned int i = 0; i < timeline.size(); i++) {
-            timeline[i]->render(675, ((i+2)*35)+25);
+        for (unsigned int i = 0; i < timelineText.size(); i++) {
+            timelineText[i]->render(675, ((i+2)*35)+25);
         }
         for (unsigned int i = 0; i < 8; i++) {
             if (unitsById[i]->isAlive()) {

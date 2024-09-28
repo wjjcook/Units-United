@@ -60,6 +60,7 @@ class Game {
         void initializeColors();
         void initializeTitleElements(SDL_Renderer* renderer);
         void initializeCSelectElements(SDL_Renderer* renderer);
+        void updateTimelineText();
         void populateUnitMap();
         Unit* createUnit(const std::string& unitName);
 
@@ -115,7 +116,7 @@ class Game {
         Text* tempText;
         std::vector<Text*> player1SelectText;
         std::vector<Text*> player2SelectText;
-        std::deque<Text*> timeline;
+        std::deque<Text*> timelineText;
         std::vector<Text*> playUnitHpTexts;
         std::string inputText;
 
@@ -130,6 +131,8 @@ class Game {
         
         // Units
         std::unordered_map<std::string, std::function<Unit*()>> unitCreators;
+
+        Timeline* timeline;
         
         std::deque<Unit*> gameUnits;
         std::vector<Unit*> unitsById;
