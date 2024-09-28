@@ -602,16 +602,7 @@ void Game::initializeMatch() {
     timelineHeader = new Text(renderer, "Terminal.ttf", 32, scaleX, scaleY);
     timelineHeader->setText("Timeline", colorMap["white"]);
     
-    for (unsigned int i = 0; i < gameUnits.size(); i++) {
-        Text* unitText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
-        if (gameUnits[i]->getPlayerNum() == 1) {
-            unitText->setText("P1: " + gameUnits[i]->getName(), colorMap["light blue"]);
-        } else {
-            unitText->setText("P2: " + gameUnits[i]->getName(), colorMap["light red"]);
-        }
-        
-        timeline.push_back(unitText);
-    }
+    updateTimelineText();
 
     for (unsigned int i = 0; i < player1->getUnits().size(); i++) {
         Button* newButton = new Button(renderer, "Terminal.ttf", 12, player1->getUnits()[i]->getName(), colorMap["white"], colorMap["dark blue"], 120, 40, scaleX, scaleY);
@@ -644,6 +635,23 @@ void Game::initializeMatch() {
 
     populateUnitButtonMap();
     turnState = selectAction;
+}
+
+void Game::updateTimelineText() {
+    for (Text* text : timeline) {
+        delete text;
+    }
+    timeline.clear();
+    for (unsigned int i = 0; i < gameUnits.size(); i++) {
+        Text* unitText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
+        if (gameUnits[i]->getPlayerNum() == 1) {
+            unitText->setText("P1: " + gameUnits[i]->getName(), colorMap["light blue"]);
+        } else {
+            unitText->setText("P2: " + gameUnits[i]->getName(), colorMap["light red"]);
+        }
+        
+        timeline.push_back(unitText);
+    }
 }
 
 void Game::populateUnitButtonMap() {
@@ -847,12 +855,17 @@ void Game::update() {
                 delete receivedMsg;
             }
         }
+        bool timelineChanged = false;
         for (auto it = gameUnits.begin(); it != gameUnits.end(); ) {
             if (!(*it)->isAlive()) {
                 it = gameUnits.erase(it);
+                timelineChanged = true;
             } else {
                 ++it;
             }
+        }
+        if (timelineChanged) {
+            updateTimelineText();
         }
     }  
 }

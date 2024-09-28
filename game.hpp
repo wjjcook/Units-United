@@ -59,6 +59,7 @@ class Game {
         void initializeColors();
         void initializeTitleElements(SDL_Renderer* renderer);
         void initializeCSelectElements(SDL_Renderer* renderer);
+        void updateTimelineText();
         void populateUnitMap();
         Unit* createUnit(const std::string& unitName);
 
