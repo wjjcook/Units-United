@@ -32,7 +32,7 @@ enum Game_State {
     title, cSelect, play, pause, end
 };
 
-enum Player_Turn {
+enum Player_Num {
     PLAYER1 = 1,
     PLAYER2 = 2
 };
@@ -71,8 +71,11 @@ class Game {
         void initializeMatch();
         void populateUnitButtonMap();
         void handlePlayEvents(SDL_Event e);
+        void handleEndEvents(SDL_Event e);
+        void resetGame();
         
         void update();
+        void updateTimeline();
         Unit* findNextUnit(Unit* currentUnit);
         void render();
 
@@ -103,7 +106,8 @@ class Game {
         // Players
         Player* player1;
         Player* player2;
-        Player_Turn playerTurn;
+        Player_Num playerTurn;
+        Player_Num winner;
 
         // Text objects
         Text* titleText;
@@ -127,6 +131,7 @@ class Game {
         std::vector<Button*> cSelectUnitButtons;
         std::vector<Button*> playUnitButtons;
         std::unordered_map<std::string, std::vector<Button*>> unitButtonMap;
+        Button* rematchButton;
         
         // Units
         std::unordered_map<std::string, std::function<Unit*()>> unitCreators;

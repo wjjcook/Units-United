@@ -5,6 +5,7 @@
 Player::Player() {
     localPlayer = false;
     mana = 5;
+    lost = false;
 }
 
 Player::~Player() {
@@ -45,4 +46,14 @@ bool Player::hasUnit(const std::string& unitName) const {
 
 void Player::sortUnitsBySpeed() {
     std::sort(units.begin(), units.end(), [](Unit* lhs, Unit* rhs) { return lhs->getSpeed() > rhs->getSpeed(); });
+}
+
+bool Player::areAllUnitsAlive() {
+    for (unsigned int i = 0; i < units.size(); i++) {
+        if (units[i]->isAlive()) {
+            return true;
+        }
+    }
+    lost = true;
+    return false;
 }

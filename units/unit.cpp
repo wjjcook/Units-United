@@ -51,6 +51,9 @@ int Unit::getPlayerNum(){
 }
 
 bool Unit::isAlive(){
+    if (currHp <= 0) {
+        alive = false;
+    }
     return alive;
 }
 

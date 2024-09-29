@@ -16,11 +16,13 @@ class Player {
         void addUnit(Unit* newUnit, int playerNum);
         bool hasUnit(const std::string& unitName) const;
         void sortUnitsBySpeed();
+        bool areAllUnitsAlive();
 
     private:
         bool localPlayer;
         std::vector<Unit*> units;
         int mana;
+        bool lost;
                 
 };
 

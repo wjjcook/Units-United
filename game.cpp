@@ -410,6 +410,8 @@ void Game::handleEvents() {
                 handleCSelectEvents(e);
             } else if (gameState == play) {
                 handlePlayEvents(e);
+            } else if (gameState == end) {
+                handleEndEvents(e);
             }
         }
     }
@@ -633,6 +635,9 @@ void Game::initializeMatch() {
     announcerText->setText(" ", colorMap["white"]);
     manaText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
 
+    rematchButton = new Button(renderer, "Terminal.ttf", 24, "Rematch", colorMap["white"], colorMap["green"], 150, 60, scaleX, scaleY);
+    rematchButton->setOutline(true, colorMap["black"]);
+
     populateUnitButtonMap();
     turnState = selectAction;
 }
@@ -724,6 +729,7 @@ void Game::handlePlayEvents(SDL_Event e) {
                     if (gameUnits[j]->getName() == playUnitButtons[i]->getText() && gameUnits[j]->getPlayerNum() != playerTurn) {
                         int damageDone = currentUnit->attack();
                         gameUnits[j]->damageUnit(damageDone);
+                        // gameUnits[j]->damageUnit(200);
                         std::string hpString = "HP: " + std::to_string(gameUnits[j]->getCurrHp()) + "/" + std::to_string(gameUnits[j]->getMaxHp());
                         playUnitHpTexts[i]->setText(hpString, colorMap["white"]);
 
@@ -742,6 +748,24 @@ void Game::handlePlayEvents(SDL_Event e) {
     } else if (turnState == healAlly) {
         turnState = endTurn; // Temporary
     }
+    updateTimeline();
+}
+
+void Game::handleEndEvents(SDL_Event e) {
+    if (checkMouseEvent(rematchButton, e) == 1) {
+        resetGame();
+    }
+    if (checkMouseEvent(quitButton, e) == 1) {
+        running = false;
+    }
+}
+
+void Game::resetGame() {
+    // gameState = cSelect;
+    // cSelectDone = false;
+    // remoteCSelectDone = false;
+    return;
+    
 }
 
 void Game::update() {
@@ -799,6 +823,19 @@ void Game::update() {
         
     } else if (gameState == play) {
 
+        if (!player1->areAllUnitsAlive()) {
+            winner = PLAYER2;
+            announcerText->setText("Player 2 Wins!", colorMap["white"]);
+            gameState = end;
+            return;
+        }
+        if (!player2->areAllUnitsAlive()) {
+            winner = PLAYER1;
+            announcerText->setText("Player 1 Wins!", colorMap["white"]);
+            gameState = end;
+            return;
+        }
+
         if (currentUnit == nullptr) {
             currentUnit = gameUnits.front();
         } else if (turnState == endTurn) {
@@ -840,8 +877,8 @@ void Game::update() {
                     AttackMessage* attackMsg = static_cast<AttackMessage*>(receivedMsg);
                     for (unsigned int i = 0; i < gameUnits.size(); i++) {
                         if (attackMsg->getTargetId() == gameUnits[i]->getId()) {
-                            std::cout << gameUnits[i]->getName() << gameUnits[i]->getId() << std::endl;
                             gameUnits[i]->damageUnit(attackMsg->getDamage());
+                            // gameUnits[i]->damageUnit(200);
                             std::string hpString = "HP: " + std::to_string(gameUnits[i]->getCurrHp()) + "/" + std::to_string(gameUnits[i]->getMaxHp());
                             playUnitHpTexts[attackMsg->getTargetId()]->setText(hpString, colorMap["white"]);
 
@@ -855,22 +892,31 @@ void Game::update() {
                 delete receivedMsg;
             }
         }
-        bool timelineChanged = false;
-        for (auto it = gameUnits.begin(); it != gameUnits.end(); ) {
-            if (!(*it)->isAlive()) {
-                it = gameUnits.erase(it);
-                timelineChanged = true;
-            } else {
-                ++it;
-            }
+        updateTimeline();
+    }
+}
+
+void Game::updateTimeline() {
+    bool timelineChanged = false;
+    for (auto it = gameUnits.begin(); it != gameUnits.end(); ) {
+        if (!(*it)->isAlive()) {
+            it = gameUnits.erase(it);
+            timelineChanged = true;
+        } else {
+            ++it;
         }
-        if (timelineChanged) {
-            updateTimelineText();
-        }
-    }  
+    }
+    if (timelineChanged) {
+        updateTimelineText();
+    }
 }
 
 Unit* Game::findNextUnit(Unit* currentUnit) {
+
+    if (gameUnits.size() == 0) {
+        return nullptr;
+    }
+
     auto it = std::find(gameUnits.begin(), gameUnits.end(), currentUnit);
 
     if (it != gameUnits.end()) {
@@ -945,6 +991,25 @@ void Game::render() {
             
         }
         
+    } else if (gameState == end) {
+        announcerText->render(275, 380);
+        timelineHeader->render(725, 50);
+        for (unsigned int i = 0; i < timeline.size(); i++) {
+            timeline[i]->render(675, ((i+2)*35)+25);
+        }
+        for (unsigned int i = 0; i < 8; i++) {
+            if (unitsById[i]->isAlive()) {
+                if (i < 4) {
+                    playUnitButtons[i]->render((i*150)+25, 50);
+                    playUnitHpTexts[i]->render((i*150)+27, 100);
+                } else {
+                    playUnitButtons[i]->render(((i-4)*150)+25, 175);
+                    playUnitHpTexts[i]->render(((i-4)*150)+27, 225);
+                }
+            } 
+        }
+        rematchButton->render(200, 425);
+        quitButton->render(375, 425);
     }
 
     SDL_RenderPresent(renderer);
