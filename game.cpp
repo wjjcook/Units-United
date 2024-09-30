@@ -562,6 +562,7 @@ void Game::initializeMatch() {
         for (unsigned int i = 0; i < 8; i++) {
             gameUnits[i]->setId(i);
         }
+        SDL_Delay(1000);
         UnitOrderMessage unitOrderMsg(unitOrder);
         sendMessage(unitOrderMsg);
     } else {
@@ -690,6 +691,9 @@ void Game::populateUnitButtonMap() {
 }
 
 void Game::handlePlayEvents(SDL_Event e) {
+    if (!currentUnit) {
+        return;
+    }
     if (turnState == selectAction) {
         for (unsigned int i = 0; i < unitButtonMap[currentUnit->getName()].size(); i++) {
             if (checkMouseEvent(unitButtonMap[currentUnit->getName()][i], e) == 1) {
@@ -988,7 +992,6 @@ void Game::render() {
                     }
                 }
             }
-            
         }
         
     } else if (gameState == end) {
