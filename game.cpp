@@ -211,28 +211,52 @@ void Game::sendMessage(const Message& msg) {
     SDLNet_TCP_Send(client, buffer, sizeof(buffer));
 }
 
-Message* Game::receiveMessage() {
-    int numReady = SDLNet_CheckSockets(socketSet, 0);  // Check with a 0 timeout (non-blocking)
+Message* Game::receiveMessage() {  
+    // Check for data availability
+    int numReady = SDLNet_CheckSockets(socketSet, 0);  // Non-blocking check
     if (numReady == -1) {
-        // Error handling
         printf("SDLNet_CheckSockets error: %s\n", SDLNet_GetError());
         return nullptr;
     }
-
+    
     if (numReady > 0 && SDLNet_SocketReady(client)) {
-        char buffer[512];  // Adjust buffer size as needed
-        int received = SDLNet_TCP_Recv(client, buffer, sizeof(buffer));
-        if (received > 0) {
-            MessageType type;
-            memcpy(&type, buffer, sizeof(type));
-            Message* msg = Message::createMessage(type);
-            if (msg) {
-                msg->deserialize(buffer);
-                return msg;
-            }
+        char tempBuffer[512];
+        int received = SDLNet_TCP_Recv(client, tempBuffer, sizeof(tempBuffer));
+        if (received <= 0) {
+            return nullptr;
         }
+
+        // Append received data to the persistent buffer
+        messageBuffer.append(tempBuffer, received);
     }
-    return nullptr;    
+ 
+    // Check if we have enough data for the message size
+    if (messageBuffer.size() < sizeof(uint32_t)) {
+        return nullptr;  // Wait for more data
+    }
+
+    // Read the message size
+    size_t messageSize;
+    memcpy(&messageSize, messageBuffer.data(), sizeof(messageSize));
+    
+    // Check if we have the entire message in the buffer
+    if (messageBuffer.size() < sizeof(messageSize) + messageSize) {
+        return nullptr;  // Wait for more data
+    }
+
+    // Extract the complete message
+    std::string messageData = messageBuffer.substr(sizeof(messageSize), messageSize);
+    messageBuffer.erase(0, sizeof(messageSize) + messageSize);  // Remove from buffer
+
+    // Now handle the message
+    MessageType type;
+    memcpy(&type, messageData.data(), sizeof(type));
+    Message* msg = Message::createMessage(type);
+    if (msg) {
+        msg->deserialize(messageData.data());  // Deserialize from buffer
+        return msg;
+    }
+    return nullptr; 
 }
 
 void Game::initializeColors() {

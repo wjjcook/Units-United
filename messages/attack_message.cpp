@@ -28,8 +28,9 @@ int AttackMessage::getDamage() {
 }
 
 void AttackMessage::serialize(char* buffer) const {
-    size_t offset = 0;
-    memcpy(buffer, &type, sizeof(type));
+    size_t offset = sizeof(size_t);
+
+    memcpy(buffer + offset, &type, sizeof(type));
     offset += sizeof(type);
 
     memcpy(buffer + offset, &attackerId, sizeof(attackerId));
@@ -39,6 +40,9 @@ void AttackMessage::serialize(char* buffer) const {
     offset += sizeof(targetId);
 
     memcpy(buffer + offset, &damage, sizeof(damage));
+
+    size_t messageSize = offset - sizeof(size_t);
+    memcpy(buffer, &messageSize, sizeof(messageSize));
 }
 
 void AttackMessage::deserialize(const char* buffer) {

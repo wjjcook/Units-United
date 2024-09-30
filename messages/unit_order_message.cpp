@@ -21,8 +21,8 @@ void UnitOrderMessage::setUnits(std::vector<std::pair<std::string, int>> selecte
 }
 
 void UnitOrderMessage::serialize(char* buffer) const {
-    size_t offset = 0;
-    memcpy(buffer, &type, sizeof(type));
+    size_t offset = sizeof(size_t);
+    memcpy(buffer + offset, &type, sizeof(type));
     offset += sizeof(type);
 
     // Serialize the size of the vector
@@ -43,6 +43,9 @@ void UnitOrderMessage::serialize(char* buffer) const {
         memcpy(buffer + offset, &pair.second, sizeof(pair.second));
         offset += sizeof(pair.second);
     }
+    
+    size_t messageSize = offset - sizeof(size_t);
+    memcpy(buffer, &messageSize, sizeof(messageSize));
 }
 
 void UnitOrderMessage::deserialize(const char* buffer) {

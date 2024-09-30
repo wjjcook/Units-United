@@ -21,8 +21,9 @@ void StringMessage::setString(std::string s) {
 }
 
 void StringMessage::serialize(char* buffer) const {
-    size_t offset = 0;
-    memcpy(buffer, &type, sizeof(type));
+    size_t offset = sizeof(size_t);
+
+    memcpy(buffer + offset, &type, sizeof(type));
     offset += sizeof(type);
 
     size_t stringLength = str.size();
@@ -30,6 +31,9 @@ void StringMessage::serialize(char* buffer) const {
     offset += sizeof(stringLength);
 
     memcpy(buffer + offset, str.c_str(), stringLength);
+
+    size_t messageSize = offset - sizeof(size_t);
+    memcpy(buffer, &messageSize, sizeof(messageSize));
 }
 
 void StringMessage::deserialize(const char* buffer) {

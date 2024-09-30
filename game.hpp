@@ -83,6 +83,7 @@ class Game {
         TCPsocket server;
         TCPsocket client;
         SDLNet_SocketSet socketSet;
+        std::string messageBuffer;
 
         SDL_Window* gameWindow;
         SDL_Renderer* renderer;

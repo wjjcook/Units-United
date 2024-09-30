@@ -21,8 +21,9 @@ void CharacterSelectionMessage::setUnits(std::vector<std::string> selectedUnits)
 }
 
 void CharacterSelectionMessage::serialize(char* buffer) const {
-    size_t offset = 0;
-    memcpy(buffer, &type, sizeof(type));
+    size_t offset = sizeof(size_t);
+
+    memcpy(buffer + offset, &type, sizeof(type));
     offset += sizeof(type);
 
     // Serialize the number of units
@@ -38,6 +39,9 @@ void CharacterSelectionMessage::serialize(char* buffer) const {
         memcpy(buffer + offset, unit.c_str(), length);
         offset += length;
     }
+
+    size_t messageSize = offset - sizeof(size_t);
+    memcpy(buffer, &messageSize, sizeof(messageSize));
 }
 
 void CharacterSelectionMessage::deserialize(const char* buffer) {
