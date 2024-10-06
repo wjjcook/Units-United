@@ -11,9 +11,13 @@ Medic::Medic() : Unit("The Medic", "Health Pack", 110, 1, 4, 15) {
 
 Medic::~Medic() {}
 
-int Medic::attack() const{
+int Medic::attack() {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distr(minDmg, maxDmg);
     return distr(gen);
 } 
+
+void Medic::onAttackPassives(int dmg) {
+    return;
+}

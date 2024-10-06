@@ -7,7 +7,8 @@ class Fighter: public Unit {
     public:
         Fighter();
         ~Fighter() override;
-        int attack() const override;
+        int attack() override;
+        void onAttackPassives(int dmg) override;
 
     private:
 };

@@ -9,9 +9,13 @@ Tank::Tank() : Unit("The Tank", "Big Iroh Block", 200, 6, 10, 45) {
 
 Tank::~Tank() {}
 
-int Tank::attack() const{
+int Tank::attack() {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distr(minDmg, maxDmg);
     return distr(gen);
 } 
+
+void Tank::onAttackPassives(int dmg) {
+    return;
+}

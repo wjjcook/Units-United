@@ -29,7 +29,10 @@ class Unit {
 
         void damageUnit(int dmg);
 
-        virtual int attack() const;
+        virtual int attack();
+        virtual void onAttackPassives(int dmg);
+
+        int getMinDmg();
 
     protected:
         std::string name;

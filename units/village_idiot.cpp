@@ -7,9 +7,13 @@ VillageIdiot::VillageIdiot() : Unit("The Village Idiot", "Simply Fall Over", 120
 
 VillageIdiot::~VillageIdiot() {}
 
-int VillageIdiot::attack() const{
+int VillageIdiot::attack() {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distr(minDmg, maxDmg);
     return distr(gen);
 } 
+
+void VillageIdiot::onAttackPassives(int dmg) {
+    return;
+}

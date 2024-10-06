@@ -76,9 +76,17 @@ void Unit::damageUnit(int dmg) {
     }
 }
 
-int Unit::attack() const {
+int Unit::attack() {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distr(minDmg, maxDmg);
     return distr(gen);
+}
+
+void Unit::onAttackPassives(int dmg) {
+    return;
+}
+
+int Unit::getMinDmg() {
+    return minDmg;
 }
