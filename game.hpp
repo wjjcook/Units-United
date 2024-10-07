@@ -71,6 +71,7 @@ class Game {
         void initializeMatch();
         void populateUnitButtonMap();
         void handlePlayEvents(SDL_Event e);
+        void unitAttack(Unit* attacker, Unit* victim);
         void handleEndEvents(SDL_Event e);
         void resetGame();
         

@@ -731,31 +731,7 @@ void Game::handlePlayEvents(SDL_Event e) {
             if (checkMouseEvent(playUnitButtons[i], e) == 1) {
                 for (unsigned int j = 0; j < 8; j++) {
                     if (gameUnits[j]->getName() == playUnitButtons[i]->getText() && gameUnits[j]->getPlayerNum() != playerTurn) {
-                        int damageDone = currentUnit->attack();
-                        gameUnits[j]->damageUnit(damageDone);
-                        // gameUnits[j]->damageUnit(200);
-
-                        currentUnit->onAttackPassives(damageDone);
-                        // gameUnits[j]->gettingHitPassives(damageDone); Not implemented yet
-
-                        std::string hpString = "HP: " + std::to_string(gameUnits[j]->getCurrHp()) + "/" + std::to_string(gameUnits[j]->getMaxHp());
-                        playUnitHpTexts[i]->setText(hpString, colorMap["white"]);
-
-                        std::string attackerHpString = "HP: " + std::to_string(currentUnit->getCurrHp()) + "/" + std::to_string(currentUnit->getMaxHp());
-                        playUnitHpTexts[currentUnit->getId()]->setText(attackerHpString, colorMap["white"]);
-
-                        AttackMessage attackMsg(currentUnit->getId(), gameUnits[j]->getId(), damageDone);
-                        sendMessage(attackMsg);
-
-                        turnState = endTurn;
-                        playUnitButtons[i]->setHovered(false);
-                        std::string currentAnnoucement;
-                        if (damageDone == 0) {
-                            currentAnnoucement = currentUnit->getName() + " missed " + gameUnits[j]->getName() + "!";
-                        } else {
-                            currentAnnoucement = currentUnit->getName() + " attacked " + gameUnits[j]->getName() + " for " + std::to_string(damageDone) + " damage!";                            
-                        }
-                        announcerText->setText(currentAnnoucement, colorMap["white"]);
+                        unitAttack(currentUnit, gameUnits[j]);
                         break;
                     }
                 }
@@ -765,6 +741,34 @@ void Game::handlePlayEvents(SDL_Event e) {
         turnState = endTurn; // Temporary
     }
     updateTimeline();
+}
+
+void Game::unitAttack(Unit* attacker, Unit* victim) {
+    int damageDone = attacker->attack();
+    victim->damageUnit(damageDone);
+    // gameUnits[j]->damageUnit(200);
+
+    int passiveNum = attacker->onAttackPassives(damageDone);
+    // gameUnits[j]->gettingHitPassives(damageDone); Not implemented yet
+
+    std::string hpString = "HP: " + std::to_string(victim->getCurrHp()) + "/" + std::to_string(victim->getMaxHp());
+    playUnitHpTexts[victim->getId()]->setText(hpString, colorMap["white"]);
+
+    std::string attackerHpString = "HP: " + std::to_string(attacker->getCurrHp()) + "/" + std::to_string(attacker->getMaxHp());
+    playUnitHpTexts[attacker->getId()]->setText(attackerHpString, colorMap["white"]);
+
+    AttackMessage attackMsg(attacker->getId(), victim->getId(), damageDone);
+    sendMessage(attackMsg);
+
+    turnState = endTurn;
+    playUnitButtons[victim->getId()]->setHovered(false);
+    std::string currentAnnoucement;
+    if (damageDone == 0) {
+        currentAnnoucement = attacker->getName() + " missed " + victim->getName() + "!";
+    } else {
+        currentAnnoucement = attacker->getName() + " attacked " + victim->getName() + " for " + std::to_string(damageDone) + " damage!";                            
+    }
+    announcerText->setText(currentAnnoucement, colorMap["white"]);
 }
 
 void Game::handleEndEvents(SDL_Event e) {
