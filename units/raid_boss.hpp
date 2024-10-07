@@ -8,7 +8,7 @@ class RaidBoss: public Unit {
         RaidBoss();
         ~RaidBoss() override;
         int attack() override;
-        void onAttackPassives(int dmg) override;
+        int onAttackPassives(int dmg) override;
 
     private:
 };

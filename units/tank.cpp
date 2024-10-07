@@ -16,6 +16,6 @@ int Tank::attack() {
     return distr(gen);
 } 
 
-void Tank::onAttackPassives(int dmg) {
-    return;
+int Tank::onAttackPassives(int dmg) {
+    return 0;
 }

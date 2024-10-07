@@ -8,7 +8,7 @@ class Duelist: public Unit {
         Duelist();
         ~Duelist() override;
         int attack() override;
-        void onAttackPassives(int dmg) override;
+        int onAttackPassives(int dmg) override;
 
     private:
 };

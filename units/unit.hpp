@@ -30,7 +30,7 @@ class Unit {
         void damageUnit(int dmg);
 
         virtual int attack();
-        virtual void onAttackPassives(int dmg);
+        virtual int onAttackPassives(int dmg);
 
         int getMinDmg();
 

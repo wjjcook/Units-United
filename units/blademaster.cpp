@@ -14,6 +14,6 @@ int Blademaster::attack(){
     return distr(gen);
 } 
 
-void Blademaster::onAttackPassives(int dmg) {
-    return;
+int Blademaster::onAttackPassives(int dmg) {
+    return 0;
 }

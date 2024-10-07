@@ -18,6 +18,6 @@ int Medic::attack() {
     return distr(gen);
 } 
 
-void Medic::onAttackPassives(int dmg) {
-    return;
+int Medic::onAttackPassives(int dmg) {
+    return 0;
 }

@@ -14,6 +14,6 @@ int RaidBoss::attack() {
     return distr(gen);
 }
 
-void RaidBoss::onAttackPassives(int dmg) {
-    return;
+int RaidBoss::onAttackPassives(int dmg) {
+    return 0;
 }

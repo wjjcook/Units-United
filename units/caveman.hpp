@@ -8,7 +8,7 @@ class Caveman: public Unit {
         Caveman();
         ~Caveman() override;
         int attack() override;
-        void onAttackPassives(int dmg) override;
+        int onAttackPassives(int dmg) override;
 
     private:
 };

@@ -8,7 +8,7 @@ class Blademaster: public Unit {
         Blademaster();
         ~Blademaster() override;
         int attack() override;
-        void onAttackPassives(int dmg) override;
+        int onAttackPassives(int dmg) override;
 
     private:
 };

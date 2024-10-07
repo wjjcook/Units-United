@@ -8,7 +8,7 @@ class Tank: public Unit {
         Tank();
         ~Tank() override;
         int attack() override;
-        void onAttackPassives(int dmg) override;
+        int onAttackPassives(int dmg) override;
 
     private:
 };

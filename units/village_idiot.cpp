@@ -14,6 +14,6 @@ int VillageIdiot::attack() {
     return distr(gen);
 } 
 
-void VillageIdiot::onAttackPassives(int dmg) {
-    return;
+int VillageIdiot::onAttackPassives(int dmg) {
+    return 0;
 }

@@ -13,6 +13,6 @@ int Duelist::attack(){
     return distr(gen);
 } 
 
-void Duelist::onAttackPassives(int dmg) {
-    return;
+int Duelist::onAttackPassives(int dmg) {
+    return 0;
 }

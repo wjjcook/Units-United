@@ -14,6 +14,6 @@ int Fighter::attack() {
     return distr(gen);
 } 
 
-void Fighter::onAttackPassives(int dmg) {
-    return;
+int Fighter::onAttackPassives(int dmg) {
+    return 0;
 }

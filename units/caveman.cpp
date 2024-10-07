@@ -20,7 +20,7 @@ int Caveman::attack(){
     return distr(gen);
 } 
 
-void Caveman::onAttackPassives(int dmg) {
+int Caveman::onAttackPassives(int dmg) {
     if (dmg > 0) {
         minDmg += 3;
         maxDmg += 3;
@@ -29,4 +29,5 @@ void Caveman::onAttackPassives(int dmg) {
             currHp = maxHp;
         }
     }
+    return 0;
 }

@@ -83,8 +83,8 @@ int Unit::attack() {
     return distr(gen);
 }
 
-void Unit::onAttackPassives(int dmg) {
-    return;
+int Unit::onAttackPassives(int dmg) {
+    return 0;
 }
 
 int Unit::getMinDmg() {
