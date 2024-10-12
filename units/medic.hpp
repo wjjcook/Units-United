@@ -7,9 +7,7 @@ class Medic: public Unit {
     public:
         Medic();
         ~Medic() override;
-        int attack() override;
-        int onAttackPassives(int dmg) override;
-
+        void attack(Game& game, Unit* victim) override;
     private:
         int minHeal;
         int maxHeal;

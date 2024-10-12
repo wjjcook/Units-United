@@ -1,4 +1,5 @@
 #include "village_idiot.hpp"
+#include "../game.hpp"
 #include <iostream>
 #include <random>
 
@@ -7,13 +8,9 @@ VillageIdiot::VillageIdiot() : Unit("The Village Idiot", "Simply Fall Over", 120
 
 VillageIdiot::~VillageIdiot() {}
 
-int VillageIdiot::attack() {
+void VillageIdiot::attack(Game& game, Unit* victim) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distr(minDmg, maxDmg);
-    return distr(gen);
+    game.unitAttack(this, victim, distr(gen));
 } 
-
-int VillageIdiot::onAttackPassives(int dmg) {
-    return 0;
-}

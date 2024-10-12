@@ -48,6 +48,7 @@ class Game {
 
         bool init(const std::string& title, int width, int height);
         void run();
+        void unitAttack(Unit* attacker, Unit* victim, int dmg);
 
     private:
         bool initializeServer(Uint16 port);
@@ -71,7 +72,7 @@ class Game {
         void initializeMatch();
         void populateUnitButtonMap();
         void handlePlayEvents(SDL_Event e);
-        void unitAttack(Unit* attacker, Unit* victim);
+        void updateUIAfterAttack(Unit* attacker, Unit* victim, int dmg);
         void handleEndEvents(SDL_Event e);
         void resetGame();
         

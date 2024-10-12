@@ -7,8 +7,7 @@ class VillageIdiot: public Unit {
     public:
         VillageIdiot();
         ~VillageIdiot() override;
-        int attack() override;
-        int onAttackPassives(int dmg) override;
+        void attack(Game& game, Unit* victim) override;
 
     private:
 };

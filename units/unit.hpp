@@ -8,6 +8,8 @@ enum Special_Target {
     enemy, ally
 };
 
+class Game;
+
 class Unit {
     public:
         Unit(const std::string name, const std::string specialName, int hp, int minDmg, int maxDmg, int speed);
@@ -29,10 +31,7 @@ class Unit {
 
         void damageUnit(int dmg);
 
-        virtual int attack();
-        virtual int onAttackPassives(int dmg);
-
-        int getMinDmg();
+        virtual void attack(Game& game, Unit* victim);
 
     protected:
         std::string name;

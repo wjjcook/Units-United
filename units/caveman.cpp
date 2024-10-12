@@ -1,4 +1,5 @@
 #include "caveman.hpp"
+#include "../game.hpp"
 #include <iostream>
 #include <random>
 
@@ -7,20 +8,19 @@ Caveman::Caveman() : Unit("The Caveman", "Giga Club", 170, 9, 13, 10) {}
 
 Caveman::~Caveman() {}
 
-int Caveman::attack(){
+void Caveman::attack(Game& game, Unit* victim){
     std::random_device rd;
     std::mt19937 gen(rd());
 
     std::uniform_int_distribution<> hits(0, 1);
 
     if (hits(gen) == 0) {
-        return 0;
+        game.unitAttack(this, victim, 0);
+        return;
     }
-    std::uniform_int_distribution<> distr(minDmg, maxDmg);
-    return distr(gen);
-} 
 
-int Caveman::onAttackPassives(int dmg) {
+    std::uniform_int_distribution<> distr(minDmg, maxDmg);
+    int dmg = distr(gen);
     if (dmg > 0) {
         minDmg += 3;
         maxDmg += 3;
@@ -29,5 +29,5 @@ int Caveman::onAttackPassives(int dmg) {
             currHp = maxHp;
         }
     }
-    return 0;
-}
+    game.unitAttack(this, victim, dmg);
+} 

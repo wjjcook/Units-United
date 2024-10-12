@@ -7,8 +7,7 @@ class RaidBoss: public Unit {
     public:
         RaidBoss();
         ~RaidBoss() override;
-        int attack() override;
-        int onAttackPassives(int dmg) override;
+        void attack(Game& game, Unit* victim) override;
 
     private:
 };

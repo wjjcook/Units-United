@@ -1,4 +1,5 @@
 #include "unit.hpp"
+#include "../game.hpp"
 #include <iostream>
 #include <random>
 #include <string>
@@ -76,17 +77,9 @@ void Unit::damageUnit(int dmg) {
     }
 }
 
-int Unit::attack() {
+void Unit::attack(Game& game, Unit* victim) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distr(minDmg, maxDmg);
-    return distr(gen);
-}
-
-int Unit::onAttackPassives(int dmg) {
-    return 0;
-}
-
-int Unit::getMinDmg() {
-    return minDmg;
+    game.unitAttack(this, victim, distr(gen));
 }
