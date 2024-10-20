@@ -3,6 +3,7 @@
 #include "unit_order_message.hpp"
 #include "string_message.hpp"
 #include "attack_message.hpp"
+#include "passive_event_message.hpp"
 
 Message* Message::createMessage(MessageType type) {
     switch (type) {
@@ -14,6 +15,8 @@ Message* Message::createMessage(MessageType type) {
             return new StringMessage();
         case MessageType::ATTACK:
             return new AttackMessage();
+        case MessageType::PASSIVE_EVENT:
+            return new PassiveEventMessage();
         default:
             return nullptr;
     }

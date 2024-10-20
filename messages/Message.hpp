@@ -9,6 +9,7 @@ enum class MessageType {
     UNIT_ORDER,
     STRING,
     ATTACK,
+    PASSIVE_EVENT,
     MOVE,
 };
 
