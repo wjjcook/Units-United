@@ -39,6 +39,14 @@ int Unit::getCurrHp() {
     return currHp;
 }
 
+int Unit::getMinDmg() {
+    return minDmg;
+}
+
+int Unit::getMaxDmg() {
+    return maxDmg;
+}
+
 int Unit::getSpeed() {
     return speed;
 }
@@ -62,6 +70,11 @@ void Unit::setCurrHp(int hp) {
     currHp = hp;
 }
 
+void Unit::increaseDmg(int dmg) {
+    minDmg += dmg;
+    maxDmg += dmg;
+}
+
 void Unit::setId(int id) {
     this->id = id;
 }
@@ -82,4 +95,9 @@ void Unit::attack(Game& game, Unit* victim) {
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distr(minDmg, maxDmg);
     game.unitAttack(this, victim, distr(gen));
+}
+
+std::vector<PassiveEventMessage> Unit::onAttackPassives(){
+    std::vector<PassiveEventMessage> events;
+    return events;
 }

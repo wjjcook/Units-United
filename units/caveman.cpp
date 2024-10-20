@@ -21,13 +21,26 @@ void Caveman::attack(Game& game, Unit* victim){
 
     std::uniform_int_distribution<> distr(minDmg, maxDmg);
     int dmg = distr(gen);
-    if (dmg > 0) {
-        minDmg += 3;
-        maxDmg += 3;
-        currHp += 4;
-        if (currHp > maxHp) {
-            currHp = maxHp;
-        }
+
+    minDmg += 3;
+    maxDmg += 3;
+    currHp += 4;
+    if (currHp > maxHp) {
+        currHp = maxHp;
     }
+
     game.unitAttack(this, victim, dmg);
+
+    std::vector<PassiveEventMessage> events = onAttackPassives();
+    game.sendPassiveEvents(events);
+
 } 
+
+std::vector<PassiveEventMessage> Caveman::onAttackPassives(){
+    std::vector<PassiveEventMessage> events;
+
+    events.push_back(PassiveEventMessage(name, "dmgIncrease", 3));
+    events.push_back(PassiveEventMessage(name, "heal", 4));
+
+    return events;
+}

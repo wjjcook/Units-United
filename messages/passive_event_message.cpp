@@ -15,27 +15,52 @@ MessageType PassiveEventMessage::getType() const {
     return type;
 }
 
+std::string PassiveEventMessage::getUnitName() {
+    return unitName;
+}
+
+std::string PassiveEventMessage::getPassiveType() {
+    return passiveType;
+}
+
+int PassiveEventMessage::getValue() {
+    return value;
+}
+
 void PassiveEventMessage::serialize(char* buffer) const {
     size_t offset = 0;
     memcpy(buffer, &type, sizeof(type));
     offset += sizeof(type);
 
-    memcpy(buffer + offset, &unitName, sizeof(unitName));
-    offset += sizeof(unitName);
+    size_t stringLength = unitName.size();
+    memcpy(buffer + offset, &stringLength, sizeof(stringLength));
+    offset += sizeof(stringLength);
+    memcpy(buffer + offset, unitName.c_str(), stringLength);
+    offset += stringLength;
 
-    memcpy(buffer + offset, &passiveType, sizeof(passiveType));
-    offset += sizeof(passiveType);
+    stringLength = passiveType.size();
+    memcpy(buffer + offset, &stringLength, sizeof(stringLength));
+    offset += sizeof(stringLength);
+    memcpy(buffer + offset, passiveType.c_str(), stringLength);
+    offset += stringLength;
 
     memcpy(buffer + offset, &value , sizeof(value));
 }
 
 void PassiveEventMessage::deserialize(const char* buffer) {
     size_t offset = sizeof(MessageType);
-    memcpy(&unitName, buffer + offset, sizeof(unitName));
-    offset += sizeof(unitName);
 
-    memcpy(&passiveType, buffer + offset, sizeof(passiveType));
-    offset += sizeof(passiveType);
+    size_t stringLength = unitName.size();
+    memcpy(&stringLength, buffer + offset, sizeof(stringLength));
+    offset += sizeof(stringLength);
+    unitName.assign(buffer + offset, stringLength);
+    offset += stringLength;
+
+    stringLength = passiveType.size();
+    memcpy(&stringLength, buffer + offset, sizeof(stringLength));
+    offset += sizeof(stringLength);
+    passiveType.assign(buffer + offset, stringLength);
+    offset += stringLength;
 
     memcpy(&value, buffer + offset, sizeof(value));
 }

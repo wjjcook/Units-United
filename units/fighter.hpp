@@ -8,6 +8,7 @@ class Fighter: public Unit {
         Fighter();
         ~Fighter() override;
         void attack(Game& game, Unit* victim) override;
+        std::vector<PassiveEventMessage> onAttackPassives() override;
 
     private:
 };

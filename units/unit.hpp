@@ -4,6 +4,8 @@
 #include <string>
 #include <random>
 
+#include "../messages/passive_event_message.hpp" 
+
 enum Special_Target {
     enemy, ally
 };
@@ -20,18 +22,22 @@ class Unit {
         Special_Target getSpecialTarget();
         int getMaxHp();
         int getCurrHp();
+        int getMinDmg();
+        int getMaxDmg();
         int getSpeed();
         int getId();
         int getPlayerNum();
         bool isAlive();
 
         void setCurrHp(int hp);
+        void increaseDmg(int dmg);
         void setId(int id);
         void setPlayerNum(int playerNum);
 
         void damageUnit(int dmg);
 
         virtual void attack(Game& game, Unit* victim);
+        virtual std::vector<PassiveEventMessage> onAttackPassives();
 
     protected:
         std::string name;

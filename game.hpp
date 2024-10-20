@@ -18,6 +18,7 @@
 #include "messages/unit_order_message.hpp"
 #include "messages/string_message.hpp"
 #include "messages/attack_message.hpp"
+#include "messages/passive_event_message.hpp"
 
 #include "units/blademaster.hpp"
 #include "units/caveman.hpp"
@@ -49,6 +50,7 @@ class Game {
         bool init(const std::string& title, int width, int height);
         void run();
         void unitAttack(Unit* attacker, Unit* victim, int dmg);
+        void sendPassiveEvents(std::vector<PassiveEventMessage> events);
 
     private:
         bool initializeServer(Uint16 port);
@@ -77,6 +79,7 @@ class Game {
         void resetGame();
         
         void update();
+        void receiveAndHandlePassiveMessages();
         void updateTimeline();
         Unit* findNextUnit(Unit* currentUnit);
         void render();

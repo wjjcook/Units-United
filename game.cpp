@@ -755,6 +755,12 @@ void Game::unitAttack(Unit* attacker, Unit* victim, int dmg) {
     playUnitButtons[victim->getId()]->setHovered(false);
 }
 
+void Game::sendPassiveEvents(std::vector<PassiveEventMessage> events) {
+    for (PassiveEventMessage event : events) {
+        sendMessage(event);
+    }
+}
+
 void Game::updateUIAfterAttack(Unit* attacker, Unit* victim, int dmg) {
     std::string attackerHpString = "HP: " + std::to_string(attacker->getCurrHp()) + "/" + std::to_string(attacker->getMaxHp());
     playUnitHpTexts[attacker->getId()]->setText(attackerHpString, colorMap["white"]);
@@ -898,8 +904,8 @@ void Game::update() {
                     for (unsigned int i = 0; i < gameUnits.size(); i++) {
                         if (attackMsg->getTargetId() == gameUnits[i]->getId()) {
                             gameUnits[i]->damageUnit(attackMsg->getDamage());
-                            // Need to create PassiveEventMessage to pass the passive interactions over the network
-
+                            receiveAndHandlePassiveMessages();
+                            
                             updateUIAfterAttack(currentUnit, gameUnits[i], attackMsg->getDamage());
                             turnState = endTurn;
                             break;
@@ -910,6 +916,32 @@ void Game::update() {
             }
         }
         updateTimeline();
+    }
+}
+
+// NEED TO FIX RECEIVING MULTIPLE MESSAGES
+void Game::receiveAndHandlePassiveMessages() {
+    bool messagesAvailable = true;
+    
+    while (messagesAvailable) {
+        Message* receivedPassiveMsg = receiveMessage();
+
+        if (receivedPassiveMsg) {
+            if (receivedPassiveMsg->getType() == MessageType::PASSIVE_EVENT) {
+                PassiveEventMessage* passiveMsg = static_cast<PassiveEventMessage*>(receivedPassiveMsg);
+                
+                if (passiveMsg->getPassiveType() == "heal") {
+                    currentUnit->setCurrHp(currentUnit->getCurrHp() + passiveMsg->getValue());
+                    std::cout << "hp increased" << std::endl;
+                } else if (passiveMsg->getPassiveType() == "dmgIncrease") {
+                    currentUnit->increaseDmg(passiveMsg->getValue());
+                    std::cout << "dmg increased" << std::endl;
+                }
+            }
+            delete receivedPassiveMsg;
+        } else {
+            messagesAvailable = false; 
+        }    
     }
 }
 

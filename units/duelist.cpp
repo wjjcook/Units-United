@@ -13,3 +13,8 @@ void Duelist::attack(Game& game, Unit* victim){
     std::uniform_int_distribution<> distr(minDmg, maxDmg);
     game.unitAttack(this, victim, distr(gen));
 } 
+
+std::vector<PassiveEventMessage> Duelist::onAttackPassives(){
+    std::vector<PassiveEventMessage> events;
+    return events;
+}
