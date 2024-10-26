@@ -145,15 +145,11 @@ bool Game::initializeServer(Uint16 port) {
         return false;
     }
 
-    if (SDLNet_ResolveHost(&ip, NULL, port) != 0) {
+    if (SDLNet_ResolveHost(&ip, nullptr, port) != 0) {
         std::cerr << "SDLNet_ResolveHost Error: " << SDLNet_GetError() << std::endl;
         SDLNet_Quit();
         return false;
     }
-
-    Uint32 resolvedIp = SDL_SwapBE32(ip.host);
-    std::cout << "Resolved IP: " << (resolvedIp >> 24) << "." << ((resolvedIp >> 16) & 0xFF) << "." 
-              << ((resolvedIp >> 8) & 0xFF) << "." << (resolvedIp & 0xFF) << std::endl;
 
     server = SDLNet_TCP_Open(&ip);
     if (!server) {
@@ -206,21 +202,17 @@ bool Game::connectToServer(const char* serverIP, int port) {
 }
 
 void Game::sendMessage(const Message& msg) {
-    char buffer[256];  // Adjust size as needed
+    char buffer[512];
     msg.serialize(buffer);
     SDLNet_TCP_Send(client, buffer, sizeof(buffer));
 }
 
 Message* Game::receiveMessage() {
-    int numReady = SDLNet_CheckSockets(socketSet, 0);  // Check with a 0 timeout (non-blocking)
-    if (numReady == -1) {
-        // Error handling
-        printf("SDLNet_CheckSockets error: %s\n", SDLNet_GetError());
-        return nullptr;
-    }
+    int activeSockets = SDLNet_CheckSockets(socketSet, 0);
+    if (activeSockets > 0 && SDLNet_SocketReady(client)) {
+        char buffer[512];
+        memset(buffer, 0, sizeof(buffer));
 
-    if (numReady > 0 && SDLNet_SocketReady(client)) {
-        char buffer[512];  // Adjust buffer size as needed
         int received = SDLNet_TCP_Recv(client, buffer, sizeof(buffer));
         if (received > 0) {
             MessageType type;
@@ -562,7 +554,6 @@ void Game::initializeMatch() {
         for (unsigned int i = 0; i < 8; i++) {
             gameUnits[i]->setId(i);
         }
-        SDL_Delay(1000);
         UnitOrderMessage unitOrderMsg(unitOrder);
         sendMessage(unitOrderMsg);
     } else {
