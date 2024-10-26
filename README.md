@@ -59,15 +59,15 @@ The Village Idiot is so unbelievably stupid that he cannot be stunned.
 
 10 **Speed**
 
-**GIGA CLUB**:
+**GIGA CLUB**
 
 The Caveman smacks an enemy so hard they move to the bottom of the turn list, dealing 10 damage.
 
-**EVOLUTION**:
+**EVOLUTION**
 
 The Caveman gains 4 HP and 3 damage after landing a successful basic attack.
 
-**CAVEMAN BRAIN**:
+**CAVEMAN BRAIN**
 
 The Caveman has a 50% chance of missing basic attacks.
 
