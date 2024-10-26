@@ -3,7 +3,7 @@ A C++ turn-based strategy game made with SDL2.
 
 Requires SDL2, SDL2_ttf, and SDL2_net libraries to build.
 
-# Card List
+# Unit List
 - [The Duelist](#the-duelist)
 - [The Village Idiot](#the-village-idiot)
 - [The Caveman](#the-caveman)
@@ -13,6 +13,7 @@ Requires SDL2, SDL2_ttf, and SDL2_net libraries to build.
 - [The Blademaster](#the-blademaster)
 - [The Tank](#the-tank)
 
+25+ more Units coming soon!
 
 ## The Duelist
 
