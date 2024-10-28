@@ -51,6 +51,8 @@ class Game {
         void run();
         void unitAttack(Unit* attacker, Unit* victim, int dmg);
         void sendPassiveEvents(std::vector<PassiveEventMessage> events);
+        void updateUIAfterAttack(Unit* attacker, Unit* victim, int dmg, std::string customAnnouncement = "");
+        std::string generateCustomAnnouncement(Unit* victim = nullptr, std::vector<int> multiAttacks = {});
 
     private:
         bool initializeServer(Uint16 port);
@@ -74,12 +76,11 @@ class Game {
         void initializeMatch();
         void populateUnitButtonMap();
         void handlePlayEvents(SDL_Event e);
-        void updateUIAfterAttack(Unit* attacker, Unit* victim, int dmg);
         void handleEndEvents(SDL_Event e);
         void resetGame();
         
         void update();
-        void receiveAndHandlePassiveMessages();
+        std::string receiveAndHandlePassiveMessages(int firstAttack);
         void updateTimeline();
         Unit* findNextUnit(Unit* currentUnit);
         void render();

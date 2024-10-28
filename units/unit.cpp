@@ -68,6 +68,9 @@ bool Unit::isAlive(){
 
 void Unit::setCurrHp(int hp) {
     currHp = hp;
+    if (currHp > maxHp) {
+        currHp = maxHp;
+    }
 }
 
 void Unit::increaseDmg(int dmg) {
@@ -97,7 +100,7 @@ void Unit::attack(Game& game, Unit* victim) {
     game.unitAttack(this, victim, distr(gen));
 }
 
-std::vector<PassiveEventMessage> Unit::onAttackPassives(){
+std::vector<PassiveEventMessage> Unit::onAttackPassives(Unit* victim){
     std::vector<PassiveEventMessage> events;
     return events;
 }

@@ -8,7 +8,7 @@ class Caveman: public Unit {
         Caveman();
         ~Caveman() override;
         void attack(Game& game, Unit* victim) override;
-        std::vector<PassiveEventMessage> onAttackPassives() override;
+        std::vector<PassiveEventMessage> onAttackPassives(Unit* victim) override;
 
     private:
 };

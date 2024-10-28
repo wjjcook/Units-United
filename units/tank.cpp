@@ -17,7 +17,7 @@ void Tank::attack(Game& game, Unit* victim) {
     game.unitAttack(this, victim, distr(gen));
 } 
 
-std::vector<PassiveEventMessage> Tank::onAttackPassives(){
+std::vector<PassiveEventMessage> Tank::onAttackPassives(Unit* victim){
     std::vector<PassiveEventMessage> events;
     return events;
 }

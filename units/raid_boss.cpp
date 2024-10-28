@@ -15,7 +15,7 @@ void RaidBoss::attack(Game& game, Unit* victim) {
     game.unitAttack(this, victim, distr(gen));
 }
 
-std::vector<PassiveEventMessage> RaidBoss::onAttackPassives(){
+std::vector<PassiveEventMessage> RaidBoss::onAttackPassives(Unit* victim){
     std::vector<PassiveEventMessage> events;
     return events;
 }

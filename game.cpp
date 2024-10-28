@@ -1,5 +1,6 @@
 #include "game.hpp"
 #include <iostream>
+#include <sstream>
 
 Game::Game() {
     gameWindow = nullptr;
@@ -509,6 +510,9 @@ void Game::addUnitToRoster(std::string unit) {
 
 void Game::initializeMatch() {
 
+    delete announcerText;
+    announcerText = new Text(renderer, "Terminal.ttf", 20, scaleX, scaleY);
+
     player1->sortUnitsBySpeed();
     player2->sortUnitsBySpeed();
 
@@ -703,8 +707,8 @@ void Game::handlePlayEvents(SDL_Event e) {
                     StringMessage skipMsg("skip");
                     sendMessage(skipMsg);
                     turnState = endTurn;
-                    std::string currentAnnoucement = "You skipped " + currentUnit->getName() + "'s turn!";
-                    announcerText->setText(currentAnnoucement, colorMap["white"]);
+                    std::string currentAnnouncement = "You skipped " + currentUnit->getName() + "'s turn!";
+                    announcerText->setText(currentAnnouncement, colorMap["white"]);
                 }
                 unitButtonMap[currentUnit->getName()][i]->setHovered(false);
                 break;
@@ -752,20 +756,22 @@ void Game::sendPassiveEvents(std::vector<PassiveEventMessage> events) {
     }
 }
 
-void Game::updateUIAfterAttack(Unit* attacker, Unit* victim, int dmg) {
+void Game::updateUIAfterAttack(Unit* attacker, Unit* victim, int dmg, std::string customAnnouncement) {
     std::string attackerHpString = "HP: " + std::to_string(attacker->getCurrHp()) + "/" + std::to_string(attacker->getMaxHp());
     playUnitHpTexts[attacker->getId()]->setText(attackerHpString, colorMap["white"]);
 
     std::string hpString = "HP: " + std::to_string(victim->getCurrHp()) + "/" + std::to_string(victim->getMaxHp());
     playUnitHpTexts[victim->getId()]->setText(hpString, colorMap["white"]);
 
-    std::string currentAnnoucement;
-    if (dmg == 0) {
-        currentAnnoucement = attacker->getName() + " missed " + victim->getName() + "!";
+    std::string currentAnnouncement;
+    if (customAnnouncement != "") {
+        currentAnnouncement = customAnnouncement;
+    } else if (dmg == 0) {
+        currentAnnouncement = attacker->getName() + " missed " + victim->getName() + "!";
     } else {
-        currentAnnoucement = attacker->getName() + " attacked " + victim->getName() + " for " + std::to_string(dmg) + " damage!";                            
+        currentAnnouncement = attacker->getName() + " attacked " + victim->getName() + " for " + std::to_string(dmg) + " damage!";                            
     }
-    announcerText->setText(currentAnnoucement, colorMap["white"]);
+    announcerText->setText(currentAnnouncement, colorMap["white"]);
 }
 
 void Game::handleEndEvents(SDL_Event e) {
@@ -882,11 +888,11 @@ void Game::update() {
                     if (strMsg->getString() == "skip") {
                         turnState = endTurn;
                         if (playerTurn == PLAYER1) {
-                            std::string currentAnnoucement = "Player 1 skipped " + currentUnit->getName() + "'s turn!";
-                            announcerText->setText(currentAnnoucement, colorMap["white"]);
+                            std::string currentAnnouncement = "Player 1 skipped " + currentUnit->getName() + "'s turn!";
+                            announcerText->setText(currentAnnouncement, colorMap["white"]);
                         } else {
-                            std::string currentAnnoucement = "Player 2 skipped " + currentUnit->getName() + "'s turn!";
-                            announcerText->setText(currentAnnoucement, colorMap["white"]);
+                            std::string currentAnnouncement = "Player 2 skipped " + currentUnit->getName() + "'s turn!";
+                            announcerText->setText(currentAnnouncement, colorMap["white"]);
                         }
                         
                     }
@@ -895,9 +901,9 @@ void Game::update() {
                     for (unsigned int i = 0; i < gameUnits.size(); i++) {
                         if (attackMsg->getTargetId() == gameUnits[i]->getId()) {
                             gameUnits[i]->damageUnit(attackMsg->getDamage());
-                            receiveAndHandlePassiveMessages();
+                            std::string customAnnouncement = receiveAndHandlePassiveMessages(attackMsg->getDamage());
                             
-                            updateUIAfterAttack(currentUnit, gameUnits[i], attackMsg->getDamage());
+                            updateUIAfterAttack(currentUnit, gameUnits[i], attackMsg->getDamage(), customAnnouncement);
                             turnState = endTurn;
                             break;
                         }
@@ -910,9 +916,12 @@ void Game::update() {
     }
 }
 
-// NEED TO FIX RECEIVING MULTIPLE MESSAGES
-void Game::receiveAndHandlePassiveMessages() {
+std::string Game::receiveAndHandlePassiveMessages(int firstAttack) {
     bool messagesAvailable = true;
+    bool passiveAnnouncement = false;
+
+    Unit* victim = nullptr;
+    std::vector<int> multiAttacks = {firstAttack};
     
     while (messagesAvailable) {
         Message* receivedPassiveMsg = receiveMessage();
@@ -923,10 +932,21 @@ void Game::receiveAndHandlePassiveMessages() {
                 
                 if (passiveMsg->getPassiveType() == "heal") {
                     currentUnit->setCurrHp(currentUnit->getCurrHp() + passiveMsg->getValue());
-                    std::cout << "hp increased" << std::endl;
                 } else if (passiveMsg->getPassiveType() == "dmgIncrease") {
                     currentUnit->increaseDmg(passiveMsg->getValue());
-                    std::cout << "dmg increased" << std::endl;
+                } else if (passiveMsg->getPassiveType() == "additionalAttack") {
+                    if (!victim) {
+                        for (unsigned int i = 0; i < 8; i++) {
+                            if (gameUnits[i]->getName() == passiveMsg->getUnitName() && gameUnits[i]->getPlayerNum() != currentUnit->getPlayerNum()) {
+                                victim = gameUnits[i];
+                                break;
+                            }
+                        }
+                    } 
+                    victim->damageUnit(passiveMsg->getValue());
+                    multiAttacks.push_back(passiveMsg->getValue());
+                    
+                    passiveAnnouncement = true;
                 }
             }
             delete receivedPassiveMsg;
@@ -934,6 +954,32 @@ void Game::receiveAndHandlePassiveMessages() {
             messagesAvailable = false; 
         }    
     }
+
+    if (passiveAnnouncement) {
+        return generateCustomAnnouncement(victim, multiAttacks);
+    }
+    return "";
+}
+
+std::string Game::generateCustomAnnouncement(Unit* victim, std::vector<int> multiAttacks) {
+    if (currentUnit->getName() == "The Blademaster" && victim) {
+        std::ostringstream oss;
+
+        oss << "The Blademaster attacked " << victim->getName() << " 3 times for ";
+
+        for (size_t i = 0; i < multiAttacks.size(); ++i) {
+            oss << multiAttacks[i];
+            if (i == multiAttacks.size() - 2) {
+                oss << ", and ";
+            } else if (i < multiAttacks.size() - 2) {
+                oss << ", "; 
+            }
+        }
+
+        oss << " damage!";
+        return oss.str();
+    }
+    return "";
 }
 
 void Game::updateTimeline() {

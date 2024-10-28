@@ -37,7 +37,7 @@ class Unit {
         void damageUnit(int dmg);
 
         virtual void attack(Game& game, Unit* victim);
-        virtual std::vector<PassiveEventMessage> onAttackPassives();
+        virtual std::vector<PassiveEventMessage> onAttackPassives(Unit* victim);
 
     protected:
         std::string name;

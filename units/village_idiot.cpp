@@ -15,7 +15,7 @@ void VillageIdiot::attack(Game& game, Unit* victim) {
     game.unitAttack(this, victim, distr(gen));
 } 
 
-std::vector<PassiveEventMessage> VillageIdiot::onAttackPassives(){
+std::vector<PassiveEventMessage> VillageIdiot::onAttackPassives(Unit* victim){
     std::vector<PassiveEventMessage> events;
     return events;
 }

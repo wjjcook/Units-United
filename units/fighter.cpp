@@ -15,7 +15,7 @@ void Fighter::attack(Game& game, Unit* victim) {
     game.unitAttack(this, victim, distr(gen));
 } 
 
-std::vector<PassiveEventMessage> Fighter::onAttackPassives(){
+std::vector<PassiveEventMessage> Fighter::onAttackPassives(Unit* victim){
     std::vector<PassiveEventMessage> events;
     return events;
 }

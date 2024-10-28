@@ -31,12 +31,12 @@ void Caveman::attack(Game& game, Unit* victim){
 
     game.unitAttack(this, victim, dmg);
 
-    std::vector<PassiveEventMessage> events = onAttackPassives();
+    std::vector<PassiveEventMessage> events = onAttackPassives(victim);
     game.sendPassiveEvents(events);
 
 } 
 
-std::vector<PassiveEventMessage> Caveman::onAttackPassives(){
+std::vector<PassiveEventMessage> Caveman::onAttackPassives(Unit* victim){
     std::vector<PassiveEventMessage> events;
 
     events.push_back(PassiveEventMessage(name, "dmgIncrease", 3));

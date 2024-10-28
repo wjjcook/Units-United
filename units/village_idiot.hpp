@@ -8,7 +8,7 @@ class VillageIdiot: public Unit {
         VillageIdiot();
         ~VillageIdiot() override;
         void attack(Game& game, Unit* victim) override;
-        std::vector<PassiveEventMessage> onAttackPassives() override;
+        std::vector<PassiveEventMessage> onAttackPassives(Unit* victim) override;
 
     private:
 };
