@@ -97,7 +97,9 @@ void Unit::attack(Game& game, Unit* victim) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distr(minDmg, maxDmg);
-    game.unitAttack(this, victim, distr(gen));
+    int dmg = distr(gen);
+    victim->damageUnit(dmg);
+    game.unitAttack(this, victim, dmg);
 }
 
 std::vector<PassiveEventMessage> Unit::onAttackPassives(Unit* victim){

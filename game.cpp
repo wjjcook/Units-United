@@ -739,7 +739,6 @@ void Game::handlePlayEvents(SDL_Event e) {
 }
 
 void Game::unitAttack(Unit* attacker, Unit* victim, int dmg) {
-    victim->damageUnit(dmg);
 
     updateUIAfterAttack(attacker, victim, dmg);
 
