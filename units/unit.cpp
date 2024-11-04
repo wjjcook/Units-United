@@ -86,11 +86,12 @@ void Unit::setPlayerNum(int pNum) {
     playerNum = pNum;
 }
 
-void Unit::damageUnit(int dmg) {
+int Unit::damageUnit(int dmg) {
     currHp -= dmg;
     if (currHp <= 0) {
         alive = false;
     }
+    return dmg;
 }
 
 void Unit::attack(Game& game, Unit* victim) {
@@ -98,11 +99,16 @@ void Unit::attack(Game& game, Unit* victim) {
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distr(minDmg, maxDmg);
     int dmg = distr(gen);
-    victim->damageUnit(dmg);
-    game.unitAttack(this, victim, dmg);
+    int newDmg = victim->damageUnit(dmg);
+    game.unitAttack(this, victim, dmg, newDmg);
 }
 
 std::vector<PassiveEventMessage> Unit::onAttackPassives(Unit* victim){
+    std::vector<PassiveEventMessage> events;
+    return events;
+}
+
+std::vector<PassiveEventMessage> Unit::onDamagePassives(Unit* attacker, int dmg) {
     std::vector<PassiveEventMessage> events;
     return events;
 }

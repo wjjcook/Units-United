@@ -15,7 +15,7 @@ void Caveman::attack(Game& game, Unit* victim){
     std::uniform_int_distribution<> hits(0, 1);
 
     if (hits(gen) == 0) {
-        game.unitAttack(this, victim, 0);
+        game.unitAttack(this, victim, 0, 0);
         return;
     }
 
@@ -29,10 +29,13 @@ void Caveman::attack(Game& game, Unit* victim){
         currHp = maxHp;
     }
 
-    victim->damageUnit(dmg);
-    game.unitAttack(this, victim, dmg);
+    int newDmg = victim->damageUnit(dmg);
+    std::vector<PassiveEventMessage> events = victim->onDamagePassives(this, dmg);
+    game.unitAttack(this, victim, dmg, newDmg);
 
-    std::vector<PassiveEventMessage> events = onAttackPassives(victim);
+    std::vector<PassiveEventMessage> onAttackEvents = onAttackPassives(victim);
+
+    events.insert(events.end(), onAttackEvents.begin(), onAttackEvents.end());
     game.sendPassiveEvents(events);
 
 } 

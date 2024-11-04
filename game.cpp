@@ -738,11 +738,11 @@ void Game::handlePlayEvents(SDL_Event e) {
     updateTimeline();
 }
 
-void Game::unitAttack(Unit* attacker, Unit* victim, int dmg) {
+void Game::unitAttack(Unit* attacker, Unit* victim, int rawDmg, int newDmg) {
 
-    updateUIAfterAttack(attacker, victim, dmg);
+    updateUIAfterAttack(attacker, victim, newDmg);
 
-    AttackMessage attackMsg(attacker->getId(), victim->getId(), dmg);
+    AttackMessage attackMsg(attacker->getId(), victim->getId(), rawDmg);
     sendMessage(attackMsg);
 
     turnState = endTurn;
@@ -899,10 +899,10 @@ void Game::update() {
                     AttackMessage* attackMsg = static_cast<AttackMessage*>(receivedMsg);
                     for (unsigned int i = 0; i < gameUnits.size(); i++) {
                         if (attackMsg->getTargetId() == gameUnits[i]->getId()) {
-                            gameUnits[i]->damageUnit(attackMsg->getDamage());
-                            std::string customAnnouncement = receiveAndHandlePassiveMessages(attackMsg->getDamage());
+                            int newDmg = gameUnits[i]->damageUnit(attackMsg->getDamage());
+                            std::string customAnnouncement = receiveAndHandlePassiveMessages(newDmg);
                             
-                            updateUIAfterAttack(currentUnit, gameUnits[i], attackMsg->getDamage(), customAnnouncement);
+                            updateUIAfterAttack(currentUnit, gameUnits[i], newDmg, customAnnouncement);
                             turnState = endTurn;
                             break;
                         }
@@ -942,8 +942,8 @@ std::string Game::receiveAndHandlePassiveMessages(int firstAttack) {
                             }
                         }
                     } 
-                    victim->damageUnit(passiveMsg->getValue());
-                    multiAttacks.push_back(passiveMsg->getValue());
+                    int newDmg = victim->damageUnit(passiveMsg->getValue());
+                    multiAttacks.push_back(newDmg);
                     
                     passiveAnnouncement = true;
                 }

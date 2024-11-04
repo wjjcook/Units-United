@@ -34,10 +34,10 @@ class Unit {
         void setId(int id);
         void setPlayerNum(int playerNum);
 
-        void damageUnit(int dmg);
-
+        virtual int damageUnit(int dmg);
         virtual void attack(Game& game, Unit* victim);
         virtual std::vector<PassiveEventMessage> onAttackPassives(Unit* victim);
+        virtual std::vector<PassiveEventMessage> onDamagePassives(Unit* attacker, int dmg);
 
     protected:
         std::string name;

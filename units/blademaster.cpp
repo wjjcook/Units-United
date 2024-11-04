@@ -13,18 +13,19 @@ void Blademaster::attack(Game& game, Unit* victim){
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distr(minDmg, maxDmg);
     int firstAttack = distr(gen);
-    victim->damageUnit(firstAttack);
-    game.unitAttack(this, victim, firstAttack);
+    int newDmg = victim->damageUnit(firstAttack);
+    game.unitAttack(this, victim, firstAttack, newDmg);
 
     std::uniform_int_distribution<> multiHits(0, 3);
     
     if (multiHits(gen) == 3) {
-        std::vector<int> multiAttacks = {firstAttack};
+        newSecondAttack = 0;
+        newThirdAttack = 0;
+        std::vector<int> multiAttacks = {newDmg};
         std::vector<PassiveEventMessage> events = onAttackPassives(victim);
         game.sendPassiveEvents(events);
-        for (PassiveEventMessage event : events) {
-            multiAttacks.push_back(event.getValue());
-        }
+        multiAttacks.push_back(newSecondAttack);
+        multiAttacks.push_back(newThirdAttack);
         game.updateUIAfterAttack(this, victim, firstAttack, game.generateCustomAnnouncement(victim, multiAttacks));
     }
 }
@@ -38,8 +39,8 @@ std::vector<PassiveEventMessage> Blademaster::onAttackPassives(Unit* victim){
     int secondAttack = distr(gen);
     int thirdAttack = distr(gen);
 
-    victim->damageUnit(secondAttack);
-    victim->damageUnit(thirdAttack);
+    newSecondAttack = victim->damageUnit(secondAttack);
+    newThirdAttack = victim->damageUnit(thirdAttack);
 
     events.push_back(PassiveEventMessage(victim->getName(), "additionalAttack", secondAttack));
     events.push_back(PassiveEventMessage(victim->getName(), "additionalAttack", thirdAttack));

@@ -11,6 +11,8 @@ class Blademaster: public Unit {
         std::vector<PassiveEventMessage> onAttackPassives(Unit* victim) override;
 
     private:
+        int newSecondAttack;
+        int newThirdAttack;
 };
 
 
