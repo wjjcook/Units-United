@@ -899,7 +899,10 @@ void Game::update() {
                     AttackMessage* attackMsg = static_cast<AttackMessage*>(receivedMsg);
                     for (unsigned int i = 0; i < gameUnits.size(); i++) {
                         if (attackMsg->getTargetId() == gameUnits[i]->getId()) {
-                            int newDmg = gameUnits[i]->damageUnit(attackMsg->getDamage());
+                            int newDmg = 0;
+                            if (attackMsg->getDamage() > 0) {
+                                newDmg = gameUnits[i]->damageUnit(attackMsg->getDamage());
+                            }
                             std::string customAnnouncement = receiveAndHandlePassiveMessages(newDmg);
                             
                             updateUIAfterAttack(currentUnit, gameUnits[i], newDmg, customAnnouncement);

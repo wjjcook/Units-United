@@ -7,10 +7,12 @@ class RaidBoss: public Unit {
     public:
         RaidBoss();
         ~RaidBoss() override;
+        int damageUnit(int dmg) override;
         void attack(Game& game, Unit* victim) override;
         std::vector<PassiveEventMessage> onAttackPassives(Unit* victim) override;
 
     private:
+        int overwhelmed;
 };
 
 
