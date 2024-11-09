@@ -7,7 +7,7 @@ class Tank: public Unit {
     public:
         Tank();
         ~Tank() override;
-        int damageUnit(int dmg) override;
+        int damageUnit(int dmg, bool isBasicAttack, Unit* attacker) override;
         void attack(Game& game, Unit* victim) override;
         std::vector<PassiveEventMessage> onAttackPassives(Unit* victim) override;
 

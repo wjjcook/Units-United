@@ -29,7 +29,7 @@ void Caveman::attack(Game& game, Unit* victim){
         currHp = maxHp;
     }
 
-    int newDmg = victim->damageUnit(dmg);
+    int newDmg = victim->damageUnit(dmg, true, this);
     std::vector<PassiveEventMessage> events = victim->onDamagePassives(this, dmg);
     game.unitAttack(this, victim, dmg, newDmg);
 

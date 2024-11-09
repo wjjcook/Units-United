@@ -34,7 +34,7 @@ class Unit {
         void setId(int id);
         void setPlayerNum(int playerNum);
 
-        virtual int damageUnit(int dmg);
+        virtual int damageUnit(int dmg, bool isBasicAttack, Unit* attacker);
         virtual void attack(Game& game, Unit* victim);
         virtual std::vector<PassiveEventMessage> onAttackPassives(Unit* victim);
         virtual std::vector<PassiveEventMessage> onDamagePassives(Unit* attacker, int dmg);

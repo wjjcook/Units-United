@@ -10,7 +10,11 @@ RaidBoss::RaidBoss() : Unit("The Raid Boss", "Earthshatter", 200, 15, 20, 1) {
 
 RaidBoss::~RaidBoss() {}
 
-int RaidBoss::damageUnit(int dmg) {
+int RaidBoss::damageUnit(int dmg, bool isBasicAttack, Unit* attacker) {
+    if (isBasicAttack) {
+        attacker->damageUnit(3, false, this);
+    }
+
     int totalDmg = dmg + overwhelmed;
     currHp -= totalDmg;
     if (currHp <= 0) {
@@ -33,7 +37,7 @@ void RaidBoss::attack(Game& game, Unit* victim) {
 
     std::uniform_int_distribution<> distr(minDmg, maxDmg);
     int dmg = distr(gen);
-    int newDmg = victim->damageUnit(dmg);
+    int newDmg = victim->damageUnit(dmg, true, this);
     game.unitAttack(this, victim, dmg, newDmg);
 }
 

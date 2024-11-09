@@ -13,7 +13,7 @@ void Blademaster::attack(Game& game, Unit* victim){
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distr(minDmg, maxDmg);
     int firstAttack = distr(gen);
-    int newDmg = victim->damageUnit(firstAttack);
+    int newDmg = victim->damageUnit(firstAttack, true, this);
     game.unitAttack(this, victim, firstAttack, newDmg);
 
     std::uniform_int_distribution<> multiHits(0, 3);
@@ -39,8 +39,8 @@ std::vector<PassiveEventMessage> Blademaster::onAttackPassives(Unit* victim){
     int secondAttack = distr(gen);
     int thirdAttack = distr(gen);
 
-    newSecondAttack = victim->damageUnit(secondAttack);
-    newThirdAttack = victim->damageUnit(thirdAttack);
+    newSecondAttack = victim->damageUnit(secondAttack, true, this);
+    newThirdAttack = victim->damageUnit(thirdAttack, true, this);
 
     events.push_back(PassiveEventMessage(victim->getName(), "additionalAttack", secondAttack));
     events.push_back(PassiveEventMessage(victim->getName(), "additionalAttack", thirdAttack));

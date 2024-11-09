@@ -759,8 +759,8 @@ void Game::updateUIAfterAttack(Unit* attacker, Unit* victim, int dmg, std::strin
     std::string attackerHpString = "HP: " + std::to_string(attacker->getCurrHp()) + "/" + std::to_string(attacker->getMaxHp());
     playUnitHpTexts[attacker->getId()]->setText(attackerHpString, colorMap["white"]);
 
-    std::string hpString = "HP: " + std::to_string(victim->getCurrHp()) + "/" + std::to_string(victim->getMaxHp());
-    playUnitHpTexts[victim->getId()]->setText(hpString, colorMap["white"]);
+    std::string victimHpString = "HP: " + std::to_string(victim->getCurrHp()) + "/" + std::to_string(victim->getMaxHp());
+    playUnitHpTexts[victim->getId()]->setText(victimHpString, colorMap["white"]);
 
     std::string currentAnnouncement;
     if (customAnnouncement != "") {
@@ -901,7 +901,7 @@ void Game::update() {
                         if (attackMsg->getTargetId() == gameUnits[i]->getId()) {
                             int newDmg = 0;
                             if (attackMsg->getDamage() > 0) {
-                                newDmg = gameUnits[i]->damageUnit(attackMsg->getDamage());
+                                newDmg = gameUnits[i]->damageUnit(attackMsg->getDamage(), true, currentUnit);
                             }
                             std::string customAnnouncement = receiveAndHandlePassiveMessages(newDmg);
                             
@@ -945,7 +945,7 @@ std::string Game::receiveAndHandlePassiveMessages(int firstAttack) {
                             }
                         }
                     } 
-                    int newDmg = victim->damageUnit(passiveMsg->getValue());
+                    int newDmg = victim->damageUnit(passiveMsg->getValue(), true, currentUnit);
                     multiAttacks.push_back(newDmg);
                     
                     passiveAnnouncement = true;

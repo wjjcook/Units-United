@@ -86,7 +86,7 @@ void Unit::setPlayerNum(int pNum) {
     playerNum = pNum;
 }
 
-int Unit::damageUnit(int dmg) {
+int Unit::damageUnit(int dmg, bool isBasicAttack, Unit* attacker) {
     currHp -= dmg;
     if (currHp <= 0) {
         alive = false;
@@ -99,7 +99,7 @@ void Unit::attack(Game& game, Unit* victim) {
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distr(minDmg, maxDmg);
     int dmg = distr(gen);
-    int newDmg = victim->damageUnit(dmg);
+    int newDmg = victim->damageUnit(dmg, true, this);
     game.unitAttack(this, victim, dmg, newDmg);
 }
 

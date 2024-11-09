@@ -13,7 +13,7 @@ void Fighter::attack(Game& game, Unit* victim) {
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distr(minDmg, maxDmg);
     int dmg = distr(gen);
-    int newDmg = victim->damageUnit(dmg);
+    int newDmg = victim->damageUnit(dmg, true, this);
     game.unitAttack(this, victim, dmg, newDmg);
 } 
 
