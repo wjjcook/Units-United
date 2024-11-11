@@ -8,7 +8,6 @@ class Duelist: public Unit {
         Duelist();
         ~Duelist() override;
         void attack(Game& game, Unit* victim) override;
-        std::vector<PassiveEventMessage> onAttackPassives(Unit* victim) override;
 
     private:
 };

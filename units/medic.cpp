@@ -19,9 +19,4 @@ void Medic::attack(Game& game, Unit* victim) {
     int dmg = distr(gen);
     int newDmg = victim->damageUnit(dmg, true, this);
     game.unitAttack(this, victim, dmg, newDmg);
-} 
-
-std::vector<PassiveEventMessage> Medic::onAttackPassives(Unit* victim){
-    std::vector<PassiveEventMessage> events;
-    return events;
 }

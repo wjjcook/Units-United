@@ -40,8 +40,3 @@ void RaidBoss::attack(Game& game, Unit* victim) {
     int newDmg = victim->damageUnit(dmg, true, this);
     game.unitAttack(this, victim, dmg, newDmg);
 }
-
-std::vector<PassiveEventMessage> RaidBoss::onAttackPassives(Unit* victim){
-    std::vector<PassiveEventMessage> events;
-    return events;
-}
