@@ -726,7 +726,26 @@ void Game::handlePlayEvents(SDL_Event e) {
             if (checkMouseEvent(playUnitButtons[i], e) == 1) {
                 for (unsigned int j = 0; j < 8; j++) {
                     if (gameUnits[j]->getName() == playUnitButtons[i]->getText() && gameUnits[j]->getPlayerNum() != playerTurn) {
-                        currentUnit->attack(*this, gameUnits[j]);
+                        
+                        Unit* victim = gameUnits[j];
+                        if (!currentUnit->attackHits()) {
+                            unitAttack(currentUnit, victim, 0, 0);
+                            break;
+                        }
+
+                        std::vector<PassiveEventMessage> beforeDamagePassives = victim->beforeDamagePassives(*this, currentUnit);
+                        bool countered = false;
+                        for (unsigned int i = 0; i < beforeDamagePassives.size(); i++) {
+                            if (beforeDamagePassives[i].getPassiveType() == "counterAttack") {
+                                countered = true;
+                                break;
+                            }
+                        }
+                        sendPassiveEvents(beforeDamagePassives);
+
+                        if (!countered) {
+                            currentUnit->attack(*this, gameUnits[j]);
+                        }
                         break;
                     }
                 }
@@ -897,15 +916,24 @@ void Game::update() {
                     }
                 } else if (receivedMsg->getType() == MessageType::ATTACK) {
                     AttackMessage* attackMsg = static_cast<AttackMessage*>(receivedMsg);
+                    Unit* attacker = nullptr;
+                    Unit* victim = nullptr;
                     for (unsigned int i = 0; i < gameUnits.size(); i++) {
-                        if (attackMsg->getTargetId() == gameUnits[i]->getId()) {
+                        if (attackMsg->getAttackerId() == gameUnits[i]->getId()) {
+                            attacker = gameUnits[i];
+                        } else if (attackMsg->getTargetId() == gameUnits[i]->getId()) {
+                            victim = gameUnits[i];
+                        }
+                        if (attacker && victim) {
                             int newDmg = 0;
+                            std::string customAnnouncement = "";
+
                             if (attackMsg->getDamage() > 0) {
-                                newDmg = gameUnits[i]->damageUnit(attackMsg->getDamage(), true, currentUnit);
+                                newDmg = victim->damageUnit(attackMsg->getDamage(), true, attacker);
+                                customAnnouncement = receiveAndHandlePassiveMessages(newDmg);
                             }
-                            std::string customAnnouncement = receiveAndHandlePassiveMessages(newDmg);
                             
-                            updateUIAfterAttack(currentUnit, gameUnits[i], newDmg, customAnnouncement);
+                            updateUIAfterAttack(attacker, victim, newDmg, customAnnouncement);
                             turnState = endTurn;
                             break;
                         }
@@ -932,7 +960,9 @@ std::string Game::receiveAndHandlePassiveMessages(int firstAttack) {
             if (receivedPassiveMsg->getType() == MessageType::PASSIVE_EVENT) {
                 PassiveEventMessage* passiveMsg = static_cast<PassiveEventMessage*>(receivedPassiveMsg);
                 
-                if (passiveMsg->getPassiveType() == "heal") {
+                if (passiveMsg->getPassiveType() == "END") {
+                    messagesAvailable = false;
+                } else if (passiveMsg->getPassiveType() == "heal") {
                     currentUnit->setCurrHp(currentUnit->getCurrHp() + passiveMsg->getValue());
                 } else if (passiveMsg->getPassiveType() == "dmgIncrease") {
                     currentUnit->increaseDmg(passiveMsg->getValue());
@@ -947,14 +977,16 @@ std::string Game::receiveAndHandlePassiveMessages(int firstAttack) {
                     } 
                     int newDmg = victim->damageUnit(passiveMsg->getValue(), true, currentUnit);
                     multiAttacks.push_back(newDmg);
-                    
                     passiveAnnouncement = true;
+
+                } else if (passiveMsg->getPassiveType() == "counterAttack") {
+                    std::string customAnnouncement = "The Duelist countered " + currentUnit->getName() + " for " + std::to_string(firstAttack) + " damage!";
+                    delete receivedPassiveMsg;
+                    return customAnnouncement;
                 }
             }
             delete receivedPassiveMsg;
-        } else {
-            messagesAvailable = false; 
-        }    
+        }   
     }
 
     if (passiveAnnouncement) {

@@ -19,4 +19,5 @@ void Medic::attack(Game& game, Unit* victim) {
     int dmg = distr(gen);
     int newDmg = victim->damageUnit(dmg, true, this);
     game.unitAttack(this, victim, dmg, newDmg);
+    game.sendPassiveEvents({PassiveEventMessage(name, "END", 0)});
 }

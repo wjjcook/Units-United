@@ -27,6 +27,8 @@ void Blademaster::attack(Game& game, Unit* victim){
         multiAttacks.push_back(newSecondAttack);
         multiAttacks.push_back(newThirdAttack);
         game.updateUIAfterAttack(this, victim, firstAttack, game.generateCustomAnnouncement(victim, multiAttacks));
+    } else {
+        game.sendPassiveEvents({PassiveEventMessage(name, "END", 0)});
     }
 }
 
@@ -44,6 +46,7 @@ std::vector<PassiveEventMessage> Blademaster::onAttackPassives(Unit* victim){
 
     events.push_back(PassiveEventMessage(victim->getName(), "additionalAttack", secondAttack));
     events.push_back(PassiveEventMessage(victim->getName(), "additionalAttack", thirdAttack));
+    events.push_back(PassiveEventMessage(name, "END", 0));
 
     return events;
 }

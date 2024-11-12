@@ -101,6 +101,11 @@ void Unit::attack(Game& game, Unit* victim) {
     int dmg = distr(gen);
     int newDmg = victim->damageUnit(dmg, true, this);
     game.unitAttack(this, victim, dmg, newDmg);
+    game.sendPassiveEvents({PassiveEventMessage(name, "END", 0)});
+}
+
+bool Unit::attackHits() {
+    return true;
 }
 
 std::vector<PassiveEventMessage> Unit::onAttackPassives(Unit* victim){
@@ -110,5 +115,11 @@ std::vector<PassiveEventMessage> Unit::onAttackPassives(Unit* victim){
 
 std::vector<PassiveEventMessage> Unit::onDamagePassives(Unit* attacker, int dmg) {
     std::vector<PassiveEventMessage> events;
+    return events;
+}
+
+std::vector<PassiveEventMessage> Unit::beforeDamagePassives(Game& game, Unit* attacker) {
+    std::vector<PassiveEventMessage> events;
+    events.push_back(PassiveEventMessage(name, "END", 0));
     return events;
 }

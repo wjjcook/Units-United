@@ -15,9 +15,11 @@ void Fighter::attack(Game& game, Unit* victim) {
     int dmg = distr(gen);
     int newDmg = victim->damageUnit(dmg, true, this);
     game.unitAttack(this, victim, dmg, newDmg);
+    game.sendPassiveEvents({PassiveEventMessage(name, "END", 0)});
 } 
 
 std::vector<PassiveEventMessage> Fighter::onAttackPassives(Unit* victim){
     std::vector<PassiveEventMessage> events;
+    events.push_back(PassiveEventMessage(name, "END", 0));
     return events;
 }

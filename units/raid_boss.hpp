@@ -9,6 +9,7 @@ class RaidBoss: public Unit {
         ~RaidBoss() override;
         int damageUnit(int dmg, bool isBasicAttack, Unit* attacker) override;
         void attack(Game& game, Unit* victim) override;
+        bool attackHits() override;
 
     private:
         int overwhelmed;
