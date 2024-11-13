@@ -724,37 +724,44 @@ void Game::handlePlayEvents(SDL_Event e) {
 
         for (unsigned int i = start; i < end; i++) {
             if (checkMouseEvent(playUnitButtons[i], e) == 1) {
-                for (unsigned int j = 0; j < 8; j++) {
-                    if (gameUnits[j]->getName() == playUnitButtons[i]->getText() && gameUnits[j]->getPlayerNum() != playerTurn) {
-                        
-                        Unit* victim = gameUnits[j];
-                        if (!currentUnit->attackHits()) {
-                            unitAttack(currentUnit, victim, 0, 0);
-                            break;
-                        }
-
-                        std::vector<PassiveEventMessage> beforeDamagePassives = victim->beforeDamagePassives(*this, currentUnit);
-                        bool countered = false;
-                        for (unsigned int i = 0; i < beforeDamagePassives.size(); i++) {
-                            if (beforeDamagePassives[i].getPassiveType() == "counterAttack") {
-                                countered = true;
-                                break;
-                            }
-                        }
-                        sendPassiveEvents(beforeDamagePassives);
-
-                        if (!countered) {
-                            currentUnit->attack(*this, gameUnits[j]);
-                        }
-                        break;
-                    }
-                }
+                initiateAttackOnClick(playUnitButtons[i]);
+                // if (currentUnit->getName() == "The Fighter") {
+                    
+                // }
             }
         }
     } else if (turnState == healAlly) {
         turnState = endTurn; // Temporary
     }
     updateTimeline();
+}
+
+void Game::initiateAttackOnClick(Button* targetButton) {
+    for (unsigned int j = 0; j < 8; j++) {
+        if (gameUnits[j]->getName() == targetButton->getText() && gameUnits[j]->getPlayerNum() != playerTurn) {
+            
+            Unit* victim = gameUnits[j];
+            if (!currentUnit->attackHits()) {
+                unitAttack(currentUnit, victim, 0, 0);
+                break;
+            }
+
+            std::vector<PassiveEventMessage> beforeDamagePassives = victim->beforeDamagePassives(*this, currentUnit);
+            bool countered = false;
+            for (unsigned int i = 0; i < beforeDamagePassives.size(); i++) {
+                if (beforeDamagePassives[i].getPassiveType() == "counterAttack") {
+                    countered = true;
+                    break;
+                }
+            }
+            sendPassiveEvents(beforeDamagePassives);
+
+            if (!countered) {
+                currentUnit->attack(*this, gameUnits[j]);
+            }
+            break;
+        }
+    }
 }
 
 void Game::unitAttack(Unit* attacker, Unit* victim, int rawDmg, int newDmg) {
