@@ -76,7 +76,7 @@ class Game {
         void initializeMatch();
         void populateUnitButtonMap();
         void handlePlayEvents(SDL_Event e);
-        void initiateAttackOnClick(Button* targetButton);
+        void initiateAttackOnClick(std::string targetName);
         void handleEndEvents(SDL_Event e);
         void resetGame();
         
@@ -109,6 +109,9 @@ class Game {
         Turn_State turnState;
 
         std::map<std::string, SDL_Color> colorMap;
+
+        std::string fighterFirstTarget;
+        int fighterFirstAttack;
 
         // Players
         Player* player1;
@@ -146,7 +149,6 @@ class Game {
         std::deque<Unit*> gameUnits;
         std::vector<Unit*> unitsById;
         Unit* currentUnit;
-
 
 };
 

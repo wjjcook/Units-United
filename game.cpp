@@ -31,6 +31,9 @@ Game::Game() {
     playerTurn = PLAYER1;
 
     currentUnit = nullptr;
+
+    fighterFirstTarget = "";
+    fighterFirstAttack = 0;
     
 }
 
@@ -719,15 +722,25 @@ void Game::handlePlayEvents(SDL_Event e) {
         unsigned int end = start + 4;
 
         if (checkMouseEvent(unitButtonMap[currentUnit->getName()].back(), e) == 1) {
+            fighterFirstTarget = "";
+            fighterFirstAttack = 0;
             turnState = selectAction;
         }
 
         for (unsigned int i = start; i < end; i++) {
             if (checkMouseEvent(playUnitButtons[i], e) == 1) {
-                initiateAttackOnClick(playUnitButtons[i]);
-                // if (currentUnit->getName() == "The Fighter") {
-                    
-                // }
+                if (currentUnit->getName() == "The Fighter") {
+                    if (fighterFirstTarget == ""){
+                        fighterFirstTarget = playUnitButtons[i]->getText();
+                    } else {
+                        initiateAttackOnClick(fighterFirstTarget);
+                        initiateAttackOnClick(playUnitButtons[i]->getText());
+                        fighterFirstAttack = 0;
+                        fighterFirstTarget = "";
+                    }
+                } else {
+                    initiateAttackOnClick(playUnitButtons[i]->getText());
+                }
             }
         }
     } else if (turnState == healAlly) {
@@ -736,9 +749,9 @@ void Game::handlePlayEvents(SDL_Event e) {
     updateTimeline();
 }
 
-void Game::initiateAttackOnClick(Button* targetButton) {
+void Game::initiateAttackOnClick(std::string targetName) {
     for (unsigned int j = 0; j < 8; j++) {
-        if (gameUnits[j]->getName() == targetButton->getText() && gameUnits[j]->getPlayerNum() != playerTurn) {
+        if (gameUnits[j]->getName() == targetName && gameUnits[j]->getPlayerNum() != playerTurn) {
             
             Unit* victim = gameUnits[j];
             if (!currentUnit->attackHits()) {
@@ -766,7 +779,20 @@ void Game::initiateAttackOnClick(Button* targetButton) {
 
 void Game::unitAttack(Unit* attacker, Unit* victim, int rawDmg, int newDmg) {
 
-    updateUIAfterAttack(attacker, victim, newDmg);
+    if (attacker->getName() == "The Fighter") {
+        if (fighterFirstAttack == 0) {
+            fighterFirstAttack = newDmg;
+            updateUIAfterAttack(attacker, victim, newDmg);
+        } else {
+            // Need to account for duelist counters
+            std::string customAnnouncement = "The Fighter attacked " + fighterFirstTarget + " for " + std::to_string(fighterFirstAttack) + " damage and " + victim->getName() + " for " + std::to_string(newDmg) + " damage!";
+            updateUIAfterAttack(attacker, victim, newDmg, customAnnouncement);
+            fighterFirstAttack = 0;
+            fighterFirstTarget = "";
+        }
+    } else {
+        updateUIAfterAttack(attacker, victim, newDmg);
+    }
 
     AttackMessage attackMsg(attacker->getId(), victim->getId(), rawDmg);
     sendMessage(attackMsg);
@@ -939,8 +965,20 @@ void Game::update() {
                                 newDmg = victim->damageUnit(attackMsg->getDamage(), true, attacker);
                                 customAnnouncement = receiveAndHandlePassiveMessages(newDmg);
                             }
+                            if (attacker->getName() == "The Fighter") {
+                                if (fighterFirstAttack == 0) {
+                                    fighterFirstTarget = victim->getName();
+                                    fighterFirstAttack = newDmg;
+                                    updateUIAfterAttack(attacker, victim, newDmg, customAnnouncement);
+                                    break;
+                                }
+                                // Need to account for duelist counters
+                                customAnnouncement = "The Fighter attacked " + fighterFirstTarget + " for " + std::to_string(fighterFirstAttack) + " damage and " + victim->getName() + " for " + std::to_string(newDmg) + " damage!";
+                            }
                             
                             updateUIAfterAttack(attacker, victim, newDmg, customAnnouncement);
+                            fighterFirstAttack = 0;
+                            fighterFirstTarget = "";
                             turnState = endTurn;
                             break;
                         }
