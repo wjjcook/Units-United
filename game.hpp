@@ -81,6 +81,7 @@ class Game {
         void resetGame();
         
         void update();
+        void roundOver();
         std::string receiveAndHandlePassiveMessages(int firstAttack);
         void updateTimeline();
         Unit* findNextUnit(Unit* currentUnit);

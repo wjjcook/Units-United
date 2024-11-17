@@ -737,6 +737,8 @@ void Game::handlePlayEvents(SDL_Event e) {
                         initiateAttackOnClick(playUnitButtons[i]->getText());
                         fighterFirstAttack = 0;
                         fighterFirstTarget = "";
+                        Fighter* theFighter = static_cast<Fighter*>(currentUnit);
+                        theFighter->setStandingGround(true);
                     }
                 } else {
                     initiateAttackOnClick(playUnitButtons[i]->getText());
@@ -914,6 +916,9 @@ void Game::update() {
             currentUnit = gameUnits.front();
         } else if (turnState == endTurn) {
             currentUnit = findNextUnit(currentUnit);
+            if (currentUnit == gameUnits.front()) {
+                roundOver();
+            }
             turnState = selectAction;
         }
         if (currentUnit->getPlayerNum() == 1) {
@@ -972,6 +977,8 @@ void Game::update() {
                                     updateUIAfterAttack(attacker, victim, newDmg, customAnnouncement);
                                     break;
                                 }
+                                Fighter* theFighter = static_cast<Fighter*>(attacker);
+                                theFighter->setStandingGround(true);
                                 // Need to account for duelist counters
                                 customAnnouncement = "The Fighter attacked " + fighterFirstTarget + " for " + std::to_string(fighterFirstAttack) + " damage and " + victim->getName() + " for " + std::to_string(newDmg) + " damage!";
                             }
@@ -988,6 +995,15 @@ void Game::update() {
             }
         }
         updateTimeline();
+    }
+}
+
+void Game::roundOver() {
+    for (unsigned int i = 0; i < gameUnits.size(); i++) {
+        if (gameUnits[i]->getName() == "The Fighter") {
+            Fighter* theFighter = static_cast<Fighter*>(gameUnits[i]);
+            theFighter->setStandingGround(false);
+        }
     }
 }
 

@@ -4,9 +4,29 @@
 #include <random>
 
 
-Fighter::Fighter() : Unit("The Fighter", "Haymaker", 135, 5, 8, 75) {}
+Fighter::Fighter() : Unit("The Fighter", "Haymaker", 135, 5, 8, 75) {
+    standingGround = false;
+}
 
 Fighter::~Fighter() {}
+
+void Fighter::setStandingGround(bool sg) {
+    standingGround = sg;
+}
+
+int Fighter::damageUnit(int dmg, bool isBasicAttack, Unit* attacker) {
+    int totalDmg = dmg;
+    if (standingGround) {
+        totalDmg -= 3;
+    }
+    
+    currHp -= totalDmg;
+    if (currHp <= 0) {
+        alive = false;
+    }
+
+    return totalDmg;
+}
 
 void Fighter::attack(Game& game, Unit* victim) {
     std::random_device rd;
