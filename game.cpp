@@ -514,7 +514,7 @@ void Game::addUnitToRoster(std::string unit) {
 void Game::initializeMatch() {
 
     delete announcerText;
-    announcerText = new Text(renderer, "Terminal.ttf", 20, scaleX, scaleY);
+    announcerText = new Text(renderer, "Terminal.ttf", 16, scaleX, scaleY);
 
     player1->sortUnitsBySpeed();
     player2->sortUnitsBySpeed();
@@ -766,6 +766,16 @@ void Game::initiateAttackOnClick(std::string targetName) {
             for (unsigned int i = 0; i < beforeDamagePassives.size(); i++) {
                 if (beforeDamagePassives[i].getPassiveType() == "counterAttack") {
                     countered = true;
+
+                    if (currentUnit->getName() == "The Fighter") {
+                        if (fighterFirstAttack == 0) {
+                            fighterFirstAttack = -beforeDamagePassives[i].getValue();
+                        } else {
+                            std::string customAnnouncement = "The Fighter attacked " + fighterFirstTarget + " for " + std::to_string(fighterFirstAttack) + " damage and The Duelist countered The Fighter for " + std::to_string(beforeDamagePassives[i].getValue()) + " damage!";
+                            updateUIAfterAttack(currentUnit, gameUnits[j], beforeDamagePassives[i].getValue(), customAnnouncement);
+                        }
+                    }
+
                     break;
                 }
             }
@@ -786,8 +796,12 @@ void Game::unitAttack(Unit* attacker, Unit* victim, int rawDmg, int newDmg) {
             fighterFirstAttack = newDmg;
             updateUIAfterAttack(attacker, victim, newDmg);
         } else {
-            // Need to account for duelist counters
-            std::string customAnnouncement = "The Fighter attacked " + fighterFirstTarget + " for " + std::to_string(fighterFirstAttack) + " damage and " + victim->getName() + " for " + std::to_string(newDmg) + " damage!";
+            std::string customAnnouncement;
+            if (fighterFirstAttack < 0) {
+                customAnnouncement = "The Duelist countered The Fighter for " + std::to_string(-fighterFirstAttack) + " damage and The Fighter attacked " + victim->getName() + " for " + std::to_string(newDmg) + " damage!";
+            } else {
+                customAnnouncement = "The Fighter attacked " + fighterFirstTarget + " for " + std::to_string(fighterFirstAttack) + " damage and " + victim->getName() + " for " + std::to_string(newDmg) + " damage!";
+            }
             updateUIAfterAttack(attacker, victim, newDmg, customAnnouncement);
             fighterFirstAttack = 0;
             fighterFirstTarget = "";
@@ -971,22 +985,26 @@ void Game::update() {
                                 customAnnouncement = receiveAndHandlePassiveMessages(newDmg);
                             }
                             if (attacker->getName() == "The Fighter") {
+                                Fighter* theFighter = static_cast<Fighter*>(attacker);
+                                theFighter->setStandingGround(true);
                                 if (fighterFirstAttack == 0) {
                                     fighterFirstTarget = victim->getName();
                                     fighterFirstAttack = newDmg;
                                     updateUIAfterAttack(attacker, victim, newDmg, customAnnouncement);
                                     break;
                                 }
-                                Fighter* theFighter = static_cast<Fighter*>(attacker);
-                                theFighter->setStandingGround(true);
-                                // Need to account for duelist counters
-                                customAnnouncement = "The Fighter attacked " + fighterFirstTarget + " for " + std::to_string(fighterFirstAttack) + " damage and " + victim->getName() + " for " + std::to_string(newDmg) + " damage!";
+                                if (fighterFirstTarget == "countered") {
+                                    customAnnouncement = "The Duelist countered The Fighter for " + std::to_string(fighterFirstAttack) + " damage and The Fighter attacked " + victim->getName() + " for " + std::to_string(newDmg) + " damage!";
+                                } else {
+                                    customAnnouncement = "The Fighter attacked " + fighterFirstTarget + " for " + std::to_string(fighterFirstAttack) + " damage and " + victim->getName() + " for " + std::to_string(newDmg) + " damage!";
+                                }
                             }
-                            
-                            updateUIAfterAttack(attacker, victim, newDmg, customAnnouncement);
-                            fighterFirstAttack = 0;
-                            fighterFirstTarget = "";
-                            turnState = endTurn;
+                            if (customAnnouncement != "fighterCountered") {
+                                updateUIAfterAttack(attacker, victim, newDmg, customAnnouncement);
+                                fighterFirstAttack = 0;
+                                fighterFirstTarget = "";
+                                turnState = endTurn;
+                            }
                             break;
                         }
                     }
@@ -1041,7 +1059,18 @@ std::string Game::receiveAndHandlePassiveMessages(int firstAttack) {
                     passiveAnnouncement = true;
 
                 } else if (passiveMsg->getPassiveType() == "counterAttack") {
-                    std::string customAnnouncement = "The Duelist countered " + currentUnit->getName() + " for " + std::to_string(firstAttack) + " damage!";
+                    std::string customAnnouncement;
+                    if (currentUnit->getName() == "The Fighter") {
+                        if (fighterFirstAttack == 0) {
+                            fighterFirstTarget = "countered";
+                            fighterFirstAttack = passiveMsg->getValue();
+                            customAnnouncement = "fighterCountered";
+                        } else {
+                            customAnnouncement = "The Fighter attacked " + fighterFirstTarget + " for " + std::to_string(fighterFirstAttack) + " damage and The Duelist countered The Fighter for " + std::to_string(passiveMsg->getValue()) + " damage!";
+                        }
+                    } else {
+                        customAnnouncement = "The Duelist countered " + currentUnit->getName() + " for " + std::to_string(firstAttack) + " damage!";
+                    }                    
                     delete receivedPassiveMsg;
                     return customAnnouncement;
                 }
