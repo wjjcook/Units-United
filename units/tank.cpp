@@ -19,6 +19,9 @@ int Tank::damageUnit(int dmg, bool isBasicAttack, Unit* attacker) {
     int modifiedDmg;
     if (dmg < 20) {
         modifiedDmg = dmg - 2;
+        if (modifiedDmg < 0) {
+            modifiedDmg = 0;
+        }
     } else {
         modifiedDmg = dmg + 12;
     }

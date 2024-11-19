@@ -18,6 +18,9 @@ int Fighter::damageUnit(int dmg, bool isBasicAttack, Unit* attacker) {
     int totalDmg = dmg;
     if (standingGround) {
         totalDmg -= 3;
+        if (totalDmg < 0) {
+            totalDmg = 0;
+        }
     }
     
     currHp -= totalDmg;

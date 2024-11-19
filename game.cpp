@@ -823,12 +823,14 @@ void Game::sendPassiveEvents(std::vector<PassiveEventMessage> events) {
     }
 }
 
-void Game::updateUIAfterAttack(Unit* attacker, Unit* victim, int dmg, std::string customAnnouncement) {
-    std::string attackerHpString = "HP: " + std::to_string(attacker->getCurrHp()) + "/" + std::to_string(attacker->getMaxHp());
-    playUnitHpTexts[attacker->getId()]->setText(attackerHpString, colorMap["white"]);
+void Game::updateUnitUI(Unit* unit) {
+    std::string hpString = "HP: " + std::to_string(unit->getCurrHp()) + "/" + std::to_string(unit->getMaxHp());
+    playUnitHpTexts[unit->getId()]->setText(hpString, colorMap["white"]);
+}
 
-    std::string victimHpString = "HP: " + std::to_string(victim->getCurrHp()) + "/" + std::to_string(victim->getMaxHp());
-    playUnitHpTexts[victim->getId()]->setText(victimHpString, colorMap["white"]);
+void Game::updateUIAfterAttack(Unit* attacker, Unit* victim, int dmg, std::string customAnnouncement) {
+    updateUnitUI(attacker);
+    updateUnitUI(victim);
 
     std::string currentAnnouncement;
     if (customAnnouncement != "") {
@@ -840,6 +842,8 @@ void Game::updateUIAfterAttack(Unit* attacker, Unit* victim, int dmg, std::strin
     }
     announcerText->setText(currentAnnouncement, colorMap["white"]);
 }
+
+
 
 void Game::handleEndEvents(SDL_Event e) {
     if (checkMouseEvent(rematchButton, e) == 1) {
@@ -933,6 +937,8 @@ void Game::update() {
             if (currentUnit == gameUnits.front()) {
                 roundOver();
             }
+            currentUnit->onTurnPassives();
+            updateUnitUI(currentUnit);
             turnState = selectAction;
         }
         if (currentUnit->getPlayerNum() == 1) {

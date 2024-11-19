@@ -123,3 +123,5 @@ std::vector<PassiveEventMessage> Unit::beforeDamagePassives(Game& game, Unit* at
     events.push_back(PassiveEventMessage(name, "END", 0));
     return events;
 }
+
+void Unit::onTurnPassives() {}

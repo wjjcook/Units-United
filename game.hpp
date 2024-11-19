@@ -51,6 +51,7 @@ class Game {
         void run();
         void unitAttack(Unit* attacker, Unit* victim, int rawDmg, int newDmg);
         void sendPassiveEvents(std::vector<PassiveEventMessage> events);
+        void updateUnitUI(Unit* unit);
         void updateUIAfterAttack(Unit* attacker, Unit* victim, int dmg, std::string customAnnouncement = "");
         std::string generateCustomAnnouncement(Unit* victim = nullptr, std::vector<int> multiAttacks = {});
 

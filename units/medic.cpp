@@ -21,3 +21,10 @@ void Medic::attack(Game& game, Unit* victim) {
     game.unitAttack(this, victim, dmg, newDmg);
     game.sendPassiveEvents({PassiveEventMessage(name, "END", 0)});
 }
+
+void Medic::onTurnPassives() {
+    currHp += 5;
+    if (currHp > maxHp) {
+        currHp = maxHp;
+    }
+}
