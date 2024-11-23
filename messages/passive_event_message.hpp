@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Message.hpp"
+#include "message.hpp"
 
 class PassiveEventMessage : public Message {
     public:

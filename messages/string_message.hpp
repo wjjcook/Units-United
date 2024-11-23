@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-#include "Message.hpp"
+#include "message.hpp"
 
 class StringMessage : public Message {
     public:

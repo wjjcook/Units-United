@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "Message.hpp"
+#include "message.hpp"
 
 class AttackMessage : public Message {
     public:
