@@ -4,7 +4,7 @@ LDFLAGS := -L src/lib
 LIBS := -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_NET
 
 # Source files and object files
-SRCS := $(wildcard *.cpp units/*.cpp messages/*.cpp)
+SRCS := $(wildcard ui/*.cpp *.cpp units/*.cpp messages/*.cpp)
 OBJS := $(SRCS:.cpp=.o)
 
 # Target executable
@@ -24,6 +24,7 @@ $(TARGET): $(OBJS)
 # Clean up build files
 clean:
 	-del /f /q *.o
+	-del /f /q ui\*.o
 	-del /f /q units\*.o
 	-del /f /q messages\*.o
 	-del /f /q $(TARGET).exe

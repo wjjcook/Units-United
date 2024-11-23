@@ -134,8 +134,11 @@ bool Game::init(const std::string& title, int width, int height) {
         SDL_Quit();
         return false;
     }
+
+    titleScreen = new TitleScreen(renderer, scaleX, scaleY);
+
     initializeColors();
-    initializeTitleElements(renderer);
+    // initializeTitleElements(renderer);
     initializeCSelectElements(renderer);
     populateUnitMap();
 
@@ -246,28 +249,31 @@ void Game::initializeColors() {
     colorMap["grey"] = {45, 45, 45, 255};
 }
 
-void Game::initializeTitleElements(SDL_Renderer* renderer) {
+// void Game::initializeTitleElements(SDL_Renderer* renderer) {
 
-    titleText = new Text(renderer, "Terminal.ttf", 48, scaleX, scaleY);
-    titleText->setText("Units United", colorMap["white"]);
+//     titleText = new Text(renderer, "Terminal.ttf", 48, scaleX, scaleY);
+//     titleText->setText("Units United", colorMap["white"]);
+
+//     announcerText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
+//     announcerText->setText(" ", colorMap["white"]);
+
+//     ipText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
+//     ipText->setText(" ", colorMap["white"]);
+
+//     titleStartButton = new Button(renderer, "Terminal.ttf", 24, "Start Game", colorMap["white"], colorMap["green"], 150, 60, scaleX, scaleY);
+//     titleStartButton->setOutline(true, colorMap["black"]);
+
+//     titleJoinButton = new Button(renderer, "Terminal.ttf", 24, "Join Game", colorMap["white"], colorMap["green"], 150, 60, scaleX, scaleY);
+//     titleJoinButton->setOutline(true, colorMap["black"]);
+
+//     quitButton = new Button(renderer, "Terminal.ttf", 24, "Quit", colorMap["white"], colorMap["dark red"], 150, 60, scaleX, scaleY);
+//     quitButton->setOutline(true, colorMap["black"]);
+// }
+
+void Game::initializeCSelectElements(SDL_Renderer* renderer) {
 
     announcerText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
     announcerText->setText(" ", colorMap["white"]);
-
-    ipText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
-    ipText->setText(" ", colorMap["white"]);
-
-    titleStartButton = new Button(renderer, "Terminal.ttf", 24, "Start Game", colorMap["white"], colorMap["green"], 150, 60, scaleX, scaleY);
-    titleStartButton->setOutline(true, colorMap["black"]);
-
-    titleJoinButton = new Button(renderer, "Terminal.ttf", 24, "Join Game", colorMap["white"], colorMap["green"], 150, 60, scaleX, scaleY);
-    titleJoinButton->setOutline(true, colorMap["black"]);
-
-    quitButton = new Button(renderer, "Terminal.ttf", 24, "Quit", colorMap["white"], colorMap["dark red"], 150, 60, scaleX, scaleY);
-    quitButton->setOutline(true, colorMap["black"]);
-}
-
-void Game::initializeCSelectElements(SDL_Renderer* renderer) {
 
     tempText = new Text(renderer, "Terminal.ttf", 48, scaleX, scaleY);
     tempText->setText("NEW UNITS COMING SOON...", colorMap["white"]);
@@ -398,7 +404,8 @@ void Game::handleEvents() {
                         player2->setLocalPlayer(true);
                         gameState = cSelect;
                     }
-                    announcerText->setText("Enter Remote IP: " + inputText, colorMap["white"]);
+                    titleScreen->setText(TextType::Announcer, "Enter Remote IP: " + inputText);
+                    // announcerText->setText("Enter Remote IP: " + inputText, colorMap["white"]);
                 }
                 handleTitleEvents(e);
                 
@@ -429,29 +436,33 @@ int Game::checkMouseEvent(Button* button, SDL_Event e) {
 }
 
 void Game::handleTitleEvents(SDL_Event e) {
-    if (!searchForClient && checkMouseEvent(titleStartButton, e) == 1) {
+    if (!searchForClient && checkMouseEvent(titleScreen->getButton(ButtonType::Start), e) == 1) {
         receiveIpInput = false;
-        announcerText->setText("Finding Match...", colorMap["white"]);
-        announcerText->render(400, 200);
-        SDL_RenderPresent(renderer);
+        titleScreen->setText(TextType::Announcer, "Finding Match...");
+        // titleScreen->getText(TextType::Announcer)->render(400, 200);
+        // announcerText->setText("Finding Match...", colorMap["white"]);
+        // announcerText->render(400, 200);
+        // SDL_RenderPresent(renderer);
         if (!initializeServer(12345)) {
             std::cerr << "Failed to initialize network." << std::endl;
             return;
         }
-        titleStartButton->setHovered(false);  
+        titleScreen->getButton(ButtonType::Start)->setHovered(false);
+        // titleStartButton->setHovered(false);  
     }
-    if (checkMouseEvent(titleJoinButton, e) == 1) {
+    if (checkMouseEvent(titleScreen->getButton(ButtonType::Join), e) == 1) {
         if (searchForClient) {
             closeServer();
             searchForClient = false;
         }
-        announcerText->setText("Enter Remote IP: ", colorMap["white"]);
+        titleScreen->setText(TextType::Announcer, "Enter Remote IP: ");
+        // announcerText->setText("Enter Remote IP: ", colorMap["white"]);
         SDL_StartTextInput();
         ipInput = "";
         ipInputDone = false;
         receiveIpInput = true;
     }
-    if (checkMouseEvent(quitButton, e) == 1) {
+    if (checkMouseEvent(titleScreen->getButton(ButtonType::Quit), e) == 1) {
         if (searchForClient) {
             closeServer();
             searchForClient = false;
@@ -1151,11 +1162,12 @@ void Game::render() {
     SDL_RenderClear(renderer);
 
     if (gameState == title) {
-        titleText->render(325, 100);
-        announcerText->render(300, 200);
-        titleStartButton->render(300, 300);
-        titleJoinButton->render(500, 300);
-        quitButton->render(400, 400);
+        titleScreen->render();
+        // titleText->render(325, 100);
+        // announcerText->render(300, 200);
+        // titleStartButton->render(300, 300);
+        // titleJoinButton->render(500, 300);
+        // quitButton->render(400, 400);
     } else if (gameState == cSelect) {
         announcerText->render(25, 450);
         tempText->render(50, 300);

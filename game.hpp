@@ -14,6 +14,9 @@
 #include "button.hpp"
 #include "player.hpp"
 
+#include "ui/ui.hpp"
+#include "ui/title_screen.hpp"
+
 #include "messages/character_selection_message.hpp"
 #include "messages/unit_order_message.hpp"
 #include "messages/string_message.hpp"
@@ -114,6 +117,9 @@ class Game {
 
         std::string fighterFirstTarget;
         int fighterFirstAttack;
+
+        // UI
+        UI* titleScreen;
 
         // Players
         Player* player1;
