@@ -1,7 +1,6 @@
 #include "character_select_screen.hpp"
 
-CharacterSelectScreen::CharacterSelectScreen(SDL_Renderer* renderer, float scaleX, float scaleY, int localPlayer) : UI(renderer, scaleX, scaleY) {
-    this->localPlayer = localPlayer;
+CharacterSelectScreen::CharacterSelectScreen(SDL_Renderer* renderer, float scaleX, float scaleY) : UI(renderer, scaleX, scaleY) {
     initializeElements();
 }
 
@@ -60,6 +59,10 @@ void CharacterSelectScreen::initializeElements() {
     unitButtons.push_back(villageIdiotButton);
 }
 
+void CharacterSelectScreen::setLocalPlayer(int playerNum) {
+    localPlayer = playerNum;
+}
+
 void CharacterSelectScreen::setText(TextType type, const std::string& newText) {
     switch (type) {
     case TextType::Announcer:
@@ -68,6 +71,17 @@ void CharacterSelectScreen::setText(TextType type, const std::string& newText) {
     default:
         std::cout << "Unsupported text type" << std::endl;
         break;
+    }
+}
+
+void CharacterSelectScreen::addUnitToPlayerSelectText(std::string unit, int playerNum) {
+    Text* unitText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
+    if (playerNum == 1) {
+        unitText->setText(unit, colorMap["light blue"]);
+        player1SelectText.push_back(unitText);
+    } else {
+        unitText->setText(unit, colorMap["light red"]);
+        player2SelectText.push_back(unitText);
     }
 }
 

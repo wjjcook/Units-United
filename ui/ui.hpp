@@ -27,7 +27,6 @@ class UI {
 
         virtual void initializeElements() = 0;
 
-        virtual Text* getText(TextType type) = 0;
         virtual void setText(TextType type, const std::string& newText) = 0;
         virtual Button* getButton(ButtonType type) = 0;
         virtual void render() = 0;

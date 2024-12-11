@@ -17,7 +17,6 @@ class TitleScreen : public UI {
 
         void initializeElements() override;
 
-        Text* getText(TextType type) override;
         void setText(TextType type, const std::string& newText) override;
         Button* getButton(ButtonType type) override;
         void render() override;

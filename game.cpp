@@ -136,10 +136,11 @@ bool Game::init(const std::string& title, int width, int height) {
     }
 
     titleScreen = new TitleScreen(renderer, scaleX, scaleY);
+    cSelectScreen = new CharacterSelectScreen(renderer, scaleX, scaleY);
 
     initializeColors();
     // initializeTitleElements(renderer);
-    initializeCSelectElements(renderer);
+    // initializeCSelectElements(renderer);
     populateUnitMap();
 
     running = true;
@@ -270,60 +271,60 @@ void Game::initializeColors() {
 //     quitButton->setOutline(true, colorMap["black"]);
 // }
 
-void Game::initializeCSelectElements(SDL_Renderer* renderer) {
+// void Game::initializeCSelectElements(SDL_Renderer* renderer) {
 
-    announcerText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
-    announcerText->setText(" ", colorMap["white"]);
+//     announcerText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
+//     announcerText->setText(" ", colorMap["white"]);
 
-    tempText = new Text(renderer, "Terminal.ttf", 48, scaleX, scaleY);
-    tempText->setText("NEW UNITS COMING SOON...", colorMap["white"]);
+//     tempText = new Text(renderer, "Terminal.ttf", 48, scaleX, scaleY);
+//     tempText->setText("NEW UNITS COMING SOON...", colorMap["white"]);
 
-    cSelectStartButton = new Button(renderer, "Terminal.ttf", 24, "Ready!", colorMap["white"], colorMap["green"], 150, 60, scaleX, scaleY);
-    cSelectStartButton->setOutline(true, colorMap["black"]);
+//     cSelectStartButton = new Button(renderer, "Terminal.ttf", 24, "Ready!", colorMap["white"], colorMap["green"], 150, 60, scaleX, scaleY);
+//     cSelectStartButton->setOutline(true, colorMap["black"]);
 
-    Text* player1HeaderText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
-    player1HeaderText->setText("Player 1 Units:", colorMap["light blue"]);
+//     Text* player1HeaderText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
+//     player1HeaderText->setText("Player 1 Units:", colorMap["light blue"]);
 
-    Text* player2HeaderText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
-    player2HeaderText->setText("Player 2 Units:", colorMap["light red"]);
+//     Text* player2HeaderText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
+//     player2HeaderText->setText("Player 2 Units:", colorMap["light red"]);
 
-    player1SelectText.push_back(player1HeaderText);
-    player2SelectText.push_back(player2HeaderText);
+//     player1SelectText.push_back(player1HeaderText);
+//     player2SelectText.push_back(player2HeaderText);
 
-    Button* blademasterButton = new Button(renderer, "Terminal.ttf", 16, "The Blademaster", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
-    blademasterButton->setOutline(true, colorMap["black"]);
+//     Button* blademasterButton = new Button(renderer, "Terminal.ttf", 16, "The Blademaster", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
+//     blademasterButton->setOutline(true, colorMap["black"]);
 
-    Button* cavemanButton = new Button(renderer, "Terminal.ttf", 16, "The Caveman", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
-    cavemanButton->setOutline(true, colorMap["black"]);
+//     Button* cavemanButton = new Button(renderer, "Terminal.ttf", 16, "The Caveman", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
+//     cavemanButton->setOutline(true, colorMap["black"]);
 
-    Button* duelistButton = new Button(renderer, "Terminal.ttf", 16, "The Duelist", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
-    duelistButton->setOutline(true, colorMap["black"]);
+//     Button* duelistButton = new Button(renderer, "Terminal.ttf", 16, "The Duelist", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
+//     duelistButton->setOutline(true, colorMap["black"]);
 
-    Button* fighterButton = new Button(renderer, "Terminal.ttf", 16, "The Fighter", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
-    fighterButton->setOutline(true, colorMap["black"]);
+//     Button* fighterButton = new Button(renderer, "Terminal.ttf", 16, "The Fighter", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
+//     fighterButton->setOutline(true, colorMap["black"]);
 
-    Button* medicButton = new Button(renderer, "Terminal.ttf", 16, "The Medic", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
-    medicButton->setOutline(true, colorMap["black"]);
+//     Button* medicButton = new Button(renderer, "Terminal.ttf", 16, "The Medic", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
+//     medicButton->setOutline(true, colorMap["black"]);
 
-    Button* raidBossButton = new Button(renderer, "Terminal.ttf", 16, "The Raid Boss", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
-    raidBossButton->setOutline(true, colorMap["black"]);
+//     Button* raidBossButton = new Button(renderer, "Terminal.ttf", 16, "The Raid Boss", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
+//     raidBossButton->setOutline(true, colorMap["black"]);
 
-    Button* tankButton = new Button(renderer, "Terminal.ttf", 16, "The Tank", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
-    tankButton->setOutline(true, colorMap["black"]);
+//     Button* tankButton = new Button(renderer, "Terminal.ttf", 16, "The Tank", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
+//     tankButton->setOutline(true, colorMap["black"]);
 
-    Button* villageIdiotButton = new Button(renderer, "Terminal.ttf", 16, "The Village Idiot", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
-    villageIdiotButton->setOutline(true, colorMap["black"]);
+//     Button* villageIdiotButton = new Button(renderer, "Terminal.ttf", 16, "The Village Idiot", colorMap["white"], colorMap["grey"], 150, 60, scaleX, scaleY);
+//     villageIdiotButton->setOutline(true, colorMap["black"]);
     
-    cSelectUnitButtons.push_back(blademasterButton);
-    cSelectUnitButtons.push_back(cavemanButton);
-    cSelectUnitButtons.push_back(duelistButton);
-    cSelectUnitButtons.push_back(fighterButton);
-    cSelectUnitButtons.push_back(medicButton);
-    cSelectUnitButtons.push_back(raidBossButton);
-    cSelectUnitButtons.push_back(tankButton);
-    cSelectUnitButtons.push_back(villageIdiotButton);
+//     cSelectUnitButtons.push_back(blademasterButton);
+//     cSelectUnitButtons.push_back(cavemanButton);
+//     cSelectUnitButtons.push_back(duelistButton);
+//     cSelectUnitButtons.push_back(fighterButton);
+//     cSelectUnitButtons.push_back(medicButton);
+//     cSelectUnitButtons.push_back(raidBossButton);
+//     cSelectUnitButtons.push_back(tankButton);
+//     cSelectUnitButtons.push_back(villageIdiotButton);
 
-}
+// }
 
 void Game::populateUnitMap() {
     unitCreators["The Blademaster"] = []() -> Unit* {
@@ -403,6 +404,8 @@ void Game::handleEvents() {
                         player2 = new Player();
                         player2->setLocalPlayer(true);
                         gameState = cSelect;
+                        CharacterSelectScreen* cSelect = static_cast<CharacterSelectScreen*>(cSelectScreen);
+                        cSelect->setLocalPlayer(2);
                     }
                     titleScreen->setText(TextType::Announcer, "Enter Remote IP: " + inputText);
                     // announcerText->setText("Enter Remote IP: " + inputText, colorMap["white"]);
@@ -472,15 +475,16 @@ void Game::handleTitleEvents(SDL_Event e) {
 }
 
 void Game::handleCSelectEvents(SDL_Event e) {
+    CharacterSelectScreen* cSelect = static_cast<CharacterSelectScreen*>(cSelectScreen);
     if (!cSelectDone) {
         if (!(player1->isLocalPlayer() && player1->getUnits().size() >= 4) && !(player2->isLocalPlayer() && player2->getUnits().size() >= 4)) {
-            for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++){
-                if (checkMouseEvent(cSelectUnitButtons[i], e) == 1) {
-                    addUnitToRoster(cSelectUnitButtons[i]->getText());
+            for (unsigned int i = 0; i < cSelect->getUnitButtons().size(); i++){
+                if (checkMouseEvent(cSelect->getUnitButtons()[i], e) == 1) {
+                    addUnitToRoster(cSelect->getUnitButtons()[i]->getText());
                 }
             }
         } else {
-            if (checkMouseEvent(cSelectStartButton, e) == 1) {
+            if (checkMouseEvent(cSelect->getButton(ButtonType::Start), e) == 1) {
                 cSelectDone = true;
                 std::vector<std::string> unitNames;
                 
@@ -499,6 +503,7 @@ void Game::handleCSelectEvents(SDL_Event e) {
 }
 
 void Game::addUnitToRoster(std::string unit) {
+    CharacterSelectScreen* cSelect = static_cast<CharacterSelectScreen*>(cSelectScreen);
     if (player1->isLocalPlayer()) {
         if (player1->hasUnit(unit)) {
             std::cout << "Unit already in roster!" << std::endl;
@@ -506,9 +511,10 @@ void Game::addUnitToRoster(std::string unit) {
         }
         player1->addUnit(createUnit(unit), 1);
 
-        Text* unitText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
-        unitText->setText(unit, colorMap["light blue"]);
-        player1SelectText.push_back(unitText);
+        // Text* unitText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
+        // unitText->setText(unit, colorMap["light blue"]);
+        // player1SelectText.push_back(unitText);
+        cSelect->addUnitToPlayerSelectText(unit, 1);
     } else {
         if (player2->hasUnit(unit)) {
             std::cout << "Unit already in roster!" << std::endl;
@@ -516,9 +522,10 @@ void Game::addUnitToRoster(std::string unit) {
         }
         player2->addUnit(createUnit(unit), 2);
         
-        Text* unitText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
-        unitText->setText(unit, colorMap["light red"]);
-        player2SelectText.push_back(unitText);
+        // Text* unitText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
+        // unitText->setText(unit, colorMap["light red"]);
+        // player2SelectText.push_back(unitText);
+        cSelect->addUnitToPlayerSelectText(unit, 2);
     }
 }
 
@@ -886,23 +893,30 @@ void Game::update() {
                 player2 = new Player();
                 player1->setLocalPlayer(true);
                 gameState = cSelect;
+                CharacterSelectScreen* cSelect = static_cast<CharacterSelectScreen*>(cSelectScreen);
+                cSelect->setLocalPlayer(1);
             }
         }
     } else if (gameState == cSelect) {
+        CharacterSelectScreen* cSelect = static_cast<CharacterSelectScreen*>(cSelectScreen);
         if (!cSelectDone) {
             if ((player1->isLocalPlayer() && player1->getUnits().size() >= 4) || (player2->isLocalPlayer() && player2->getUnits().size() >= 4)) {
-                announcerText->setText("Ready to start!", colorMap["white"]);
-                for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++){
-                    cSelectUnitButtons[i]->setHovered(false);
+                cSelect->setText(TextType::Announcer, "Ready to start!");
+                // announcerText->setText("Ready to start!", colorMap["white"]);
+                for (unsigned int i = 0; i < cSelect->getUnitButtons().size(); i++){
+                    cSelect->getUnitButtons()[i]->setHovered(false);
                 }
             } else {
-                announcerText->setText("Select your units!", colorMap["white"]);
+                cSelect->setText(TextType::Announcer, "Select your units!");
+                // announcerText->setText("Select your units!", colorMap["white"]);
             }
         } else {
             if (player1->isLocalPlayer()) {
-                announcerText->setText("Waiting for Player 2 to finish character selection!", colorMap["white"]);
+                cSelect->setText(TextType::Announcer, "Waiting for Player 2 to finish character selection!");
+                // announcerText->setText("Waiting for Player 2 to finish character selection!", colorMap["white"]);
             } else {
-                announcerText->setText("Waiting for Player 1 to finish character selection!", colorMap["white"]);
+                cSelect->setText(TextType::Announcer, "Waiting for Player 1 to finish character selection!");
+                // announcerText->setText("Waiting for Player 1 to finish character selection!", colorMap["white"]);
             }
         }
         Message* receivedMsg = receiveMessage();
@@ -1169,26 +1183,27 @@ void Game::render() {
         // titleJoinButton->render(500, 300);
         // quitButton->render(400, 400);
     } else if (gameState == cSelect) {
-        announcerText->render(25, 450);
-        tempText->render(50, 300);
-        cSelectStartButton->render(725, 430);
-        for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++) {
-            if (i < 4) {
-                cSelectUnitButtons[i]->render((i*175)+25, 50);
-            } else {
-                cSelectUnitButtons[i]->render(((i-4)*175)+25, 150);
-            }
+        cSelectScreen->render();
+        // announcerText->render(25, 450);
+        // tempText->render(50, 300);
+        // cSelectStartButton->render(725, 430);
+        // for (unsigned int i = 0; i < cSelectUnitButtons.size(); i++) {
+        //     if (i < 4) {
+        //         cSelectUnitButtons[i]->render((i*175)+25, 50);
+        //     } else {
+        //         cSelectUnitButtons[i]->render(((i-4)*175)+25, 150);
+        //     }
             
-        }
-        if (player1->isLocalPlayer()) {
-            for (unsigned int i = 0; i < player1SelectText.size(); i++) {
-                player1SelectText[i]->render(725, ((i)*35)+50);
-            }
-        } else {
-            for (unsigned int i = 0; i < player2SelectText.size(); i++) {
-                player2SelectText[i]->render(725, ((i)*35)+50);
-            }
-        }
+        // }
+        // if (player1->isLocalPlayer()) {
+        //     for (unsigned int i = 0; i < player1SelectText.size(); i++) {
+        //         player1SelectText[i]->render(725, ((i)*35)+50);
+        //     }
+        // } else {
+        //     for (unsigned int i = 0; i < player2SelectText.size(); i++) {
+        //         player2SelectText[i]->render(725, ((i)*35)+50);
+        //     }
+        // }
     } else if (gameState == play) {
         playerTurnText->render(25, 340);
         announcerText->render(25, 380);

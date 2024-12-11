@@ -26,18 +26,6 @@ void TitleScreen::initializeElements() {
     quitButton->setOutline(true, colorMap["black"]);
 }
 
-Text* TitleScreen::getText(TextType type) {
-    switch (type) {
-    case TextType::Announcer:
-        return announcerText;
-    case TextType::IP:
-        return ipText;
-    default:
-        std::cout << "Unsupported text type" << std::endl;
-        return nullptr;
-    }
-}
-
 void TitleScreen::setText(TextType type, const std::string& newText) {
     switch (type) {
     case TextType::Announcer:

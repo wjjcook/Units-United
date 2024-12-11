@@ -13,12 +13,14 @@
 
 class CharacterSelectScreen : public UI {
     public:
-        CharacterSelectScreen(SDL_Renderer* renderer, float scaleX, float scaleY, int localPlayer);
+        CharacterSelectScreen(SDL_Renderer* renderer, float scaleX, float scaleY);
         ~CharacterSelectScreen() override;
 
         void initializeElements() override;
+        void setLocalPlayer(int playerNum);
 
         void setText(TextType type, const std::string& newText) override;
+        void addUnitToPlayerSelectText(std::string unit, int playerNum);
         Button* getButton(ButtonType type) override;
         std::vector<Button*> getUnitButtons();
         void render() override;

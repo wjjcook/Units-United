@@ -16,6 +16,7 @@
 
 #include "ui/ui.hpp"
 #include "ui/title_screen.hpp"
+#include "ui/character_select_screen.hpp"
 
 #include "messages/character_selection_message.hpp"
 #include "messages/unit_order_message.hpp"
@@ -120,6 +121,7 @@ class Game {
 
         // UI
         UI* titleScreen;
+        UI* cSelectScreen;
 
         // Players
         Player* player1;
