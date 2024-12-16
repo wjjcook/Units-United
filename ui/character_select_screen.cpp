@@ -4,7 +4,23 @@ CharacterSelectScreen::CharacterSelectScreen(SDL_Renderer* renderer, float scale
     initializeElements();
 }
 
-CharacterSelectScreen::~CharacterSelectScreen() {}
+CharacterSelectScreen::~CharacterSelectScreen() {
+    delete announcerText;
+    delete tempText;
+    delete startButton;
+
+    for (unsigned int i = 0; i < player1SelectText.size(); i++) {
+        delete player1SelectText[i];
+    }
+
+    for (unsigned int i = 0; i < player2SelectText.size(); i++) {
+        delete player2SelectText[i];
+    }
+    
+    for (unsigned int i = 0; i < unitButtons.size(); i++) {
+        delete unitButtons[i];
+    }
+}
 
 void CharacterSelectScreen::initializeElements() {
     announcerText = new Text(renderer, "Terminal.ttf", 24, scaleX, scaleY);
@@ -63,7 +79,7 @@ void CharacterSelectScreen::setLocalPlayer(int playerNum) {
     localPlayer = playerNum;
 }
 
-void CharacterSelectScreen::setText(TextType type, const std::string& newText) {
+void CharacterSelectScreen::setText(TextType type, std::string newText) {
     switch (type) {
     case TextType::Announcer:
         announcerText->setText(newText, colorMap["white"]);

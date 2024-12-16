@@ -57,3 +57,13 @@ bool Player::areAllUnitsAlive() {
     lost = true;
     return false;
 }
+
+int Player::aliveUnitCount() {
+    int count = 0;
+    for (unsigned int i = 0; i < units.size(); i++) {
+        if (units[i]->isAlive()) {
+            count++;
+        }
+    }
+    return count;
+}

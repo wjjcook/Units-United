@@ -8,8 +8,8 @@
 #include <vector>
 
 #include "ui.hpp"
-#include "../text.hpp"
-#include "../button.hpp"
+#include "text.hpp"
+#include "button.hpp"
 
 class CharacterSelectScreen : public UI {
     public:
@@ -19,7 +19,7 @@ class CharacterSelectScreen : public UI {
         void initializeElements() override;
         void setLocalPlayer(int playerNum);
 
-        void setText(TextType type, const std::string& newText) override;
+        void setText(TextType type, std::string newText) override;
         void addUnitToPlayerSelectText(std::string unit, int playerNum);
         Button* getButton(ButtonType type) override;
         std::vector<Button*> getUnitButtons();

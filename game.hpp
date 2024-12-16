@@ -10,13 +10,14 @@
 #include <functional>
 #include <deque>
 
-#include "text.hpp"
-#include "button.hpp"
 #include "player.hpp"
 
 #include "ui/ui.hpp"
+#include "ui/text.hpp"
+#include "ui/button.hpp"
 #include "ui/title_screen.hpp"
 #include "ui/character_select_screen.hpp"
+#include "ui/play_screen.hpp"
 
 #include "messages/character_selection_message.hpp"
 #include "messages/unit_order_message.hpp"
@@ -122,6 +123,7 @@ class Game {
         // UI
         UI* titleScreen;
         UI* cSelectScreen;
+        UI* playScreen;
 
         // Players
         Player* player1;
@@ -130,28 +132,28 @@ class Game {
         Player_Num winner;
 
         // Text objects
-        Text* titleText;
-        Text* ipText;
-        Text* playerTurnText;
-        Text* announcerText;
-        Text* timelineHeader;
-        Text* manaText;
-        Text* tempText;
-        std::vector<Text*> player1SelectText;
-        std::vector<Text*> player2SelectText;
-        std::deque<Text*> timeline;
-        std::vector<Text*> playUnitHpTexts;
+        // Text* titleText;
+        // Text* ipText;
+        // Text* playerTurnText;
+        // Text* announcerText;
+        // Text* timelineHeader;
+        // Text* manaText;
+        // Text* tempText;
+        // std::vector<Text*> player1SelectText;
+        // std::vector<Text*> player2SelectText;
+        // std::deque<Text*> timeline;
+        // std::vector<Text*> playUnitHpTexts;
         std::string inputText;
 
         // Button objects
-        Button* titleStartButton;
-        Button* titleJoinButton;
-        Button* quitButton;
-        Button* cSelectStartButton;
-        std::vector<Button*> cSelectUnitButtons;
-        std::vector<Button*> playUnitButtons;
-        std::unordered_map<std::string, std::vector<Button*>> unitButtonMap;
-        Button* rematchButton;
+        // Button* titleStartButton;
+        // Button* titleJoinButton;
+        // Button* quitButton;
+        // Button* cSelectStartButton;
+        // std::vector<Button*> cSelectUnitButtons;
+        // std::vector<Button*> playUnitButtons;
+        // // std::unordered_map<std::string, std::vector<Button*>> unitButtonMap;
+        // Button* rematchButton;
         
         // Units
         std::unordered_map<std::string, std::function<Unit*()>> unitCreators;

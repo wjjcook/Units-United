@@ -17,6 +17,7 @@ class Player {
         bool hasUnit(const std::string& unitName) const;
         void sortUnitsBySpeed();
         bool areAllUnitsAlive();
+        int aliveUnitCount();
 
     private:
         bool localPlayer;

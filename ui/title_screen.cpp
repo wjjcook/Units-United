@@ -4,7 +4,14 @@ TitleScreen::TitleScreen(SDL_Renderer* renderer, float scaleX, float scaleY) : U
     initializeElements();
 }
 
-TitleScreen::~TitleScreen() {}
+TitleScreen::~TitleScreen() {
+    delete titleText;
+    delete ipText;
+    delete announcerText;
+    delete quitButton;
+    delete joinButton;
+    delete quitButton;
+}
 
 void TitleScreen::initializeElements() {
     titleText = new Text(renderer, "Terminal.ttf", 48, scaleX, scaleY);
@@ -26,7 +33,7 @@ void TitleScreen::initializeElements() {
     quitButton->setOutline(true, colorMap["black"]);
 }
 
-void TitleScreen::setText(TextType type, const std::string& newText) {
+void TitleScreen::setText(TextType type, std::string newText) {
     switch (type) {
     case TextType::Announcer:
         announcerText->setText(newText, colorMap["white"]);

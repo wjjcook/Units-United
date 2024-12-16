@@ -7,8 +7,8 @@
 #include <map>
 
 #include "ui.hpp"
-#include "../text.hpp"
-#include "../button.hpp"
+#include "text.hpp"
+#include "button.hpp"
 
 class TitleScreen : public UI {
     public:
@@ -17,7 +17,7 @@ class TitleScreen : public UI {
 
         void initializeElements() override;
 
-        void setText(TextType type, const std::string& newText) override;
+        void setText(TextType type, std::string newText) override;
         Button* getButton(ButtonType type) override;
         void render() override;
 
