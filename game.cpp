@@ -11,7 +11,7 @@ Game::Game() {
     gameState = title;
     cSelectDone = false;
     remoteCSelectDone = false;
-    inputText = "";
+    ipInput = "";
 
     player1 = nullptr;
     player2 = nullptr;
@@ -251,19 +251,19 @@ void Game::handleEvents() {
             if (gameState == title) {
                 if (receiveIpInput) {                   
                     if (e.type == SDL_TEXTINPUT) {
-                        inputText += e.text.text;
+                        ipInput += e.text.text;
                     } else if (e.type == SDL_KEYDOWN) {
-                        if (e.key.keysym.sym == SDLK_BACKSPACE && inputText.length() > 0) {
-                            inputText.pop_back();
+                        if (e.key.keysym.sym == SDLK_BACKSPACE && ipInput.length() > 0) {
+                            ipInput.pop_back();
                         } else if (e.key.keysym.sym == SDLK_RETURN) {
-                            std::cout << "Input: " << inputText << std::endl;
+                            std::cout << "Input: " << ipInput << std::endl;
                             SDL_StopTextInput();
                             ipInputDone = true;
                             receiveIpInput = false;
                         }
                     } 
                     if (ipInputDone) {
-                        if (!connectToServer(inputText.c_str(), 12345)) { 
+                        if (!connectToServer(ipInput.c_str(), 12345)) { 
                             std::cout << "Failed to connect to IP address" << std::endl;
                             return;
                         }
@@ -274,7 +274,7 @@ void Game::handleEvents() {
                         CharacterSelectScreen* cSelect = static_cast<CharacterSelectScreen*>(cSelectScreen);
                         cSelect->setLocalPlayer(2);
                     }
-                    titleScreen->setText(TextType::Announcer, "Enter Remote IP: " + inputText);
+                    titleScreen->setText(TextType::Announcer, "Enter Remote IP: " + ipInput);
                 }
                 handleTitleEvents(e);
                 

@@ -130,30 +130,6 @@ class Game {
         Player* player2;
         Player_Num playerTurn;
         Player_Num winner;
-
-        // Text objects
-        // Text* titleText;
-        // Text* ipText;
-        // Text* playerTurnText;
-        // Text* announcerText;
-        // Text* timelineHeader;
-        // Text* manaText;
-        // Text* tempText;
-        // std::vector<Text*> player1SelectText;
-        // std::vector<Text*> player2SelectText;
-        // std::deque<Text*> timeline;
-        // std::vector<Text*> playUnitHpTexts;
-        std::string inputText;
-
-        // Button objects
-        // Button* titleStartButton;
-        // Button* titleJoinButton;
-        // Button* quitButton;
-        // Button* cSelectStartButton;
-        // std::vector<Button*> cSelectUnitButtons;
-        // std::vector<Button*> playUnitButtons;
-        // // std::unordered_map<std::string, std::vector<Button*>> unitButtonMap;
-        // Button* rematchButton;
         
         // Units
         std::unordered_map<std::string, std::function<Unit*()>> unitCreators;
